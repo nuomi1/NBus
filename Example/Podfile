@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'NBus_Example' do
+  pod 'NBus', :path => '../'
+
+  target 'NBus_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
