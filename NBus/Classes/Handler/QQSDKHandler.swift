@@ -276,6 +276,16 @@ extension QQSDKHandler: OpenUserActivityHandlerType {
 
 extension QQSDKHandler {
 
+    public enum OauthInfoKeys {
+
+        public static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqSDKHandler.accessToken")
+
+        public static let openId = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqSDKHandler.openId")
+    }
+}
+
+extension QQSDKHandler {
+
     fileprivate class Helper: NSObject, QQApiInterfaceDelegate {
 
         weak var master: QQSDKHandler?
