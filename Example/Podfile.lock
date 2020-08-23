@@ -1,5 +1,13 @@
 PODS:
-  - NBus (0.1.0)
+  - NBus (0.1.0):
+    - NBus/SDKHandlers (= 0.1.0)
+  - NBus/Core (0.1.0)
+  - NBus/QQSDK (0.1.0)
+  - NBus/QQSDKHandler (0.1.0):
+    - NBus/Core
+    - NBus/QQSDK
+  - NBus/SDKHandlers (0.1.0):
+    - NBus/QQSDKHandler
 
 DEPENDENCIES:
   - NBus (from `../`)
@@ -9,7 +17,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  NBus: 7f1a0177dbba83e2681ebf0facdd1622db2a5334
+  NBus: c12ed5cb2ddc13afc430b57fcce30a80db2076b9
 
 PODFILE CHECKSUM: ed8bf132f5d937720bd28c5c8470530dcaa0ac6b
 
