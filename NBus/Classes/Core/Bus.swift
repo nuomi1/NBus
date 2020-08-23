@@ -100,3 +100,19 @@ extension Bus {
         )
     }
 }
+
+extension Bus {
+
+    public func openURL(_ url: URL) -> Bool {
+        let handlers = self.handlers.compactMap { $0 as? OpenURLHandlerType }
+
+        guard
+            let handler = handlers.first(where: { $0.canOpenURL(url) })
+        else {
+            return false
+        }
+
+        handler.openURL(url)
+        return true
+    }
+}
