@@ -20,6 +20,18 @@ public protocol LogHandlerProxyType: HandlerType {
     )
 }
 
+extension LogHandlerProxyType {
+
+    public func log(
+        _ message: String,
+        file: String = #file,
+        function: String = #function,
+        line: UInt = #line
+    ) {
+        logHandler(message, file, function, line)
+    }
+}
+
 public protocol ShareHandlerType: HandlerType {
 
     var endpoints: [Endpoint] { get }
