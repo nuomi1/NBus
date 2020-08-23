@@ -21,3 +21,10 @@ public protocol ShareHandlerType: HandlerType {
 
     func canShare(to endpoint: Endpoint) -> Bool
 }
+
+extension ShareHandlerType {
+
+    public func canShare(to endpoint: Endpoint) -> Bool {
+        endpoints.contains(endpoint)
+    }
+}
