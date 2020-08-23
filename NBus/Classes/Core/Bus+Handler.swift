@@ -40,3 +40,10 @@ public protocol OauthHandlerType: HandlerType {
 
     func canOauth(with platform: Platform) -> Bool
 }
+
+extension OauthHandlerType {
+
+    public func canOauth(with platform: Platform) -> Bool {
+        self.platform == platform
+    }
+}
