@@ -23,6 +23,8 @@ public enum Messages {
 
     public static let image = Message(rawValue: "com.nuomi1.bus.message.image")
 
+    public static let audio = Message(rawValue: "com.nuomi1.bus.message.audio")
+
     public static func text(
         text: String
     ) -> TextMessage {
@@ -39,6 +41,22 @@ public enum Messages {
     ) -> ImageMessage {
         ImageMessage(
             data: data,
+            title: title,
+            description: description,
+            thumbnail: thumbnail
+        )
+    }
+
+    public static func audio(
+        link: URL,
+        dataLink: URL? = nil,
+        title: String? = nil,
+        description: String? = nil,
+        thumbnail: Data? = nil
+    ) -> AudioMessage {
+        AudioMessage(
+            link: link,
+            dataLink: dataLink,
             title: title,
             description: description,
             thumbnail: thumbnail
@@ -72,6 +90,21 @@ public struct ImageMessage: MediaMessageType {
     public let identifier = Messages.image
 
     public let data: Data
+
+    public let title: String?
+
+    public let description: String?
+
+    public let thumbnail: Data?
+}
+
+public struct AudioMessage: MediaMessageType {
+
+    public let identifier = Messages.audio
+
+    public let link: URL
+
+    public let dataLink: URL?
 
     public let title: String?
 
