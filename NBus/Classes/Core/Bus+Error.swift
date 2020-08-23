@@ -8,5 +8,8 @@
 
 extension Bus {
 
-    public enum Error: Swift.Error {}
+    public enum Error: Swift.Error {
+
+        case missingHandler
+    }
 }
