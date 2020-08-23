@@ -78,4 +78,25 @@ extension Bus {
     }
 
     public typealias OauthCompletionHandler = (Result<[OauthInfoKey: String], Bus.Error>) -> Void
+
+    public func oauth(
+        with platform: Platform,
+        options: [Bus.OauthOptionKey: Any] = [:],
+        completionHandler: @escaping OauthCompletionHandler
+    ) {
+        let handlers = self.handlers.compactMap { $0 as? OauthHandlerType }
+
+        guard
+            let handler = handlers.first(where: { $0.canOauth(with: platform) })
+        else {
+            assertionFailure()
+            completionHandler(.failure(.missingHandler))
+            return
+        }
+
+        handler.oauth(
+            options: options,
+            completionHandler: completionHandler
+        )
+    }
 }
