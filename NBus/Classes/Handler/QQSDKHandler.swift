@@ -21,10 +21,37 @@ public class QQSDKHandler {
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
 
+    public let appID: String
+    public let universalLink: URL
+
     public var logHandler: (String, String, String, UInt) -> Void = { message, _, _, _ in
         #if DEBUG
             print(message)
         #endif
+    }
+
+    private var helper: Helper!
+    private var oauthHelper: TencentOAuth!
+
+    public init(appID: String, universalLink: URL) {
+        self.appID = appID
+        self.universalLink = universalLink
+
+        helper = Helper(master: self)
+
+        #if DEBUG
+            QQApiInterface.startLog { [weak self] message in
+                guard let message = message else { return }
+                self?.log("\(message)")
+            }
+        #endif
+
+        oauthHelper = TencentOAuth(
+            appId: appID.trimmingCharacters(in: .letters),
+            enableUniveralLink: true,
+            universalLink: universalLink.absoluteString,
+            delegate: nil
+        )
     }
 }
 
@@ -203,6 +230,42 @@ extension QQSDKHandler: ShareHandlerType {
             return .test
         case .preview:
             return .preview
+        }
+    }
+}
+
+extension QQSDKHandler {
+
+    fileprivate class Helper: NSObject, QQApiInterfaceDelegate {
+
+        weak var master: QQSDKHandler?
+
+        required init(master: QQSDKHandler) {
+            self.master = master
+        }
+
+        func onReq(_ req: QQBaseReq!) {
+            assertionFailure("\(String(describing: req))")
+        }
+
+        func onResp(_ resp: QQBaseResp!) {
+            switch resp {
+            case let response as SendMessageToQQResp:
+                switch response.result {
+                case "0":
+                    master?.shareCompletionHandler?(.success(()))
+                case "-4":
+                    master?.shareCompletionHandler?(.failure(.userCancelled))
+                default:
+                    master?.shareCompletionHandler?(.failure(.unknown))
+                }
+            default:
+                assertionFailure("\(String(describing: resp))")
+            }
+        }
+
+        func isOnlineResponse(_ response: [AnyHashable: Any]!) {
+            assertionFailure("\(String(describing: response))")
         }
     }
 }
