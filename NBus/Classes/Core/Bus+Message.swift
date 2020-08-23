@@ -31,6 +31,8 @@ public enum Messages {
 
     public static let file = Message(rawValue: "com.nuomi1.bus.message.file")
 
+    public static let miniProgram = Message(rawValue: "com.nuomi1.bus.message.miniProgram")
+
     public static func text(
         text: String
     ) -> TextMessage {
@@ -109,6 +111,22 @@ public enum Messages {
             fileExtension: fileExtension,
             title: title,
             description: description,
+            thumbnail: thumbnail
+        )
+    }
+
+    public static func miniProgram(
+        miniProgramID: String,
+        path: String,
+        link: URL,
+        miniProgramType: MiniProgramMessage.MiniProgramType,
+        thumbnail: Data? = nil
+    ) -> MiniProgramMessage {
+        MiniProgramMessage(
+            miniProgramID: miniProgramID,
+            path: path,
+            link: link,
+            miniProgramType: miniProgramType,
             thumbnail: thumbnail
         )
     }
@@ -200,6 +218,27 @@ public struct FileMessage: MediaMessageType {
     public let title: String?
 
     public let description: String?
+
+    public let thumbnail: Data?
+}
+
+public struct MiniProgramMessage: MessageType {
+
+    public enum MiniProgramType {
+        case release
+        case test
+        case preview
+    }
+
+    public let identifier = Messages.miniProgram
+
+    public let miniProgramID: String
+
+    public let path: String
+
+    public let link: URL
+
+    public let miniProgramType: MiniProgramType
 
     public let thumbnail: Data?
 }
