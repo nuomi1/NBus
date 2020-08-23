@@ -258,6 +258,14 @@ extension QQSDKHandler: OauthHandlerType {
     }
 }
 
+extension QQSDKHandler: OpenURLHandlerType {
+
+    public func openURL(_ url: URL) {
+        QQApiInterface.handleOpen(url, delegate: helper)
+        TencentOAuth.handleOpen(url)
+    }
+}
+
 extension QQSDKHandler {
 
     fileprivate class Helper: NSObject, QQApiInterfaceDelegate {
