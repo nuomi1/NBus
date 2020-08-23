@@ -12,3 +12,17 @@ public final class Bus {
 
     public var handlers: [HandlerType] = []
 }
+
+extension Bus {
+
+    public struct ShareOptionKey: RawRepresentable, Hashable {
+
+        public typealias RawValue = String
+
+        public let rawValue: Self.RawValue
+
+        public init(rawValue: Self.RawValue) {
+            self.rawValue = rawValue
+        }
+    }
+}
