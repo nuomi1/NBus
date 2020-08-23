@@ -63,3 +63,12 @@ extension OpenURLHandlerType {
         appID == url.scheme
     }
 }
+
+public protocol OpenUserActivityHandlerType: HandlerType {
+
+    var universalLink: URL { get }
+
+    func openUserActivity(_ userActivity: NSUserActivity)
+
+    func canOpenUserActivity(_ userActivity: NSUserActivity) -> Bool
+}
