@@ -52,3 +52,17 @@ extension Bus {
         )
     }
 }
+
+extension Bus {
+
+    public struct OauthOptionKey: RawRepresentable, Hashable {
+
+        public typealias RawValue = String
+
+        public let rawValue: Self.RawValue
+
+        public init(rawValue: Self.RawValue) {
+            self.rawValue = rawValue
+        }
+    }
+}
