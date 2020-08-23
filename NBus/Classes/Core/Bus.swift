@@ -65,4 +65,15 @@ extension Bus {
             self.rawValue = rawValue
         }
     }
+
+    public struct OauthInfoKey: RawRepresentable, Hashable {
+
+        public typealias RawValue = String
+
+        public let rawValue: Self.RawValue
+
+        public init(rawValue: Self.RawValue) {
+            self.rawValue = rawValue
+        }
+    }
 }
