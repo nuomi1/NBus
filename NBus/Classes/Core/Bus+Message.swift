@@ -21,11 +21,27 @@ public enum Messages {
 
     public static let text = Message(rawValue: "com.nuomi1.bus.message.text")
 
+    public static let image = Message(rawValue: "com.nuomi1.bus.message.image")
+
     public static func text(
         text: String
     ) -> TextMessage {
         TextMessage(
             text: text
+        )
+    }
+
+    public static func image(
+        data: Data,
+        title: String? = nil,
+        description: String? = nil,
+        thumbnail: Data? = nil
+    ) -> ImageMessage {
+        ImageMessage(
+            data: data,
+            title: title,
+            description: description,
+            thumbnail: thumbnail
         )
     }
 }
@@ -49,4 +65,17 @@ public struct TextMessage: MessageType {
     public let identifier = Messages.text
 
     public let text: String
+}
+
+public struct ImageMessage: MediaMessageType {
+
+    public let identifier = Messages.image
+
+    public let data: Data
+
+    public let title: String?
+
+    public let description: String?
+
+    public let thumbnail: Data?
 }
