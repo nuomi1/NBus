@@ -76,4 +76,6 @@ extension Bus {
             self.rawValue = rawValue
         }
     }
+
+    public typealias OauthCompletionHandler = (Result<[OauthInfoKey: String], Bus.Error>) -> Void
 }
