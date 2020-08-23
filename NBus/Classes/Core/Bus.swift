@@ -27,4 +27,28 @@ extension Bus {
     }
 
     public typealias ShareCompletionHandler = (Result<Void, Bus.Error>) -> Void
+
+    public func share(
+        message: MessageType,
+        to endpoint: Endpoint,
+        options: [Bus.ShareOptionKey: Any] = [:],
+        completionHandler: @escaping ShareCompletionHandler
+    ) {
+        let handlers = self.handlers.compactMap { $0 as? ShareHandlerType }
+
+        guard
+            let handler = handlers.first(where: { $0.canShare(to: endpoint) })
+        else {
+            assertionFailure()
+            completionHandler(.failure(.missingHandler))
+            return
+        }
+
+        handler.share(
+            message: message,
+            to: endpoint,
+            options: options,
+            completionHandler: completionHandler
+        )
+    }
 }
