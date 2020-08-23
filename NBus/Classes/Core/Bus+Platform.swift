@@ -16,3 +16,8 @@ public struct Platform: RawRepresentable, Hashable {
         self.rawValue = rawValue
     }
 }
+
+public enum Platforms {
+
+    public static let qq = Platform(rawValue: "com.nuomi1.bus.platform.qq")
+}
