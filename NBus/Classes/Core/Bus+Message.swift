@@ -17,6 +17,19 @@ public struct Message: RawRepresentable, Hashable {
     }
 }
 
+public enum Messages {
+
+    public static let text = Message(rawValue: "com.nuomi1.bus.message.text")
+
+    public static func text(
+        text: String
+    ) -> TextMessage {
+        TextMessage(
+            text: text
+        )
+    }
+}
+
 public protocol MessageType {
 
     var identifier: Message { get }
@@ -29,4 +42,11 @@ public protocol MediaMessageType: MessageType {
     var description: String? { get }
 
     var thumbnail: Data? { get }
+}
+
+public struct TextMessage: MessageType {
+
+    public let identifier = Messages.text
+
+    public let text: String
 }
