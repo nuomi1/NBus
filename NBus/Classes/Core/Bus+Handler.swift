@@ -72,3 +72,12 @@ public protocol OpenUserActivityHandlerType: HandlerType {
 
     func canOpenUserActivity(_ userActivity: NSUserActivity) -> Bool
 }
+
+extension OpenUserActivityHandlerType {
+
+    public func canOpenUserActivity(_ userActivity: NSUserActivity) -> Bool {
+        let lhs = userActivity.webpageURL?.absoluteString ?? ""
+        let rhs = universalLink.absoluteString
+        return lhs.hasPrefix(rhs)
+    }
+}
