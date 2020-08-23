@@ -15,11 +15,14 @@ public class QQSDKHandler {
         Endpoints.QQ.timeline,
     ]
 
+    public let platform: Platform = Platforms.qq
+
     public var isInstalled: Bool {
         QQApiInterface.isQQInstalled()
     }
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
+    private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
     public let appID: String
     public let universalLink: URL
@@ -230,6 +233,27 @@ extension QQSDKHandler: ShareHandlerType {
             return .test
         case .preview:
             return .preview
+        }
+    }
+}
+
+extension QQSDKHandler: OauthHandlerType {
+
+    public func oauth(
+        options: [Bus.OauthOptionKey: Any] = [:],
+        completionHandler: @escaping Bus.OauthCompletionHandler
+    ) {
+        guard isInstalled else {
+            completionHandler(.failure(.missingApplication))
+            return
+        }
+
+        oauthCompletionHandler = completionHandler
+
+        let result = oauthHelper.authorize([kOPEN_PERMISSION_GET_USER_INFO])
+
+        if !result {
+            completionHandler(.failure(.unknown))
         }
     }
 }
