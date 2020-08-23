@@ -28,3 +28,15 @@ extension ShareHandlerType {
         endpoints.contains(endpoint)
     }
 }
+
+public protocol OauthHandlerType: HandlerType {
+
+    var platform: Platform { get }
+
+    func oauth(
+        options: [Bus.OauthOptionKey: Any],
+        completionHandler: @escaping Bus.OauthCompletionHandler
+    )
+
+    func canOauth(with platform: Platform) -> Bool
+}
