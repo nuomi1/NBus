@@ -8,6 +8,18 @@
 
 public protocol HandlerType {}
 
+public protocol LogHandlerProxyType: HandlerType {
+
+    var logHandler: Bus.LogHandler { get }
+
+    func log(
+        _ message: String,
+        file: String,
+        function: String,
+        line: UInt
+    )
+}
+
 public protocol ShareHandlerType: HandlerType {
 
     var endpoints: [Endpoint] { get }
