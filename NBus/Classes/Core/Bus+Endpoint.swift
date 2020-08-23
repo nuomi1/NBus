@@ -16,3 +16,13 @@ public struct Endpoint: RawRepresentable, Hashable {
         self.rawValue = rawValue
     }
 }
+
+public enum Endpoints {
+
+    public enum QQ {
+
+        public static let friend = Endpoint(rawValue: "com.nuomi1.bus.endpoint.qq.friend")
+
+        public static let timeline = Endpoint(rawValue: "com.nuomi1.bus.endpoint.qq.timeline")
+    }
+}

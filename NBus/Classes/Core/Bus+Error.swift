@@ -11,5 +11,15 @@ extension Bus {
     public enum Error: Swift.Error {
 
         case missingHandler
+
+        case missingApplication
+
+        case unsupportedMessage
+
+        case invalidMessage
+
+        case userCancelled
+
+        case unknown
     }
 }

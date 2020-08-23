@@ -212,3 +212,6 @@ xcuserdata
 ### XcodeGen ###
 *.xcodeproj
 *.xcworkspace
+
+### CocoaPods ###
+Vendor/

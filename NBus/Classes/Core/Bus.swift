@@ -15,6 +15,11 @@ public final class Bus {
 
 extension Bus {
 
+    public typealias LogHandler = (String, String, String, UInt) -> Void
+}
+
+extension Bus {
+
     public struct ShareOptionKey: RawRepresentable, Hashable {
 
         public typealias RawValue = String
