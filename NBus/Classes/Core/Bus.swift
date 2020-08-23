@@ -9,4 +9,6 @@
 public final class Bus {
 
     public static let shared = Bus()
+
+    public var handlers: [HandlerType] = []
 }
