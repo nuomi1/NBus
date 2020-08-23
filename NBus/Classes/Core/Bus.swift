@@ -25,4 +25,6 @@ extension Bus {
             self.rawValue = rawValue
         }
     }
+
+    public typealias ShareCompletionHandler = (Result<Void, Bus.Error>) -> Void
 }
