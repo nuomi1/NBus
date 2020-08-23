@@ -16,3 +16,8 @@ public struct Message: RawRepresentable, Hashable {
         self.rawValue = rawValue
     }
 }
+
+public protocol MessageType {
+
+    var identifier: Message { get }
+}
