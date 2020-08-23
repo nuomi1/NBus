@@ -16,6 +16,11 @@
 default_platform(:ios)
 
 platform :ios do
+  before_all do
+    ENV["FL_COCOAPODS_PODFILE"] ||= "Example/Podfile"
+    ENV["XCODEGEN_SPEC"] ||= "Example/project.yml"
+  end
+
   lane :setup_xcodegen do
     xcodegen
   end
