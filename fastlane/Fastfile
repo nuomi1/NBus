@@ -19,4 +19,8 @@ platform :ios do
   lane :format do
     swiftformat
   end
+
+  lane :lint do
+    swiftlint
+  end
 end

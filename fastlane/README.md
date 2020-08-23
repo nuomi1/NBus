@@ -21,6 +21,11 @@ or alternatively using `brew install fastlane`
 fastlane ios format
 ```
 
+### ios lint
+```
+fastlane ios lint
+```
+
 
 ----
 
