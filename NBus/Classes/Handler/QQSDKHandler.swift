@@ -53,7 +53,7 @@ public class QQSDKHandler {
             appId: appID.trimmingCharacters(in: .letters),
             enableUniveralLink: true,
             universalLink: universalLink.absoluteString,
-            delegate: nil
+            delegate: helper
         )
     }
 }
@@ -286,7 +286,7 @@ extension QQSDKHandler {
 
 extension QQSDKHandler {
 
-    fileprivate class Helper: NSObject, QQApiInterfaceDelegate {
+    fileprivate class Helper: NSObject, QQApiInterfaceDelegate, TencentSessionDelegate {
 
         weak var master: QQSDKHandler?
 
@@ -316,6 +316,35 @@ extension QQSDKHandler {
 
         func isOnlineResponse(_ response: [AnyHashable: Any]!) {
             assertionFailure("\(String(describing: response))")
+        }
+
+        func tencentDidLogin() {
+            guard
+                let accessToken = master?.oauthHelper.accessToken,
+                let openId = master?.oauthHelper.openId
+            else {
+                master?.oauthCompletionHandler?(.failure(.unknown))
+                return
+            }
+
+            let parameters = [
+                OauthInfoKeys.accessToken: accessToken,
+                OauthInfoKeys.openId: openId,
+            ]
+
+            master?.oauthCompletionHandler?(.success(parameters))
+        }
+
+        func tencentDidNotLogin(_ cancelled: Bool) {
+            if cancelled {
+                master?.oauthCompletionHandler?(.failure(.userCancelled))
+            } else {
+                master?.oauthCompletionHandler?(.failure(.unknown))
+            }
+        }
+
+        func tencentDidNotNetWork() {
+            assertionFailure()
         }
     }
 }
