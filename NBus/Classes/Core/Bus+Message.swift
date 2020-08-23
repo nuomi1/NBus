@@ -21,3 +21,12 @@ public protocol MessageType {
 
     var identifier: Message { get }
 }
+
+public protocol MediaMessageType: MessageType {
+
+    var title: String? { get }
+
+    var description: String? { get }
+
+    var thumbnail: Data? { get }
+}
