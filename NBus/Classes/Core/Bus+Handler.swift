@@ -47,3 +47,12 @@ extension OauthHandlerType {
         self.platform == platform
     }
 }
+
+public protocol OpenURLHandlerType: HandlerType {
+
+    var appID: String { get }
+
+    func openURL(_ url: URL)
+
+    func canOpenURL(_ url: URL) -> Bool
+}
