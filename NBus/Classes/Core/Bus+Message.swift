@@ -29,6 +29,8 @@ public enum Messages {
 
     public static let webPage = Message(rawValue: "com.nuomi1.bus.message.webPage")
 
+    public static let file = Message(rawValue: "com.nuomi1.bus.message.file")
+
     public static func text(
         text: String
     ) -> TextMessage {
@@ -89,6 +91,22 @@ public enum Messages {
     ) -> WebPageMessage {
         WebPageMessage(
             link: link,
+            title: title,
+            description: description,
+            thumbnail: thumbnail
+        )
+    }
+
+    public static func file(
+        data: Data,
+        fileExtension: String,
+        title: String? = nil,
+        description: String? = nil,
+        thumbnail: Data? = nil
+    ) -> FileMessage {
+        FileMessage(
+            data: data,
+            fileExtension: fileExtension,
             title: title,
             description: description,
             thumbnail: thumbnail
@@ -163,6 +181,21 @@ public struct WebPageMessage: MediaMessageType {
     public let identifier = Messages.webPage
 
     public let link: URL
+
+    public let title: String?
+
+    public let description: String?
+
+    public let thumbnail: Data?
+}
+
+public struct FileMessage: MediaMessageType {
+
+    public let identifier = Messages.file
+
+    public let data: Data
+
+    public let fileExtension: String
 
     public let title: String?
 
