@@ -56,3 +56,10 @@ public protocol OpenURLHandlerType: HandlerType {
 
     func canOpenURL(_ url: URL) -> Bool
 }
+
+extension OpenURLHandlerType {
+
+    public func canOpenURL(_ url: URL) -> Bool {
+        appID == url.scheme
+    }
+}
