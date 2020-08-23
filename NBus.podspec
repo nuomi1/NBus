@@ -12,7 +12,28 @@ Pod::Spec.new do |s|
 
   s.swift_version = "5.0"
 
-  s.source_files = "NBus/Classes/**/*.swift"
+  s.default_subspecs = "SDKHandlers"
+
+  s.subspec "SDKHandlers" do |ss|
+    ss.dependency "NBus/QQSDKHandler"
+  end
+
+  s.subspec "Core" do |ss|
+    ss.source_files = ["NBus/Classes/Core/**/*.swift"]
+  end
+
+  s.subspec "QQSDKHandler" do |ss|
+    ss.dependency "NBus/Core"
+    ss.dependency "NBus/QQSDK"
+
+    ss.source_files = ["NBus/Classes/Handler/QQSDKHandler.swift"]
+  end
+
+  s.subspec "QQSDK" do |ss|
+    ss.vendored_frameworks = ["NBus/Vendor/QQ_SDK/**/*.framework"]
+
+    ss.source_files = ["NBus/Vendor/QQ_SDK/**/*.h"]
+  end
 
   s.prepare_command = <<-CMD
     function download_sdk() {
