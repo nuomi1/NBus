@@ -116,3 +116,19 @@ extension Bus {
         return true
     }
 }
+
+extension Bus {
+
+    public func openUserActivity(_ userActivity: NSUserActivity) -> Bool {
+        let handlers = self.handlers.compactMap { $0 as? OpenUserActivityHandlerType }
+
+        guard
+            let handler = handlers.first(where: { $0.canOpenUserActivity(userActivity) })
+        else {
+            return false
+        }
+
+        handler.openUserActivity(userActivity)
+        return true
+    }
+}
