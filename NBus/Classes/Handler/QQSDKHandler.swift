@@ -266,6 +266,14 @@ extension QQSDKHandler: OpenURLHandlerType {
     }
 }
 
+extension QQSDKHandler: OpenUserActivityHandlerType {
+
+    public func openUserActivity(_ userActivity: NSUserActivity) {
+        QQApiInterface.handleOpenUniversallink(userActivity.webpageURL, delegate: helper)
+        TencentOAuth.handleUniversalLink(userActivity.webpageURL)
+    }
+}
+
 extension QQSDKHandler {
 
     fileprivate class Helper: NSObject, QQApiInterfaceDelegate {
