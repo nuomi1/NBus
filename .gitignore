@@ -208,3 +208,7 @@ xcuserdata
 **/xcshareddata/WorkspaceSettings.xcsettings
 
 # End of https://www.toptal.com/developers/gitignore/api/carthage,cocoapods,fastlane,macos,objective-c,swift,swiftpackagemanager,xcode
+
+### XcodeGen ###
+*.xcodeproj
+*.xcworkspace
