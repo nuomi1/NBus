@@ -16,6 +16,19 @@
 default_platform(:ios)
 
 platform :ios do
+  lane :setup_xcodegen do
+    xcodegen
+  end
+
+  lane :setup_cocoapods do
+    cocoapods
+  end
+
+  lane :setup do
+    setup_xcodegen
+    setup_cocoapods
+  end
+
   lane :format do
     swiftformat
   end

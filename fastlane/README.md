@@ -16,6 +16,21 @@ or alternatively using `brew install fastlane`
 
 # Available Actions
 ## iOS
+### ios setup_xcodegen
+```
+fastlane ios setup_xcodegen
+```
+
+### ios setup_cocoapods
+```
+fastlane ios setup_cocoapods
+```
+
+### ios setup
+```
+fastlane ios setup
+```
+
 ### ios format
 ```
 fastlane ios format
