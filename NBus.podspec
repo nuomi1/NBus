@@ -32,6 +32,8 @@ Pod::Spec.new do |s|
   s.subspec "QQSDK" do |ss|
     ss.vendored_frameworks = ["NBus/Vendor/QQ_SDK/**/*.framework"]
 
+    ss.frameworks = ["SystemConfiguration", "WebKit"]
+
     ss.source_files = ["NBus/Vendor/QQ_SDK/**/*.h"]
   end
 
