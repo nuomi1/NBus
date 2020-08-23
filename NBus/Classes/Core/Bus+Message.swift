@@ -27,6 +27,8 @@ public enum Messages {
 
     public static let video = Message(rawValue: "com.nuomi1.bus.message.video")
 
+    public static let webPage = Message(rawValue: "com.nuomi1.bus.message.webPage")
+
     public static func text(
         text: String
     ) -> TextMessage {
@@ -72,6 +74,20 @@ public enum Messages {
         thumbnail: Data? = nil
     ) -> VideoMessage {
         VideoMessage(
+            link: link,
+            title: title,
+            description: description,
+            thumbnail: thumbnail
+        )
+    }
+
+    public static func webPage(
+        link: URL,
+        title: String? = nil,
+        description: String? = nil,
+        thumbnail: Data? = nil
+    ) -> WebPageMessage {
+        WebPageMessage(
             link: link,
             title: title,
             description: description,
@@ -132,6 +148,19 @@ public struct AudioMessage: MediaMessageType {
 public struct VideoMessage: MediaMessageType {
 
     public let identifier = Messages.video
+
+    public let link: URL
+
+    public let title: String?
+
+    public let description: String?
+
+    public let thumbnail: Data?
+}
+
+public struct WebPageMessage: MediaMessageType {
+
+    public let identifier = Messages.webPage
 
     public let link: URL
 
