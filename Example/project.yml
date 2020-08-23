@@ -1,0 +1,15 @@
+name: NBus
+
+attributes:
+  ORGANIZATIONNAME: nuomi1
+
+targets:
+  BusMock:
+    type: application
+    platform: iOS
+    deploymentTarget: 10.0
+    sources:
+      - NBus
+    settings:
+      base:
+        SWIFT_VERSION: 5.0
