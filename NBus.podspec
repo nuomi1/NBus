@@ -38,5 +38,17 @@ Pod::Spec.new do |s|
         cp -r ${file} ${VENDOR_SDK_DIR}
       done
     }
+
+    cd NBus
+
+    mkdir -p Vendor
+    cd Vendor
+
+    QQ="QQ"
+    QQ_VER="3.3.9"
+    QQ_URL="http://d3g.qq.com/qzone/Publish-Sdk${QQ_VER}-Lite.zip"
+    QQ_SHA1="edac517333ba92aef666afb8c7fd00e458f37629"
+    QQ_SEARCH="Publish-Sdk${QQ_VER}-Lite/sdk-Lite"
+    download_sdk ${QQ} ${QQ_VER} ${QQ_URL} ${QQ_SHA1} ${QQ_SEARCH}
   CMD
 end
