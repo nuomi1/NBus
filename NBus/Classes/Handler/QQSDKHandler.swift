@@ -27,7 +27,7 @@ public class QQSDKHandler {
     public let appID: String
     public let universalLink: URL
 
-    public var logHandler: (String, String, String, UInt) -> Void = { message, _, _, _ in
+    public var logHandler: Bus.LogHandler = { message, _, _, _ in
         #if DEBUG
             print(message)
         #endif
