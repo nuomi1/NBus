@@ -6,6 +6,7 @@
 //  Copyright © 2020 nuomi1. All rights reserved.
 //
 
+import AuthenticationServices
 import Foundation
 
 public class SystemHandler {
@@ -18,10 +19,25 @@ public class SystemHandler {
         true
     }
 
+    private var oauthCompletionHandler: Bus.OauthCompletionHandler?
+
     public var logHandler: (String, String, String, UInt) -> Void = { message, _, _, _ in
         #if DEBUG
             print(message)
         #endif
+    }
+
+    private var boxHelper: Any!
+
+    @available(iOS 13.0, *)
+    private var helper: Helper {
+        boxHelper as! Helper
+    }
+
+    public init() {
+        if #available(iOS 13.0, *) {
+            boxHelper = Helper(master: self)
+        }
     }
 }
 
@@ -145,5 +161,63 @@ extension SystemHandler {
         public static let givenName = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.systemHandler.givenName")
 
         public static let familyName = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.systemHandler.familyName")
+    }
+}
+
+extension SystemHandler {
+
+    @available(iOS 13.0, *)
+    fileprivate class Helper: NSObject, ASAuthorizationControllerDelegate {
+
+        weak var master: SystemHandler?
+
+        required init(master: SystemHandler) {
+            self.master = master
+        }
+
+        func authorizationController(
+            controller: ASAuthorizationController,
+            didCompleteWithAuthorization authorization: ASAuthorization
+        ) {
+            switch authorization.credential {
+            case let credential as ASAuthorizationAppleIDCredential:
+                let identityToken = credential.identityToken.flatMap {
+                    String(data: $0, encoding: .utf8)
+                }
+
+                let authorizationCode = credential.authorizationCode.flatMap {
+                    String(data: $0, encoding: .utf8)
+                }
+
+                let parameters = [
+                    OauthInfoKeys.identityToken: identityToken,
+                    OauthInfoKeys.authorizationCode: authorizationCode,
+                    OauthInfoKeys.user: credential.user,
+                    OauthInfoKeys.email: credential.email,
+                    OauthInfoKeys.givenName: credential.fullName?.givenName,
+                    OauthInfoKeys.familyName: credential.fullName?.familyName,
+                ]
+                .compactMapValues { value -> String? in
+                    guard
+                        let value = value, !value.isEmpty
+                    else { return nil }
+
+                    return value
+                }
+
+                master?.oauthCompletionHandler?(.success(parameters))
+            default:
+                assertionFailure("\(authorization.credential)")
+            }
+        }
+
+        func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+            switch error {
+            case ASAuthorizationError.canceled:
+                master?.oauthCompletionHandler?(.failure(.userCancelled))
+            default:
+                master?.oauthCompletionHandler?(.failure(.unknown))
+            }
+        }
     }
 }
