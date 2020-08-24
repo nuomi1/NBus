@@ -22,10 +22,33 @@ public class WechatSDKHandler {
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
 
+    public let appID: String
+    public let universalLink: URL
+
     public var logHandler: (String, String, String, UInt) -> Void = { message, _, _, _ in
         #if DEBUG
             print(message)
         #endif
+    }
+
+    private var helper: Helper!
+
+    public init(appID: String, universalLink: URL) {
+        self.appID = appID
+        self.universalLink = universalLink
+
+        helper = Helper(master: self)
+
+        #if DEBUG
+            WXApi.startLog(by: .detail) { [weak self] message in
+                self?.log(message)
+            }
+        #endif
+
+        WXApi.registerApp(
+            appID,
+            universalLink: universalLink.absoluteString
+        )
     }
 }
 
@@ -164,6 +187,36 @@ extension WechatSDKHandler: ShareHandlerType {
             return .test
         case .preview:
             return .preview
+        }
+    }
+}
+
+extension WechatSDKHandler {
+
+    fileprivate class Helper: NSObject, WXApiDelegate {
+
+        weak var master: WechatSDKHandler?
+
+        required init(master: WechatSDKHandler) {
+            self.master = master
+        }
+
+        func onReq(_ req: BaseReq) {
+            assertionFailure("\(req)")
+        }
+
+        func onResp(_ resp: BaseResp) {
+            switch resp {
+            case let response as SendMessageToWXResp:
+                switch response.errCode {
+                case WXSuccess.rawValue:
+                    master?.shareCompletionHandler?(.success(()))
+                default:
+                    master?.shareCompletionHandler?(.failure(.unknown))
+                }
+            default:
+                assertionFailure("\(resp)")
+            }
         }
     }
 }
