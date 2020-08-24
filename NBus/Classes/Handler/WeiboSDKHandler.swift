@@ -20,10 +20,30 @@ public class WeiboSDKHandler {
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
 
+    public let appID: String
+    private let redirectLink: URL
+
     public var logHandler: (String, String, String, UInt) -> Void = { message, _, _, _ in
         #if DEBUG
             print(message)
         #endif
+    }
+
+    private var helper: Helper!
+
+    public init(appID: String, redirectLink: URL) {
+        self.appID = appID
+        self.redirectLink = redirectLink
+
+        helper = Helper(master: self)
+
+        #if DEBUG
+            WeiboSDK.enableDebugMode(true)
+        #endif
+
+        WeiboSDK.registerApp(
+            appID.trimmingCharacters(in: .letters)
+        )
     }
 }
 
@@ -77,6 +97,38 @@ extension WeiboSDKHandler: ShareHandlerType {
 
         if !result {
             completionHandler(.failure(.invalidMessage))
+        }
+    }
+}
+
+extension WeiboSDKHandler {
+
+    fileprivate class Helper: NSObject, WeiboSDKDelegate {
+
+        weak var master: WeiboSDKHandler?
+
+        required init(master: WeiboSDKHandler) {
+            self.master = master
+        }
+
+        func didReceiveWeiboRequest(_ request: WBBaseRequest!) {
+            assertionFailure("\(String(describing: request))")
+        }
+
+        func didReceiveWeiboResponse(_ response: WBBaseResponse!) {
+            switch response {
+            case let response as WBSendMessageToWeiboResponse:
+                switch response.statusCode {
+                case .success:
+                    master?.shareCompletionHandler?(.success(()))
+                case .userCancel:
+                    master?.shareCompletionHandler?(.failure(.userCancelled))
+                default:
+                    master?.shareCompletionHandler?(.failure(.unknown))
+                }
+            default:
+                assertionFailure("\(String(describing: response))")
+            }
         }
     }
 }
