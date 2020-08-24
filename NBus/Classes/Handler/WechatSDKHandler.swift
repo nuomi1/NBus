@@ -224,6 +224,13 @@ extension WechatSDKHandler: OauthHandlerType {
     }
 }
 
+extension WechatSDKHandler: OpenURLHandlerType {
+
+    public func openURL(_ url: URL) {
+        WXApi.handleOpen(url, delegate: helper)
+    }
+}
+
 extension WechatSDKHandler {
 
     public enum OauthOptionKeys {
