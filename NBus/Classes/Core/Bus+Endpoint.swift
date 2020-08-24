@@ -25,4 +25,13 @@ public enum Endpoints {
 
         public static let timeline = Endpoint(rawValue: "com.nuomi1.bus.endpoint.qq.timeline")
     }
+
+    public enum Wechat {
+
+        public static let friend = Endpoint(rawValue: "com.nuomi1.bus.endpoint.wechat.friend")
+
+        public static let timeline = Endpoint(rawValue: "com.nuomi1.bus.endpoint.wechat.timeline")
+
+        public static let favorite = Endpoint(rawValue: "com.nuomi1.bus.endpoint.wechat.favorite")
+    }
 }

@@ -16,6 +16,7 @@ Pod::Spec.new do |s|
 
   s.subspec "SDKHandlers" do |ss|
     ss.dependency "NBus/QQSDKHandler"
+    ss.dependency "NBus/WechatSDKHandler"
   end
 
   s.subspec "Core" do |ss|
@@ -29,12 +30,29 @@ Pod::Spec.new do |s|
     ss.source_files = ["NBus/Classes/Handler/QQSDKHandler.swift"]
   end
 
+  s.subspec "WechatSDKHandler" do |ss|
+    ss.dependency "NBus/Core"
+    ss.dependency "NBus/WechatSDK"
+
+    ss.source_files = ["NBus/Classes/Handler/WechatSDKHandler.swift"]
+  end
+
   s.subspec "QQSDK" do |ss|
     ss.vendored_frameworks = ["NBus/Vendor/QQ_SDK/**/*.framework"]
 
     ss.frameworks = ["SystemConfiguration", "WebKit"]
 
     ss.source_files = ["NBus/Vendor/QQ_SDK/**/*.h"]
+  end
+
+  s.subspec "WechatSDK" do |ss|
+    ss.vendored_libraries = ["NBus/Vendor/Wechat_SDK/**/*.a"]
+    ss.frameworks = ["WebKit"]
+    ss.libraries = ["c++"]
+
+    ss.source_files = ["NBus/Vendor/Wechat_SDK/**/*.h"]
+
+    ss.pod_target_xcconfig = { "OTHER_LDFLAGS" => "-ObjC -all_load" }
   end
 
   s.prepare_command = <<-CMD
@@ -73,5 +91,12 @@ Pod::Spec.new do |s|
     QQ_SHA1="edac517333ba92aef666afb8c7fd00e458f37629"
     QQ_SEARCH="Publish-Sdk${QQ_VER}-Lite/sdk-Lite"
     download_sdk ${QQ} ${QQ_VER} ${QQ_URL} ${QQ_SHA1} ${QQ_SEARCH}
+
+    WECHAT="Wechat"
+    WECHAT_VER="1.8.7.1"
+    WECHAT_URL="https://res.wx.qq.com/op_res/DHI055JVxYur-5c7ss5McQZj2Y9KZQlp24xwD7FYnF88x8LA8rWCzSfdStN5tiCD"
+    WECHAT_SHA1="5359ec0b4fc707f41fcf458fe4faebb83efd4011"
+    WECHAT_SEARCH="OpenSDK${WECHAT_VER}"
+    download_sdk ${WECHAT} ${WECHAT_VER} ${WECHAT_URL} ${WECHAT_SHA1} ${WECHAT_SEARCH}
   CMD
 end
