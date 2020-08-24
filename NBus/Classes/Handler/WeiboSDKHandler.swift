@@ -161,6 +161,19 @@ extension WeiboSDKHandler {
                 default:
                     master?.shareCompletionHandler?(.failure(.unknown))
                 }
+            case let response as WBAuthorizeResponse:
+                switch (response.statusCode, response.accessToken) {
+                case let (.success, accessToken?):
+                    let parameters = [
+                        OauthInfoKeys.accessToken: accessToken,
+                    ]
+
+                    master?.oauthCompletionHandler?(.success(parameters))
+                case (.userCancel, _):
+                    master?.oauthCompletionHandler?(.failure(.userCancelled))
+                default:
+                    master?.oauthCompletionHandler?(.failure(.unknown))
+                }
             default:
                 assertionFailure("\(String(describing: response))")
             }
