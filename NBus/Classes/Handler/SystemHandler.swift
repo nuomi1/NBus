@@ -9,3 +9,13 @@
 import Foundation
 
 public class SystemHandler {}
+
+extension SystemHandler {
+
+    public enum ShareOptionKeys {
+
+        public static let sourceView = Bus.ShareOptionKey(rawValue: "com.nuomi1.bus.systemHandler.sourceView")
+
+        public static let sourceRect = Bus.ShareOptionKey(rawValue: "com.nuomi1.bus.systemHandler.sourceRect")
+    }
+}
