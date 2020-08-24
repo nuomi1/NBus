@@ -260,6 +260,17 @@ extension WechatSDKHandler {
                 default:
                     master?.shareCompletionHandler?(.failure(.unknown))
                 }
+            case let response as SendAuthResp:
+                switch (response.errCode, response.code) {
+                case let (WXSuccess.rawValue, code?):
+                    let parameters = [
+                        OauthInfoKeys.code: code,
+                    ]
+
+                    master?.oauthCompletionHandler?(.success(parameters))
+                default:
+                    master?.oauthCompletionHandler?(.failure(.unknown))
+                }
             default:
                 assertionFailure("\(resp)")
             }
