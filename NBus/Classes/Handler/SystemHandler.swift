@@ -17,7 +17,15 @@ public class SystemHandler {
     public var isInstalled: Bool {
         true
     }
+
+    public var logHandler: (String, String, String, UInt) -> Void = { message, _, _, _ in
+        #if DEBUG
+            print(message)
+        #endif
+    }
 }
+
+extension SystemHandler: LogHandlerProxyType {}
 
 extension SystemHandler: ShareHandlerType {
 
