@@ -29,12 +29,29 @@ Pod::Spec.new do |s|
     ss.source_files = ["NBus/Classes/Handler/QQSDKHandler.swift"]
   end
 
+  s.subspec "WechatSDKHandler" do |ss|
+    ss.dependency "NBus/Core"
+    ss.dependency "NBus/WechatSDK"
+
+    ss.source_files = ["NBus/Classes/Handler/WechatSDKHandler.swift"]
+  end
+
   s.subspec "QQSDK" do |ss|
     ss.vendored_frameworks = ["NBus/Vendor/QQ_SDK/**/*.framework"]
 
     ss.frameworks = ["SystemConfiguration", "WebKit"]
 
     ss.source_files = ["NBus/Vendor/QQ_SDK/**/*.h"]
+  end
+
+  s.subspec "WechatSDK" do |ss|
+    ss.vendored_libraries = ["NBus/Vendor/Wechat_SDK/**/*.a"]
+    ss.frameworks = ["WebKit"]
+    ss.libraries = ["c++"]
+
+    ss.source_files = ["NBus/Vendor/Wechat_SDK/**/*.h"]
+
+    ss.pod_target_xcconfig = { "OTHER_LDFLAGS" => "-ObjC -all_load" }
   end
 
   s.prepare_command = <<-CMD
