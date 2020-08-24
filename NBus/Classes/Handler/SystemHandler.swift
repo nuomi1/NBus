@@ -15,6 +15,8 @@ public class SystemHandler {
         Endpoints.System.activity,
     ]
 
+    public let platform: Platform = Platforms.system
+
     public var isInstalled: Bool {
         true
     }
@@ -134,6 +136,31 @@ extension SystemHandler: ShareHandlerType {
     }
 
     // swiftlint:enable cyclomatic_complexity function_body_length
+}
+
+extension SystemHandler: OauthHandlerType {
+
+    public func oauth(
+        options: [Bus.OauthOptionKey: Any] = [:],
+        completionHandler: @escaping Bus.OauthCompletionHandler
+    ) {
+        guard #available(iOS 13.0, *) else {
+            completionHandler(.failure(.unknown))
+            return
+        }
+
+        oauthCompletionHandler = completionHandler
+
+        let provider = ASAuthorizationAppleIDProvider()
+
+        let request = provider.createRequest()
+        request.requestedScopes = [.email, .fullName]
+
+        let controller = ASAuthorizationController(authorizationRequests: [request])
+        controller.delegate = helper
+
+        controller.performRequests()
+    }
 }
 
 extension SystemHandler {
