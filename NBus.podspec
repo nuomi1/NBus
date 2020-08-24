@@ -45,6 +45,12 @@ Pod::Spec.new do |s|
     ss.source_files = ["NBus/Classes/Handler/WeiboSDKHandler.swift"]
   end
 
+  s.subspec "SystemHandler" do |ss|
+    ss.dependency "NBus/Core"
+
+    ss.source_files = ["NBus/Classes/Handler/SystemHandler.swift"]
+  end
+
   s.subspec "QQSDK" do |ss|
     ss.vendored_frameworks = ["NBus/Vendor/QQ_SDK/**/*.framework"]
 
