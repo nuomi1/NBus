@@ -230,6 +230,11 @@ extension WechatSDKHandler {
 
         public static let viewController = Bus.OauthOptionKey(rawValue: "com.nuomi1.bus.wechatSDKHandler.viewController")
     }
+
+    public enum OauthInfoKeys {
+
+        public static let code = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.wechatSDKHandler.code")
+    }
 }
 
 extension WechatSDKHandler {
