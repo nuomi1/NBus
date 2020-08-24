@@ -17,6 +17,7 @@ Pod::Spec.new do |s|
   s.subspec "SDKHandlers" do |ss|
     ss.dependency "NBus/QQSDKHandler"
     ss.dependency "NBus/WechatSDKHandler"
+    ss.dependency "NBus/WeiboSDKHandler"
   end
 
   s.subspec "Core" do |ss|
