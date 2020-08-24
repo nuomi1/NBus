@@ -128,6 +128,13 @@ extension WeiboSDKHandler: OauthHandlerType {
     }
 }
 
+extension WeiboSDKHandler: OpenURLHandlerType {
+
+    public func openURL(_ url: URL) {
+        WeiboSDK.handleOpen(url, delegate: helper)
+    }
+}
+
 extension WeiboSDKHandler {
 
     public enum OauthInfoKeys {
