@@ -21,7 +21,15 @@ public class WechatSDKHandler {
     }
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
+
+    public var logHandler: (String, String, String, UInt) -> Void = { message, _, _, _ in
+        #if DEBUG
+            print(message)
+        #endif
+    }
 }
+
+extension WechatSDKHandler: LogHandlerProxyType {}
 
 extension WechatSDKHandler: ShareHandlerType {
 
