@@ -37,6 +37,13 @@ Pod::Spec.new do |s|
     ss.source_files = ["NBus/Classes/Handler/WechatSDKHandler.swift"]
   end
 
+  s.subspec "WeiboSDKHandler" do |ss|
+    ss.dependency "NBus/Core"
+    ss.dependency "NBus/WeiboSDK"
+
+    ss.source_files = ["NBus/Classes/Handler/WeiboSDKHandler.swift"]
+  end
+
   s.subspec "QQSDK" do |ss|
     ss.vendored_frameworks = ["NBus/Vendor/QQ_SDK/**/*.framework"]
 
@@ -53,6 +60,14 @@ Pod::Spec.new do |s|
     ss.source_files = ["NBus/Vendor/Wechat_SDK/**/*.h"]
 
     ss.pod_target_xcconfig = { "OTHER_LDFLAGS" => "-ObjC -all_load" }
+  end
+
+  s.subspec "WeiboSDK" do |ss|
+    ss.vendored_libraries = ["NBus/Vendor/Weibo_SDK/**/*.a"]
+
+    ss.source_files = ["NBus/Vendor/Weibo_SDK/**/*.h"]
+
+    ss.resources = ["NBus/Vendor/Weibo_SDK/**/*.bundle"]
   end
 
   s.prepare_command = <<-CMD
