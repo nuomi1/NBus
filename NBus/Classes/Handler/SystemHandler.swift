@@ -8,7 +8,109 @@
 
 import Foundation
 
-public class SystemHandler {}
+public class SystemHandler {
+
+    public let endpoints: [Endpoint] = [
+        Endpoints.System.activity,
+    ]
+
+    public var isInstalled: Bool {
+        true
+    }
+}
+
+extension SystemHandler: ShareHandlerType {
+
+    // swiftlint:disable cyclomatic_complexity function_body_length
+
+    public func share(
+        message: MessageType,
+        to endpoint: Endpoint,
+        options: [Bus.ShareOptionKey: Any] = [:],
+        completionHandler: @escaping Bus.ShareCompletionHandler
+    ) {
+        guard
+            let rootViewController = UIApplication.shared.keyWindow?.rootViewController
+        else {
+            assertionFailure()
+            completionHandler(.failure(.unknown))
+            return
+        }
+
+        var activityItems: [Any?] = []
+
+        if let message = message as? MediaMessageType {
+            activityItems.append(message.title)
+            activityItems.append(message.description)
+        }
+
+        switch message {
+        case let message as TextMessage:
+            activityItems.append(message.text)
+
+        case let message as ImageMessage:
+            activityItems.append(message.data)
+
+        case let message as AudioMessage:
+            activityItems.append(message.link)
+
+        case let message as VideoMessage:
+            activityItems.append(message.link)
+
+        case let message as WebPageMessage:
+            activityItems.append(message.link)
+
+        case let message as FileMessage:
+            activityItems.append(message.data)
+
+        case let message as MiniProgramMessage:
+            activityItems.append(message.link)
+
+        default:
+            completionHandler(.failure(.unsupportedMessage))
+            return
+        }
+
+        let activityViewController = UIActivityViewController(
+            activityItems: activityItems.compactMap { $0 },
+            applicationActivities: nil
+        )
+
+        activityViewController.completionWithItemsHandler = { _, result, _, error in
+            switch (result, error) {
+            case (_, _?):
+                completionHandler(.failure(.unknown))
+            case (true, _):
+                completionHandler(.success(()))
+            case (false, _):
+                completionHandler(.failure(.userCancelled))
+            }
+        }
+
+        if let popoverPresentationController = activityViewController.popoverPresentationController {
+            guard
+                let sourceView = options[ShareOptionKeys.sourceView] as? UIView
+            else {
+                assertionFailure()
+                completionHandler(.failure(.unknown))
+                return
+            }
+
+            popoverPresentationController.sourceView = sourceView
+
+            if let sourceRect = options[ShareOptionKeys.sourceRect] as? CGRect {
+                popoverPresentationController.sourceRect = sourceRect
+            }
+        }
+
+        rootViewController.present(
+            activityViewController,
+            animated: true
+        )
+    }
+
+    // swiftlint:enable cyclomatic_complexity function_body_length
+}
 
 extension SystemHandler {
 
