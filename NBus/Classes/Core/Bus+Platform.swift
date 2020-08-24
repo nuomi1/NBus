@@ -24,4 +24,6 @@ public enum Platforms {
     public static let wechat = Platform(rawValue: "com.nuomi1.bus.platform.wechat")
 
     public static let weibo = Platform(rawValue: "com.nuomi1.bus.platform.weibo")
+
+    public static let system = Platform(rawValue: "com.nuomi1.bus.platform.system")
 }
