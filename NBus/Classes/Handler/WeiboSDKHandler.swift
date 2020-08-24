@@ -14,11 +14,14 @@ public class WeiboSDKHandler {
         Endpoints.Weibo.timeline,
     ]
 
+    public let platform: Platform = Platforms.weibo
+
     public var isInstalled: Bool {
         WeiboSDK.isWeiboAppInstalled()
     }
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
+    private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
     public let appID: String
     private let redirectLink: URL
@@ -97,6 +100,30 @@ extension WeiboSDKHandler: ShareHandlerType {
 
         if !result {
             completionHandler(.failure(.invalidMessage))
+        }
+    }
+}
+
+extension WeiboSDKHandler: OauthHandlerType {
+
+    public func oauth(
+        options: [Bus.OauthOptionKey: Any] = [:],
+        completionHandler: @escaping Bus.OauthCompletionHandler
+    ) {
+        guard isInstalled else {
+            completionHandler(.failure(.missingApplication))
+            return
+        }
+
+        oauthCompletionHandler = completionHandler
+
+        let request = WBAuthorizeRequest()
+        request.redirectURI = redirectLink.absoluteString
+
+        let result = WeiboSDK.send(request)
+
+        if !result {
+            completionHandler(.failure(.unknown))
         }
     }
 }
