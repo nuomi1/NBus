@@ -6,7 +6,10 @@
 //  Copyright © 2020 nuomi1. All rights reserved.
 //
 
-public protocol HandlerType {}
+public protocol HandlerType {
+
+    var isInstalled: Bool { get }
+}
 
 public protocol LogHandlerProxyType: HandlerType {
 
