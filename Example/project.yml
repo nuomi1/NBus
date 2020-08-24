@@ -3,6 +3,10 @@ name: NBus
 attributes:
   ORGANIZATIONNAME: nuomi1
 
+configFiles:
+  Debug: NBus/Config.xcconfig
+  Release: NBus/Config.xcconfig
+
 targets:
   BusMock:
     type: application
@@ -12,4 +16,5 @@ targets:
       - NBus
     settings:
       base:
+        CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/$(TARGET_NAME).entitlements
         SWIFT_VERSION: 5.0
