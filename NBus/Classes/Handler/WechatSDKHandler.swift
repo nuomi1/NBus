@@ -193,6 +193,14 @@ extension WechatSDKHandler: ShareHandlerType {
 
 extension WechatSDKHandler {
 
+    public enum OauthOptionKeys {
+
+        public static let viewController = Bus.OauthOptionKey(rawValue: "com.nuomi1.bus.wechatSDKHandler.viewController")
+    }
+}
+
+extension WechatSDKHandler {
+
     fileprivate class Helper: NSObject, WXApiDelegate {
 
         weak var master: WechatSDKHandler?
