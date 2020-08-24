@@ -129,3 +129,21 @@ extension SystemHandler {
         public static let sourceRect = Bus.ShareOptionKey(rawValue: "com.nuomi1.bus.systemHandler.sourceRect")
     }
 }
+
+extension SystemHandler {
+
+    public enum OauthInfoKeys {
+
+        public static let identityToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.systemHandler.identityToken")
+
+        public static let authorizationCode = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.systemHandler.authorizationCode")
+
+        public static let user = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.systemHandler.user")
+
+        public static let email = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.systemHandler.email")
+
+        public static let givenName = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.systemHandler.givenName")
+
+        public static let familyName = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.systemHandler.familyName")
+    }
+}
