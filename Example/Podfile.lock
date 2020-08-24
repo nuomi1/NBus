@@ -8,8 +8,11 @@ PODS:
     - NBus/QQSDK
   - NBus/SDKHandlers (0.1.0):
     - NBus/QQSDKHandler
+    - NBus/SystemHandler
     - NBus/WechatSDKHandler
     - NBus/WeiboSDKHandler
+  - NBus/SystemHandler (0.1.0):
+    - NBus/Core
   - NBus/WechatSDK (0.1.0)
   - NBus/WechatSDKHandler (0.1.0):
     - NBus/Core
@@ -27,7 +30,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  NBus: 2db47dce153f28475a620bbd9f9b6bc5a01c8ba4
+  NBus: 3e02426dad0cee4e6b0c99c779c19d5ff0c9cefa
 
 PODFILE CHECKSUM: ed8bf132f5d937720bd28c5c8470530dcaa0ac6b
 
