@@ -130,6 +130,14 @@ extension WeiboSDKHandler: OauthHandlerType {
 
 extension WeiboSDKHandler {
 
+    public enum OauthInfoKeys {
+
+        public static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.weiboSDKHandler.accessToken")
+    }
+}
+
+extension WeiboSDKHandler {
+
     fileprivate class Helper: NSObject, WeiboSDKDelegate {
 
         weak var master: WeiboSDKHandler?
