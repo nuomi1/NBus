@@ -39,4 +39,9 @@ public enum Endpoints {
 
         public static let timeline = Endpoint(rawValue: "com.nuomi1.bus.endpoint.weibo.timeline")
     }
+
+    public enum System {
+
+        public static let activity = Endpoint(rawValue: "com.nuomi1.bus.endpoint.system.activity")
+    }
 }
