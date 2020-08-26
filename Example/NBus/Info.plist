@@ -11,6 +11,21 @@
 			<string>Wechat</string>
 		</dict>
 	</array>
+	<key>BMUniversalLinkTypes</key>
+	<array>
+		<dict>
+			<key>BMPlatform</key>
+			<string>QQ</string>
+			<key>BMUniversalLink</key>
+			<string>${QQ_UNIVERSALLINK}</string>
+		</dict>
+		<dict>
+			<key>BMPlatform</key>
+			<string>Wechat</string>
+			<key>BMUniversalLink</key>
+			<string>${WECHAT_UNIVERSALLINK}</string>
+		</dict>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
