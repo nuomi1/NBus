@@ -11,6 +11,15 @@
 			<string>Wechat</string>
 		</dict>
 	</array>
+	<key>BMRedirectLinkTypes</key>
+	<array>
+		<dict>
+			<key>BMPlatform</key>
+			<string>Weibo</string>
+			<key>BMRedirectLink</key>
+			<string>${WEIBO_REDIRECTLINK}</string>
+		</dict>
+	</array>
 	<key>BMUniversalLinkTypes</key>
 	<array>
 		<dict>
