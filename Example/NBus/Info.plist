@@ -92,6 +92,8 @@
 		<string>mqqopensdkminiapp</string>
 		<string>weixin</string>
 		<string>weixinULAPI</string>
+		<string>sinaweibo</string>
+		<string>weibosdk</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
