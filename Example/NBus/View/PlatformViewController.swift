@@ -8,4 +8,18 @@
 
 import UIKit
 
-class PlatformViewController: UIViewController {}
+class PlatformViewController: UIViewController {
+
+    enum Constant {
+
+        static let buttonType: UIButton.ButtonType = .system
+
+        static let widthMultiple: CGFloat = 1.5
+
+        static let spacing: CGFloat = 22
+
+        static let borderColor = UIButton(type: .system).currentTitleColor.cgColor
+        static let borderWidth: CGFloat = 1
+        static let cornerRadius: CGFloat = 4
+    }
+}
