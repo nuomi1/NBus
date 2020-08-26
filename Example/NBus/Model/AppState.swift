@@ -7,10 +7,21 @@
 //
 
 import Foundation
+import NBus
+import UIKit
 
 class AppState {
 
     static let shared = AppState()
 
     private init() {}
+}
+
+extension AppState {
+
+    struct PlatformItem {
+        let platform: Platform
+        let handler: HandlerType
+        let viewController: () -> UIViewController
+    }
 }
