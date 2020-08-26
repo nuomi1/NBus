@@ -90,6 +90,8 @@
 	<array>
 		<string>mqq</string>
 		<string>mqqopensdkminiapp</string>
+		<string>weixin</string>
+		<string>weixinULAPI</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
