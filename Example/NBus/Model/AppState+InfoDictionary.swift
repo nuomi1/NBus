@@ -7,6 +7,66 @@
 //
 
 import Foundation
+import NBus
+
+extension AppState {
+
+    static func infoDictionary() -> InfoDictionary {
+        let fake = InfoDictionary(
+            bundleURLSchemes: [],
+            miniProgramIDs: [],
+            redirectLinks: [],
+            universalLinks: []
+        )
+
+        guard let infoDictionary = Bundle.main.infoDictionary else {
+            return fake
+        }
+
+        do {
+            let plist = try PropertyListSerialization.data(
+                fromPropertyList: infoDictionary,
+                format: .xml,
+                options: .zero
+            )
+            let value = try PropertyListDecoder().decode(
+                InfoDictionary.self,
+                from: plist
+            )
+
+            return value
+        } catch {
+            return fake
+        }
+    }
+}
+
+extension AppState {
+
+    static func getAppID(for platform: Platform) -> String? {
+        let infos = infoDictionary()
+        let item = infos.bundleURLSchemes.first(where: { $0.platform == platform.key })
+        return item?.bundleURLSchemes.first
+    }
+
+    static func getMiniProgramID(for platform: Platform) -> String? {
+        let infos = infoDictionary()
+        let item = infos.miniProgramIDs.first(where: { $0.platform == platform.key })
+        return item?.miniProgramID
+    }
+
+    static func getUniversalLink(for platforn: Platform) -> URL? {
+        let infos = infoDictionary()
+        let item = infos.universalLinks.first(where: { $0.platform == platforn.key })
+        return (item?.universalLink).flatMap { URL(string: $0) }
+    }
+
+    static func getRedirectLink(for platform: Platform) -> URL? {
+        let infos = infoDictionary()
+        let item = infos.redirectLinks.first(where: { $0.platform == platform.key })
+        return (item?.redirectLink).flatMap { URL(string: $0) }
+    }
+}
 
 extension AppState {
 
