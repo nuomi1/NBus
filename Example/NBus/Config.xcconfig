@@ -1,0 +1,24 @@
+//
+//  Config.xcconfig
+//  BusMock
+//
+//  Created by nuomi1 on 2020/8/24.
+//  Copyright © 2020 nuomi1. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+// https://stackoverflow.com/questions/21317844/how-do-i-configure-full-urls-in-xcconfig-files
+SIMPLE_SLASH=/
+
+ASSOCIATED_DOMAIN = applinks:www.nuomi1.com
+DEVELOPMENT_TEAM = BUSMOCK
+PRODUCT_BUNDLE_IDENTIFIER = com.nuomi1.bus.mock
+QQ_APPID = tencent123456
+QQ_UNIVERSALLINK = https:$(SIMPLE_SLASH)/www.nuomi1.com/qq_conn/123456/
+WECHAT_APPID = wx123456
+WECHAT_MINIPROGRAMID = gh_123456
+WECHAT_UNIVERSALLINK = https:$(SIMPLE_SLASH)/www.nuomi1.com/
+WEIBO_APPID = wb123456
+WEIBO_REDIRECTLINK = https:$(SIMPLE_SLASH)/www.nuomi1.com/

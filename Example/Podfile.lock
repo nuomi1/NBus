@@ -21,9 +21,25 @@ PODS:
   - NBus/WeiboSDKHandler (0.1.0):
     - NBus/Core
     - NBus/WeiboSDK
+  - PinLayout (1.9.2)
+  - RxCocoa (5.1.1):
+    - RxRelay (~> 5)
+    - RxSwift (~> 5)
+  - RxRelay (5.1.1):
+    - RxSwift (~> 5)
+  - RxSwift (5.1.1)
 
 DEPENDENCIES:
   - NBus (from `../`)
+  - PinLayout
+  - RxCocoa
+
+SPEC REPOS:
+  trunk:
+    - PinLayout
+    - RxCocoa
+    - RxRelay
+    - RxSwift
 
 EXTERNAL SOURCES:
   NBus:
@@ -31,7 +47,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   NBus: 3e02426dad0cee4e6b0c99c779c19d5ff0c9cefa
+  PinLayout: 0d96022e46e8b80468d819f182a393b97ca038da
+  RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
+  RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
+  RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
 
-PODFILE CHECKSUM: ed8bf132f5d937720bd28c5c8470530dcaa0ac6b
+PODFILE CHECKSUM: 20c2f938067a3b96e0655050397aa2ad485181e8
 
 COCOAPODS: 1.9.3

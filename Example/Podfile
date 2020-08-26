@@ -4,6 +4,9 @@ use_frameworks!
 
 target "BusMock" do
   pod "NBus", :path => "../"
+
+  pod "PinLayout"
+  pod "RxCocoa"
 end
 
 post_install do |installer|
