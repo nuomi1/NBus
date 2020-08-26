@@ -18,3 +18,10 @@ targets:
       base:
         CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/$(TARGET_NAME).entitlements
         SWIFT_VERSION: 5.0
+    dependencies:
+      - package: Logging
+
+packages:
+  Logging:
+    url: https://github.com/apple/swift-log
+    majorVersion: 1.4.0
