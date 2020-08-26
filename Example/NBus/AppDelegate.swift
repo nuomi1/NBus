@@ -6,6 +6,7 @@
 //  Copyright (c) 2020 nuomi1. All rights reserved.
 //
 
+import PinLayout
 import UIKit
 
 @UIApplicationMain
@@ -14,7 +15,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+
+        AppState.shared.setup()
+
+        let viewController = ViewController()
+        viewController.binding(.init(AppState.shared.platformItems.value))
+
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.view.backgroundColor = .white
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.rootViewController = navigationController
+        window?.makeKeyAndVisible()
+
         return true
     }
 
