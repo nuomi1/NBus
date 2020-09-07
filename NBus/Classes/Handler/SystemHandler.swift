@@ -33,7 +33,9 @@ public class SystemHandler {
 
     @available(iOS 13.0, *)
     private var helper: Helper {
+        // swiftlint:disable force_cast
         boxHelper as! Helper
+        // swiftlint:enable force_cast
     }
 
     public init() {
