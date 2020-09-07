@@ -16,7 +16,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
 
         AppState.shared.setup()
 
@@ -33,11 +36,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
         return Bus.shared.openURL(url)
     }
 
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    func application(
+        _ application: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
         return Bus.shared.openUserActivity(userActivity)
     }
 }
