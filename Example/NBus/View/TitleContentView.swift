@@ -28,6 +28,7 @@ class TitleContentView<ContentView: UIView>: UIView {
         setupSubviews()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

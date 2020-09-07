@@ -6,6 +6,8 @@
 //  Copyright © 2020 nuomi1. All rights reserved.
 //
 
+import Foundation
+
 extension Bus {
 
     public enum Error: Swift.Error {

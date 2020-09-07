@@ -5,10 +5,10 @@
 //  Created by nuomi1 on 2020/8/26.
 //
 
-import Foundation
 import NBus
-import RxCocoa
+import RxRelay
 import RxSwift
+import UIKit
 
 extension PlatformViewController {
 

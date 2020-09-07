@@ -33,7 +33,9 @@ public class SystemHandler {
 
     @available(iOS 13.0, *)
     private var helper: Helper {
+        // swiftlint:disable force_cast
         boxHelper as! Helper
+        // swiftlint:enable force_cast
     }
 
     public init() {
@@ -56,7 +58,8 @@ extension SystemHandler: ShareHandlerType {
         completionHandler: @escaping Bus.ShareCompletionHandler
     ) {
         guard
-            let rootViewController = UIApplication.shared.keyWindow?.rootViewController
+            let presentingViewController = options[ShareOptionKeys.presentingViewController] as? UIViewController
+            ?? UIApplication.shared.keyWindow?.rootViewController
         else {
             assertionFailure()
             completionHandler(.failure(.unknown))
@@ -129,7 +132,7 @@ extension SystemHandler: ShareHandlerType {
             }
         }
 
-        rootViewController.present(
+        presentingViewController.present(
             activityViewController,
             animated: true
         )
@@ -166,6 +169,8 @@ extension SystemHandler: OauthHandlerType {
 extension SystemHandler {
 
     public enum ShareOptionKeys {
+
+        public static let presentingViewController = Bus.ShareOptionKey(rawValue: "com.nuomi1.bus.systemHandler.presentingViewController")
 
         public static let sourceView = Bus.ShareOptionKey(rawValue: "com.nuomi1.bus.systemHandler.sourceView")
 

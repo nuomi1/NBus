@@ -6,9 +6,8 @@
 //  Copyright © 2020 nuomi1. All rights reserved.
 //
 
-import Foundation
 import NBus
-import RxCocoa
+import RxRelay
 import UIKit
 
 class AppState {
