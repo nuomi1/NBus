@@ -6,6 +6,8 @@
 //  Copyright © 2020 nuomi1. All rights reserved.
 //
 
+import Foundation
+
 public struct Message: RawRepresentable, Hashable {
 
     public typealias RawValue = String

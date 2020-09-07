@@ -6,6 +6,8 @@
 //  Copyright © 2020 nuomi1. All rights reserved.
 //
 
+import Foundation
+
 public protocol HandlerType {
 
     var isInstalled: Bool { get }
