@@ -229,15 +229,13 @@ extension SystemHandler {
                     OauthInfoKeys.givenName: credential.fullName?.givenName,
                     OauthInfoKeys.familyName: credential.fullName?.familyName,
                 ]
-                .compactMapValues { value -> String? in
-                    guard
-                        let value = value, !value.isEmpty
-                    else { return nil }
+                .compactMapContent()
 
-                    return value
+                if !parameters.isEmpty {
+                    master?.oauthCompletionHandler?(.success(parameters))
+                } else {
+                    master?.oauthCompletionHandler?(.failure(.unknown))
                 }
-
-                master?.oauthCompletionHandler?(.success(parameters))
             default:
                 assertionFailure("\(authorization.credential)")
             }

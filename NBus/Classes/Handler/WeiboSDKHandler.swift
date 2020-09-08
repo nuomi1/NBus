@@ -170,12 +170,17 @@ extension WeiboSDKHandler {
                 }
             case let response as WBAuthorizeResponse:
                 switch (response.statusCode, response.accessToken) {
-                case let (.success, accessToken?):
+                case let (.success, accessToken):
                     let parameters = [
                         OauthInfoKeys.accessToken: accessToken,
                     ]
+                    .compactMapContent()
 
-                    master?.oauthCompletionHandler?(.success(parameters))
+                    if !parameters.isEmpty {
+                        master?.oauthCompletionHandler?(.success(parameters))
+                    } else {
+                        master?.oauthCompletionHandler?(.failure(.unknown))
+                    }
                 case (.userCancel, _):
                     master?.oauthCompletionHandler?(.failure(.userCancelled))
                 default:

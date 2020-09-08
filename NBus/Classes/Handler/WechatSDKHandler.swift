@@ -279,12 +279,17 @@ extension WechatSDKHandler {
                 }
             case let response as SendAuthResp:
                 switch (response.errCode, response.code) {
-                case let (WXSuccess.rawValue, code?):
+                case let (WXSuccess.rawValue, code):
                     let parameters = [
                         OauthInfoKeys.code: code,
                     ]
+                    .compactMapContent()
 
-                    master?.oauthCompletionHandler?(.success(parameters))
+                    if !parameters.isEmpty {
+                        master?.oauthCompletionHandler?(.success(parameters))
+                    } else {
+                        master?.oauthCompletionHandler?(.failure(.unknown))
+                    }
                 default:
                     master?.oauthCompletionHandler?(.failure(.unknown))
                 }

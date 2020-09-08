@@ -319,20 +319,17 @@ extension QQSDKHandler {
         }
 
         func tencentDidLogin() {
-            guard
-                let accessToken = master?.oauthHelper.accessToken,
-                let openId = master?.oauthHelper.openId
-            else {
-                master?.oauthCompletionHandler?(.failure(.unknown))
-                return
-            }
-
             let parameters = [
-                OauthInfoKeys.accessToken: accessToken,
-                OauthInfoKeys.openId: openId,
+                OauthInfoKeys.accessToken: master?.oauthHelper.accessToken,
+                OauthInfoKeys.openId: master?.oauthHelper.openId,
             ]
+            .compactMapContent()
 
-            master?.oauthCompletionHandler?(.success(parameters))
+            if !parameters.isEmpty {
+                master?.oauthCompletionHandler?(.success(parameters))
+            } else {
+                master?.oauthCompletionHandler?(.failure(.unknown))
+            }
         }
 
         func tencentDidNotLogin(_ cancelled: Bool) {
