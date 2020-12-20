@@ -1,11 +1,14 @@
-use_frameworks!
+platform :ios, "10.0"
 
-target 'NBus_Example' do
-  pod 'NBus', :path => '../'
+use_frameworks! :linkage => :static
 
-  target 'NBus_Tests' do
-    inherit! :search_paths
+target "BusMock" do
+  pod "NBus", :path => "../"
 
-    
-  end
+  pod "PinLayout"
+  pod "RxCocoa"
+end
+
+post_install do |installer|
+  installer.pods_project.root_object.attributes["ORGANIZATIONNAME"] = "nuomi1"
 end

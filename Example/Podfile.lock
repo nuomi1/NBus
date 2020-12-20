@@ -1,0 +1,57 @@
+PODS:
+  - NBus (0.1.0):
+    - NBus/SDKHandlers (= 0.1.0)
+  - NBus/Core (0.1.0)
+  - NBus/QQSDK (0.1.0)
+  - NBus/QQSDKHandler (0.1.0):
+    - NBus/Core
+    - NBus/QQSDK
+  - NBus/SDKHandlers (0.1.0):
+    - NBus/QQSDKHandler
+    - NBus/SystemHandler
+    - NBus/WechatSDKHandler
+    - NBus/WeiboSDKHandler
+  - NBus/SystemHandler (0.1.0):
+    - NBus/Core
+  - NBus/WechatSDK (0.1.0)
+  - NBus/WechatSDKHandler (0.1.0):
+    - NBus/Core
+    - NBus/WechatSDK
+  - NBus/WeiboSDK (0.1.0)
+  - NBus/WeiboSDKHandler (0.1.0):
+    - NBus/Core
+    - NBus/WeiboSDK
+  - PinLayout (1.9.2)
+  - RxCocoa (5.1.1):
+    - RxRelay (~> 5)
+    - RxSwift (~> 5)
+  - RxRelay (5.1.1):
+    - RxSwift (~> 5)
+  - RxSwift (5.1.1)
+
+DEPENDENCIES:
+  - NBus (from `../`)
+  - PinLayout
+  - RxCocoa
+
+SPEC REPOS:
+  trunk:
+    - PinLayout
+    - RxCocoa
+    - RxRelay
+    - RxSwift
+
+EXTERNAL SOURCES:
+  NBus:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  NBus: 3e02426dad0cee4e6b0c99c779c19d5ff0c9cefa
+  PinLayout: 0d96022e46e8b80468d819f182a393b97ca038da
+  RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
+  RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
+  RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
+
+PODFILE CHECKSUM: 375fd17d41450a3e1f41c4b4dd1d218a2089309d
+
+COCOAPODS: 1.9.3

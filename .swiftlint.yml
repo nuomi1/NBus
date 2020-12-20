@@ -1,0 +1,20 @@
+disabled_rules:
+  - nesting
+  - trailing_comma
+
+excluded:
+  - Example/Carthage
+  - Example/Pods
+
+identifier_name:
+  excluded:
+    - qq
+
+line_length:
+  ignores_comments: true
+  ignores_interpolated_strings: true
+  warning: 140
+
+type_name:
+  excluded:
+    - QQ

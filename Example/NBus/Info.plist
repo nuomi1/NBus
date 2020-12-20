@@ -2,6 +2,39 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BMMiniProgramIDTypes</key>
+	<array>
+		<dict>
+			<key>BMMiniProgramID</key>
+			<string>${WECHAT_MINIPROGRAMID}</string>
+			<key>BMPlatform</key>
+			<string>Wechat</string>
+		</dict>
+	</array>
+	<key>BMRedirectLinkTypes</key>
+	<array>
+		<dict>
+			<key>BMPlatform</key>
+			<string>Weibo</string>
+			<key>BMRedirectLink</key>
+			<string>${WEIBO_REDIRECTLINK}</string>
+		</dict>
+	</array>
+	<key>BMUniversalLinkTypes</key>
+	<array>
+		<dict>
+			<key>BMPlatform</key>
+			<string>QQ</string>
+			<key>BMUniversalLink</key>
+			<string>${QQ_UNIVERSALLINK}</string>
+		</dict>
+		<dict>
+			<key>BMPlatform</key>
+			<string>Wechat</string>
+			<key>BMUniversalLink</key>
+			<string>${WECHAT_UNIVERSALLINK}</string>
+		</dict>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -18,8 +51,50 @@
 	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>QQ</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>${QQ_APPID}</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>Wechat</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>${WECHAT_APPID}</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>Weibo</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>${WEIBO_APPID}</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mqq</string>
+		<string>mqqopensdkminiapp</string>
+		<string>weixin</string>
+		<string>weixinULAPI</string>
+		<string>sinaweibo</string>
+		<string>weibosdk</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

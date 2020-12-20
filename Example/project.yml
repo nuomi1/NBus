@@ -1,0 +1,27 @@
+name: NBus
+
+attributes:
+  ORGANIZATIONNAME: nuomi1
+
+configFiles:
+  Debug: NBus/Config.xcconfig
+  Release: NBus/Config.xcconfig
+
+targets:
+  BusMock:
+    type: application
+    platform: iOS
+    deploymentTarget: 10.0
+    sources:
+      - NBus
+    settings:
+      base:
+        CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/$(TARGET_NAME).entitlements
+        SWIFT_VERSION: 5.0
+    dependencies:
+      - package: Logging
+
+packages:
+  Logging:
+    url: https://github.com/apple/swift-log
+    majorVersion: 1.4.0

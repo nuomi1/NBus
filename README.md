@@ -5,24 +5,40 @@
 [![License](https://img.shields.io/cocoapods/l/NBus.svg?style=flat)](https://cocoapods.org/pods/NBus)
 [![Platform](https://img.shields.io/cocoapods/p/NBus.svg?style=flat)](https://cocoapods.org/pods/NBus)
 
-## Example
+## Introduction
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+NBus is a sharing and signin library for Chinese Social Application, such as WeChat, QQ and Weibo.
+NBus also supports system's sharing and Sign in with Apple.
 
 ## Requirements
 
-## Installation
+- Swift 5.0
+- iOS 10.0
 
-NBus is available through [CocoaPods](https://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+## Example
 
-```ruby
-pod 'NBus'
-```
+To run the example project, clone the repo, edit the `Example/NBus/Config.xcconfig` file, and run `bundle install && bundle exec fastlane setup && open Example/NBus.xcworkspace` from the Example directory first.
+
+## WARNING
+
+1. `WeiboSDK.bundle` must saved in App's root path.
 
 ## Author
 
 nuomi1, nuomi1@qq.com
+
+## Related articles
+
+- [NBus 的由来](https://nuomi1.github.io/archives/2020/09/nbus-comes-from.html)
+- [NBus 之 WechatSDKHandler](https://nuomi1.github.io/archives/2020/12/nbus-wechatsdkhandler.html)
+- [NBus 之 QQSDKHandler](https://nuomi1.github.io/archives/2020/12/nbus-qqsdkhandler.html)
+- [NBus 之 WeiboSDKHandler](https://nuomi1.github.io/archives/2020/12/nbus-weibosdkhandler.html)
+- [NBus 之 SystemHandler](https://nuomi1.github.io/archives/2020/12/nbus-systemhandler.html)
+
+## Credits
+
+- [MonkeyKing](https://github.com/nixzhu/MonkeyKing)
+- [LQThirdParty](https://github.com/LQi2009/LQThirdParty)
 
 ## License
 
