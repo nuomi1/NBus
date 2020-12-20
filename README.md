@@ -23,6 +23,14 @@ To run the example project, clone the repo, edit the `Example/NBus/Config.xcconf
 
 nuomi1, nuomi1@qq.com
 
+## Related articles
+
+- [NBus 的由来](https://nuomi1.github.io/archives/2020/09/nbus-comes-from.html)
+- [NBus 之 WechatSDKHandler](https://nuomi1.github.io/archives/2020/12/nbus-wechatsdkhandler.html)
+- [NBus 之 QQSDKHandler](https://nuomi1.github.io/archives/2020/12/nbus-qqsdkhandler.html)
+- [NBus 之 WeiboSDKHandler](https://nuomi1.github.io/archives/2020/12/nbus-weibosdkhandler.html)
+- [NBus 之 SystemHandler](https://nuomi1.github.io/archives/2020/12/nbus-systemhandler.html)
+
 ## Credits
 
 - [MonkeyKing](https://github.com/nixzhu/MonkeyKing)
