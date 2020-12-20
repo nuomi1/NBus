@@ -5,24 +5,28 @@
 [![License](https://img.shields.io/cocoapods/l/NBus.svg?style=flat)](https://cocoapods.org/pods/NBus)
 [![Platform](https://img.shields.io/cocoapods/p/NBus.svg?style=flat)](https://cocoapods.org/pods/NBus)
 
-## Example
+## Introduction
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+NBus is a sharing and signin library for Chinese Social Application, such as WeChat, QQ and Weibo.
+NBus also supports system's sharing and Sign in with Apple.
 
 ## Requirements
 
-## Installation
+- Swift 5.0
+- iOS 10.0
 
-NBus is available through [CocoaPods](https://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+## Example
 
-```ruby
-pod 'NBus'
-```
+To run the example project, clone the repo, edit the `Example/NBus/Config.xcconfig` file, and run `bundle install && bundle exec fastlane setup && open Example/NBus.xcworkspace` from the Example directory first.
 
 ## Author
 
 nuomi1, nuomi1@qq.com
+
+## Credits
+
+- [MonkeyKing](https://github.com/nixzhu/MonkeyKing)
+- [LQThirdParty](https://github.com/LQi2009/LQThirdParty)
 
 ## License
 
