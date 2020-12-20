@@ -19,6 +19,10 @@ NBus also supports system's sharing and Sign in with Apple.
 
 To run the example project, clone the repo, edit the `Example/NBus/Config.xcconfig` file, and run `bundle install && bundle exec fastlane setup && open Example/NBus.xcworkspace` from the Example directory first.
 
+## WARNING
+
+1. `WeiboSDK.bundle` must saved in App's root path.
+
 ## Author
 
 nuomi1, nuomi1@qq.com
