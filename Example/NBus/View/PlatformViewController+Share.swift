@@ -236,9 +236,9 @@ extension PlatformViewController.ShareView {
     }
 }
 
-private extension Array {
+extension Array {
 
-    subscript(safe index: Index) -> Element? {
+    fileprivate subscript(safe index: Index) -> Element? {
         guard indices.contains(index) else { return nil }
         return self[index]
     }
