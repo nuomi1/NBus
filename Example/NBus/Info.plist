@@ -89,7 +89,9 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>mqq</string>
+		<string>mqqopensdkapiV2</string>
 		<string>mqqopensdkminiapp</string>
+		<string>mqqopensdknopasteboard</string>
 		<string>weixin</string>
 		<string>weixinULAPI</string>
 		<string>sinaweibo</string>
