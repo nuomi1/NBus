@@ -159,9 +159,14 @@ extension WechatSDKHandler: ShareHandlerType {
         case Endpoints.Wechat.friend:
             return true
         case Endpoints.Wechat.timeline:
-            return ![Messages.file, Messages.miniProgram].contains(message)
+            return ![
+                Messages.file,
+                Messages.miniProgram,
+            ].contains(message)
         case Endpoints.Wechat.favorite:
-            return ![Messages.miniProgram].contains(message)
+            return ![
+                Messages.miniProgram,
+            ].contains(message)
         default:
             assertionFailure()
             return false
@@ -210,13 +215,7 @@ extension WechatSDKHandler: OauthHandlerType {
         let request = SendAuthReq()
         request.scope = "snsapi_userinfo"
 
-        let viewController = (options[OauthOptionKeys.viewController] as? UIViewController) ?? UIViewController()
-
-        WXApi.sendAuthReq(
-            request,
-            viewController: viewController,
-            delegate: helper
-        ) { result in
+        WXApi.send(request) { result in
             if !result {
                 completionHandler(.failure(.unknown))
             }
@@ -235,14 +234,6 @@ extension WechatSDKHandler: OpenUserActivityHandlerType {
 
     public func openUserActivity(_ userActivity: NSUserActivity) {
         WXApi.handleOpenUniversalLink(userActivity, delegate: helper)
-    }
-}
-
-extension WechatSDKHandler {
-
-    public enum OauthOptionKeys {
-
-        public static let viewController = Bus.OauthOptionKey(rawValue: "com.nuomi1.bus.wechatSDKHandler.viewController")
     }
 }
 
