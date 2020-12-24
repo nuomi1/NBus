@@ -5,6 +5,8 @@
 --exclude **/Pods
 --exclude **/*.generated.swift
 
+--extensionacl on-declarations
+
 --stripunusedargs closure-only
 --swiftversion 5.0
 
