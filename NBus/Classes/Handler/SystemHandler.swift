@@ -66,6 +66,11 @@ extension SystemHandler: ShareHandlerType {
             return
         }
 
+        guard canShare(message: message.identifier, to: endpoint) else {
+            completionHandler(.failure(.unsupportedMessage))
+            return
+        }
+
         var activityItems: [Any?] = []
 
         if let message = message as? MediaMessageType {
@@ -92,10 +97,8 @@ extension SystemHandler: ShareHandlerType {
         case let message as FileMessage:
             activityItems.append(message.data)
 
-        case let message as MiniProgramMessage:
-            activityItems.append(message.link)
-
         default:
+            assertionFailure()
             completionHandler(.failure(.unsupportedMessage))
             return
         }
@@ -139,6 +142,18 @@ extension SystemHandler: ShareHandlerType {
     }
 
     // swiftlint:enable cyclomatic_complexity function_body_length
+
+    private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
+        switch endpoint {
+        case Endpoints.System.activity:
+            return ![
+                Messages.miniProgram,
+            ].contains(message)
+        default:
+            assertionFailure()
+            return false
+        }
+    }
 }
 
 extension SystemHandler: OauthHandlerType {

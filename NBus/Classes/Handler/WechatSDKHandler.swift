@@ -159,9 +159,14 @@ extension WechatSDKHandler: ShareHandlerType {
         case Endpoints.Wechat.friend:
             return true
         case Endpoints.Wechat.timeline:
-            return ![Messages.file, Messages.miniProgram].contains(message)
+            return ![
+                Messages.file,
+                Messages.miniProgram,
+            ].contains(message)
         case Endpoints.Wechat.favorite:
-            return ![Messages.miniProgram].contains(message)
+            return ![
+                Messages.miniProgram,
+            ].contains(message)
         default:
             assertionFailure()
             return false
