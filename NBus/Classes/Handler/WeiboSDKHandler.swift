@@ -65,6 +65,11 @@ extension WeiboSDKHandler: ShareHandlerType {
             return
         }
 
+        guard canShare(message: message.identifier, to: endpoint) else {
+            completionHandler(.failure(.unsupportedMessage))
+            return
+        }
+
         shareCompletionHandler = completionHandler
 
         let request = WBSendMessageToWeiboRequest()
@@ -92,6 +97,7 @@ extension WeiboSDKHandler: ShareHandlerType {
             request.message.mediaObject = webPageObject
 
         default:
+            assertionFailure()
             completionHandler(.failure(.unsupportedMessage))
             return
         }
@@ -100,6 +106,21 @@ extension WeiboSDKHandler: ShareHandlerType {
 
         if !result {
             completionHandler(.failure(.invalidMessage))
+        }
+    }
+
+    private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
+        switch endpoint {
+        case Endpoints.Weibo.timeline:
+            return ![
+                Messages.audio,
+                Messages.video,
+                Messages.file,
+                Messages.miniProgram,
+            ].contains(message)
+        default:
+            assertionFailure()
+            return false
         }
     }
 }
