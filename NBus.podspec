@@ -56,7 +56,10 @@ Pod::Spec.new do |s|
     ss.vendored_frameworks = ["NBus/Vendor/QQ_SDK/**/*.framework"]
     ss.frameworks = ["SystemConfiguration", "WebKit"]
 
-    ss.source_files = ["NBus/Vendor/QQ_SDK/**/*.h"]
+    ss.source_files = Dir.glob("NBus/Vendor/QQ_SDK/**/*.h")
+      .reject { |name| name.include?("TencentOpenApiUmbrellaHeader.h") }
+
+    ss.resources = ["NBus/Vendor/QQ_SDK/**/*.bundle"]
   end
 
   s.subspec "WechatSDK" do |ss|
@@ -108,10 +111,10 @@ Pod::Spec.new do |s|
     cd Vendor
 
     QQ="QQ"
-    QQ_VER="3.3.9"
-    QQ_URL="http://d3g.qq.com/qzone/Publish-Sdk${QQ_VER}-Lite.zip"
-    QQ_SHA1="edac517333ba92aef666afb8c7fd00e458f37629"
-    QQ_SEARCH="Publish-Sdk${QQ_VER}-Lite/sdk-Lite"
+    QQ_VER="3.5.1"
+    QQ_URL="http://d3g.qq.com/qzone/iOS_SDK_${QQ_VER}_Lite.zip"
+    QQ_SHA1="15976ed9b90cd340818fe3ae3b1e266c67cf02d9"
+    QQ_SEARCH="Lite/TencentOpenApi(Lite)_3"
     download_sdk ${QQ} ${QQ_VER} ${QQ_URL} ${QQ_SHA1} ${QQ_SEARCH}
 
     WECHAT="Wechat"
