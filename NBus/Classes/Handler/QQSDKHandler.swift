@@ -201,7 +201,10 @@ extension QQSDKHandler: ShareHandlerType {
         case Endpoints.QQ.friend:
             return true
         case Endpoints.QQ.timeline:
-            return ![Messages.file, Messages.miniProgram].contains(message)
+            return ![
+                Messages.file,
+                Messages.miniProgram,
+            ].contains(message)
         default:
             assertionFailure()
             return false
