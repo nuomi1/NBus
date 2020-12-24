@@ -47,9 +47,9 @@ extension PlatformViewController {
     }
 }
 
-private extension AppState.PlatformItem {
+extension AppState.PlatformItem {
 
-    var endpoints: [Endpoint]? {
+    fileprivate var endpoints: [Endpoint]? {
         (handler as? ShareHandlerType)?.endpoints
     }
 }
