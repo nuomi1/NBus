@@ -1,4 +1,5 @@
 --disable blankLinesAtStartOfScope
+--disable initCoderUnavailable
 --disable wrapMultilineStatementBraces
 
 --exclude **/Carthage
@@ -13,6 +14,7 @@
 --wraparguments before-first
 --wrapparameters before-first
 --wrapcollections before-first
+--wrapconditions before-first
 
 --funcattributes prev-line
 --typeattributes prev-line
