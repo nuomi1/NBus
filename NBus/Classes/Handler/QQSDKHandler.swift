@@ -283,7 +283,7 @@ extension QQSDKHandler {
 
         public static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqSDKHandler.accessToken")
 
-        public static let openId = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqSDKHandler.openId")
+        public static let openID = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqSDKHandler.openID")
     }
 }
 
@@ -324,7 +324,7 @@ extension QQSDKHandler {
         func tencentDidLogin() {
             let parameters = [
                 OauthInfoKeys.accessToken: owner?.oauthCoordinator.accessToken,
-                OauthInfoKeys.openId: owner?.oauthCoordinator.openId,
+                OauthInfoKeys.openID: owner?.oauthCoordinator.openId,
             ]
             .compactMapContent()
 
