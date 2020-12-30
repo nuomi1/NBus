@@ -33,14 +33,14 @@ public class QQSDKHandler {
         #endif
     }
 
-    private var helper: Helper!
-    private var oauthHelper: TencentOAuth!
+    private var coordinator: Coordinator!
+    private var oauthCoordinator: TencentOAuth!
 
     public init(appID: String, universalLink: URL) {
         self.appID = appID
         self.universalLink = universalLink
 
-        helper = Helper(master: self)
+        coordinator = Coordinator(owner: self)
 
         #if DEBUG
             QQApiInterface.startLog { [weak self] message in
@@ -49,11 +49,11 @@ public class QQSDKHandler {
             }
         #endif
 
-        oauthHelper = TencentOAuth(
+        oauthCoordinator = TencentOAuth(
             appId: appID.trimmingCharacters(in: .letters),
             enableUniveralLink: true,
             universalLink: universalLink.absoluteString,
-            delegate: helper
+            delegate: coordinator
         )
     }
 }
@@ -253,7 +253,7 @@ extension QQSDKHandler: OauthHandlerType {
 
         oauthCompletionHandler = completionHandler
 
-        let result = oauthHelper.authorize([kOPEN_PERMISSION_GET_USER_INFO])
+        let result = oauthCoordinator.authorize([kOPEN_PERMISSION_GET_USER_INFO])
 
         if !result {
             completionHandler(.failure(.unknown))
@@ -264,7 +264,7 @@ extension QQSDKHandler: OauthHandlerType {
 extension QQSDKHandler: OpenURLHandlerType {
 
     public func openURL(_ url: URL) {
-        QQApiInterface.handleOpen(url, delegate: helper)
+        QQApiInterface.handleOpen(url, delegate: coordinator)
         TencentOAuth.handleOpen(url)
     }
 }
@@ -272,7 +272,7 @@ extension QQSDKHandler: OpenURLHandlerType {
 extension QQSDKHandler: OpenUserActivityHandlerType {
 
     public func openUserActivity(_ userActivity: NSUserActivity) {
-        QQApiInterface.handleOpenUniversallink(userActivity.webpageURL, delegate: helper)
+        QQApiInterface.handleOpenUniversallink(userActivity.webpageURL, delegate: coordinator)
         TencentOAuth.handleUniversalLink(userActivity.webpageURL)
     }
 }
@@ -289,12 +289,12 @@ extension QQSDKHandler {
 
 extension QQSDKHandler {
 
-    fileprivate class Helper: NSObject, QQApiInterfaceDelegate, TencentSessionDelegate {
+    fileprivate class Coordinator: NSObject, QQApiInterfaceDelegate, TencentSessionDelegate {
 
-        weak var master: QQSDKHandler?
+        weak var owner: QQSDKHandler?
 
-        required init(master: QQSDKHandler) {
-            self.master = master
+        required init(owner: QQSDKHandler) {
+            self.owner = owner
         }
 
         func onReq(_ req: QQBaseReq!) {
@@ -306,11 +306,11 @@ extension QQSDKHandler {
             case let response as SendMessageToQQResp:
                 switch response.result {
                 case "0":
-                    master?.shareCompletionHandler?(.success(()))
+                    owner?.shareCompletionHandler?(.success(()))
                 case "-4":
-                    master?.shareCompletionHandler?(.failure(.userCancelled))
+                    owner?.shareCompletionHandler?(.failure(.userCancelled))
                 default:
-                    master?.shareCompletionHandler?(.failure(.unknown))
+                    owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             default:
                 assertionFailure("\(String(describing: resp))")
@@ -323,23 +323,23 @@ extension QQSDKHandler {
 
         func tencentDidLogin() {
             let parameters = [
-                OauthInfoKeys.accessToken: master?.oauthHelper.accessToken,
-                OauthInfoKeys.openId: master?.oauthHelper.openId,
+                OauthInfoKeys.accessToken: owner?.oauthCoordinator.accessToken,
+                OauthInfoKeys.openId: owner?.oauthCoordinator.openId,
             ]
             .compactMapContent()
 
             if !parameters.isEmpty {
-                master?.oauthCompletionHandler?(.success(parameters))
+                owner?.oauthCompletionHandler?(.success(parameters))
             } else {
-                master?.oauthCompletionHandler?(.failure(.unknown))
+                owner?.oauthCompletionHandler?(.failure(.unknown))
             }
         }
 
         func tencentDidNotLogin(_ cancelled: Bool) {
             if cancelled {
-                master?.oauthCompletionHandler?(.failure(.userCancelled))
+                owner?.oauthCompletionHandler?(.failure(.userCancelled))
             } else {
-                master?.oauthCompletionHandler?(.failure(.unknown))
+                owner?.oauthCompletionHandler?(.failure(.unknown))
             }
         }
 
