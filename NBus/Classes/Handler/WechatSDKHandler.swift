@@ -34,13 +34,13 @@ public class WechatSDKHandler {
         #endif
     }
 
-    private var helper: Helper!
+    private var coordinator: Coordinator!
 
     public init(appID: String, universalLink: URL) {
         self.appID = appID
         self.universalLink = universalLink
 
-        helper = Helper(master: self)
+        coordinator = Coordinator(owner: self)
 
         #if DEBUG
             WXApi.startLog(by: .detail) { [weak self] message in
@@ -226,14 +226,14 @@ extension WechatSDKHandler: OauthHandlerType {
 extension WechatSDKHandler: OpenURLHandlerType {
 
     public func openURL(_ url: URL) {
-        WXApi.handleOpen(url, delegate: helper)
+        WXApi.handleOpen(url, delegate: coordinator)
     }
 }
 
 extension WechatSDKHandler: OpenUserActivityHandlerType {
 
     public func openUserActivity(_ userActivity: NSUserActivity) {
-        WXApi.handleOpenUniversalLink(userActivity, delegate: helper)
+        WXApi.handleOpenUniversalLink(userActivity, delegate: coordinator)
     }
 }
 
@@ -247,12 +247,12 @@ extension WechatSDKHandler {
 
 extension WechatSDKHandler {
 
-    fileprivate class Helper: NSObject, WXApiDelegate {
+    fileprivate class Coordinator: NSObject, WXApiDelegate {
 
-        weak var master: WechatSDKHandler?
+        weak var owner: WechatSDKHandler?
 
-        required init(master: WechatSDKHandler) {
-            self.master = master
+        required init(owner: WechatSDKHandler) {
+            self.owner = owner
         }
 
         func onReq(_ req: BaseReq) {
@@ -264,9 +264,9 @@ extension WechatSDKHandler {
             case let response as SendMessageToWXResp:
                 switch response.errCode {
                 case WXSuccess.rawValue:
-                    master?.shareCompletionHandler?(.success(()))
+                    owner?.shareCompletionHandler?(.success(()))
                 default:
-                    master?.shareCompletionHandler?(.failure(.unknown))
+                    owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             case let response as SendAuthResp:
                 switch (response.errCode, response.code) {
@@ -277,12 +277,12 @@ extension WechatSDKHandler {
                     .compactMapContent()
 
                     if !parameters.isEmpty {
-                        master?.oauthCompletionHandler?(.success(parameters))
+                        owner?.oauthCompletionHandler?(.success(parameters))
                     } else {
-                        master?.oauthCompletionHandler?(.failure(.unknown))
+                        owner?.oauthCompletionHandler?(.failure(.unknown))
                     }
                 default:
-                    master?.oauthCompletionHandler?(.failure(.unknown))
+                    owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
             default:
                 assertionFailure("\(resp)")

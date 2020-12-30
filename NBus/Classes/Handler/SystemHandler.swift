@@ -29,18 +29,18 @@ public class SystemHandler {
         #endif
     }
 
-    private var boxHelper: Any!
+    private var boxedCoordinator: Any!
 
     @available(iOS 13.0, *)
-    private var helper: Helper {
+    private var coordinator: Coordinator {
         // swiftlint:disable force_cast
-        boxHelper as! Helper
+        boxedCoordinator as! Coordinator
         // swiftlint:enable force_cast
     }
 
     public init() {
         if #available(iOS 13.0, *) {
-            boxHelper = Helper(master: self)
+            boxedCoordinator = Coordinator(owner: self)
         }
     }
 }
@@ -175,7 +175,7 @@ extension SystemHandler: OauthHandlerType {
         request.requestedScopes = [.email, .fullName]
 
         let controller = ASAuthorizationController(authorizationRequests: [request])
-        controller.delegate = helper
+        controller.delegate = coordinator
 
         controller.performRequests()
     }
@@ -214,12 +214,12 @@ extension SystemHandler {
 extension SystemHandler {
 
     @available(iOS 13.0, *)
-    fileprivate class Helper: NSObject, ASAuthorizationControllerDelegate {
+    fileprivate class Coordinator: NSObject, ASAuthorizationControllerDelegate {
 
-        weak var master: SystemHandler?
+        weak var owner: SystemHandler?
 
-        required init(master: SystemHandler) {
-            self.master = master
+        required init(owner: SystemHandler) {
+            self.owner = owner
         }
 
         func authorizationController(
@@ -247,9 +247,9 @@ extension SystemHandler {
                 .compactMapContent()
 
                 if !parameters.isEmpty {
-                    master?.oauthCompletionHandler?(.success(parameters))
+                    owner?.oauthCompletionHandler?(.success(parameters))
                 } else {
-                    master?.oauthCompletionHandler?(.failure(.unknown))
+                    owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
             default:
                 assertionFailure("\(authorization.credential)")
@@ -259,9 +259,9 @@ extension SystemHandler {
         func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
             switch error {
             case ASAuthorizationError.canceled:
-                master?.oauthCompletionHandler?(.failure(.userCancelled))
+                owner?.oauthCompletionHandler?(.failure(.userCancelled))
             default:
-                master?.oauthCompletionHandler?(.failure(.unknown))
+                owner?.oauthCompletionHandler?(.failure(.unknown))
             }
         }
     }

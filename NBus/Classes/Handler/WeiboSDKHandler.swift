@@ -32,13 +32,13 @@ public class WeiboSDKHandler {
         #endif
     }
 
-    private var helper: Helper!
+    private var coordinator: Coordinator!
 
     public init(appID: String, redirectLink: URL) {
         self.appID = appID
         self.redirectLink = redirectLink
 
-        helper = Helper(master: self)
+        coordinator = Coordinator(owner: self)
 
         #if DEBUG
             WeiboSDK.enableDebugMode(true)
@@ -152,7 +152,7 @@ extension WeiboSDKHandler: OauthHandlerType {
 extension WeiboSDKHandler: OpenURLHandlerType {
 
     public func openURL(_ url: URL) {
-        WeiboSDK.handleOpen(url, delegate: helper)
+        WeiboSDK.handleOpen(url, delegate: coordinator)
     }
 }
 
@@ -166,12 +166,12 @@ extension WeiboSDKHandler {
 
 extension WeiboSDKHandler {
 
-    fileprivate class Helper: NSObject, WeiboSDKDelegate {
+    fileprivate class Coordinator: NSObject, WeiboSDKDelegate {
 
-        weak var master: WeiboSDKHandler?
+        weak var owner: WeiboSDKHandler?
 
-        required init(master: WeiboSDKHandler) {
-            self.master = master
+        required init(owner: WeiboSDKHandler) {
+            self.owner = owner
         }
 
         func didReceiveWeiboRequest(_ request: WBBaseRequest!) {
@@ -183,11 +183,11 @@ extension WeiboSDKHandler {
             case let response as WBSendMessageToWeiboResponse:
                 switch response.statusCode {
                 case .success:
-                    master?.shareCompletionHandler?(.success(()))
+                    owner?.shareCompletionHandler?(.success(()))
                 case .userCancel:
-                    master?.shareCompletionHandler?(.failure(.userCancelled))
+                    owner?.shareCompletionHandler?(.failure(.userCancelled))
                 default:
-                    master?.shareCompletionHandler?(.failure(.unknown))
+                    owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             case let response as WBAuthorizeResponse:
                 switch (response.statusCode, response.accessToken) {
@@ -198,14 +198,14 @@ extension WeiboSDKHandler {
                     .compactMapContent()
 
                     if !parameters.isEmpty {
-                        master?.oauthCompletionHandler?(.success(parameters))
+                        owner?.oauthCompletionHandler?(.success(parameters))
                     } else {
-                        master?.oauthCompletionHandler?(.failure(.unknown))
+                        owner?.oauthCompletionHandler?(.failure(.unknown))
                     }
                 case (.userCancel, _):
-                    master?.oauthCompletionHandler?(.failure(.userCancelled))
+                    owner?.oauthCompletionHandler?(.failure(.userCancelled))
                 default:
-                    master?.oauthCompletionHandler?(.failure(.unknown))
+                    owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
             default:
                 assertionFailure("\(String(describing: response))")
