@@ -34,6 +34,12 @@
 			<key>BMUniversalLink</key>
 			<string>${WECHAT_UNIVERSALLINK}</string>
 		</dict>
+		<dict>
+			<key>BMPlatform</key>
+			<string>Weibo</string>
+			<key>BMUniversalLink</key>
+			<string>$(WEIBO_UNIVERSALLINK)</string>
+		</dict>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
