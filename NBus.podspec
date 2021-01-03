@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "NBus"
-  s.version = "0.6.0"
+  s.version = "0.7.0"
   s.summary = "A short description of NBus."
 
   s.homepage = "https://github.com/nuomi1/NBus"
