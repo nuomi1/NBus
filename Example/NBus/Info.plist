@@ -34,6 +34,12 @@
 			<key>BMUniversalLink</key>
 			<string>${WECHAT_UNIVERSALLINK}</string>
 		</dict>
+		<dict>
+			<key>BMPlatform</key>
+			<string>Weibo</string>
+			<key>BMUniversalLink</key>
+			<string>$(WEIBO_UNIVERSALLINK)</string>
+		</dict>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
@@ -96,6 +102,7 @@
 		<string>weixinULAPI</string>
 		<string>sinaweibo</string>
 		<string>weibosdk</string>
+		<string>weibosdk3.3</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
