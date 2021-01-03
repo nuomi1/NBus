@@ -125,9 +125,9 @@ Pod::Spec.new do |s|
     download_sdk ${WECHAT} ${WECHAT_VER} ${WECHAT_URL} ${WECHAT_SHA1} ${WECHAT_SEARCH}
 
     WEIBO="Weibo"
-    WEIBO_VER="3.2.7"
+    WEIBO_VER="3.3.0"
     WEIBO_URL="https://github.com/sinaweibosdk/weibo_ios_sdk/archive/${WEIBO_VER}.zip"
-    WEIBO_SHA1="4143bb25b3ac6e865aff281e8d6638e11bc3bebf"
+    WEIBO_SHA1="7f3a3a0f4580f8009e2b7b0955e97fa79384538e"
     WEIBO_SEARCH="weibo_ios_sdk-${WEIBO_VER}/libWeiboSDK"
     download_sdk ${WEIBO} ${WEIBO_VER} ${WEIBO_URL} ${WEIBO_SHA1} ${WEIBO_SEARCH}
   CMD

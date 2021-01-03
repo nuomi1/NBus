@@ -24,6 +24,7 @@ public class WeiboSDKHandler {
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
     public let appID: String
+    public let universalLink: URL
     private let redirectLink: URL
 
     public var logHandler: Bus.LogHandler = { message, _, _, _ in
@@ -34,8 +35,9 @@ public class WeiboSDKHandler {
 
     private var coordinator: Coordinator!
 
-    public init(appID: String, redirectLink: URL) {
+    public init(appID: String, universalLink: URL, redirectLink: URL) {
         self.appID = appID
+        self.universalLink = universalLink
         self.redirectLink = redirectLink
 
         coordinator = Coordinator(owner: self)
@@ -45,7 +47,8 @@ public class WeiboSDKHandler {
         #endif
 
         WeiboSDK.registerApp(
-            appID.trimmingCharacters(in: .letters)
+            appID.trimmingCharacters(in: .letters),
+            universalLink: universalLink.absoluteString
         )
     }
 }
@@ -102,10 +105,10 @@ extension WeiboSDKHandler: ShareHandlerType {
             return
         }
 
-        let result = WeiboSDK.send(request)
-
-        if !result {
-            completionHandler(.failure(.invalidMessage))
+        WeiboSDK.send(request) { result in
+            if !result {
+                completionHandler(.failure(.invalidMessage))
+            }
         }
     }
 
@@ -141,10 +144,10 @@ extension WeiboSDKHandler: OauthHandlerType {
         let request = WBAuthorizeRequest()
         request.redirectURI = redirectLink.absoluteString
 
-        let result = WeiboSDK.send(request)
-
-        if !result {
-            completionHandler(.failure(.unknown))
+        WeiboSDK.send(request) { result in
+            if !result {
+                completionHandler(.failure(.unknown))
+            }
         }
     }
 }
@@ -153,6 +156,13 @@ extension WeiboSDKHandler: OpenURLHandlerType {
 
     public func openURL(_ url: URL) {
         WeiboSDK.handleOpen(url, delegate: coordinator)
+    }
+}
+
+extension WeiboSDKHandler: OpenUserActivityHandlerType {
+
+    public func openUserActivity(_ userActivity: NSUserActivity) {
+        WeiboSDK.handleOpenUniversalLink(userActivity, delegate: coordinator)
     }
 }
 

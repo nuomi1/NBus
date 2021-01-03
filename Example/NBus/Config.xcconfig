@@ -10,15 +10,21 @@
 // https://help.apple.com/xcode/#/dev745c5c974
 
 // https://stackoverflow.com/questions/21317844/how-do-i-configure-full-urls-in-xcconfig-files
-SIMPLE_SLASH=/
+SIMPLE_SLASH = /
+DOMAIN = www.nuomi1.com
+QQ_ID = 123456
+WECHAT_ID = 123456
+WECHAT_MID = 123456
+WEIBO_ID = 123456
 
-ASSOCIATED_DOMAIN = applinks:www.nuomi1.com
+ASSOCIATED_DOMAIN = applinks:$(DOMAIN)
 DEVELOPMENT_TEAM = BUSMOCK
 PRODUCT_BUNDLE_IDENTIFIER = com.nuomi1.bus.mock
-QQ_APPID = tencent123456
-QQ_UNIVERSALLINK = https:$(SIMPLE_SLASH)/www.nuomi1.com/qq_conn/123456/
-WECHAT_APPID = wx123456
-WECHAT_MINIPROGRAMID = gh_123456
-WECHAT_UNIVERSALLINK = https:$(SIMPLE_SLASH)/www.nuomi1.com/
-WEIBO_APPID = wb123456
-WEIBO_REDIRECTLINK = https:$(SIMPLE_SLASH)/www.nuomi1.com/
+QQ_APPID = tencent$(QQ_ID)
+QQ_UNIVERSALLINK = https:$(SIMPLE_SLASH)/$(DOMAIN)/qq_conn/$(QQ_ID)/
+WECHAT_APPID = wx$(WECHAT_ID)
+WECHAT_MINIPROGRAMID = gh_$(WECHAT_MID)
+WECHAT_UNIVERSALLINK = https:$(SIMPLE_SLASH)/$(DOMAIN)/wechat/$(WECHAT_ID)/
+WEIBO_APPID = wb$(WEIBO_ID)
+WEIBO_REDIRECTLINK = https:$(SIMPLE_SLASH)/$(DOMAIN)/weibo/$(WEIBO_ID)/
+WEIBO_UNIVERSALLINK = https:$(SIMPLE_SLASH)/$(DOMAIN)/weibo/$(WEIBO_ID)/

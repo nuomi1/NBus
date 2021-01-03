@@ -76,6 +76,7 @@ extension AppState {
 
         let weiboSDKHandler = WeiboSDKHandler(
             appID: AppState.getAppID(for: Platforms.weibo)!,
+            universalLink: AppState.getUniversalLink(for: Platforms.weibo)!,
             redirectLink: AppState.getRedirectLink(for: Platforms.weibo)!
         )
 
