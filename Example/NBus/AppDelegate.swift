@@ -9,6 +9,8 @@
 import NBus
 import PinLayout
 import RxCocoa
+import RxSwift
+import SwiftTrace
 import UIKit
 
 @UIApplicationMain
@@ -50,5 +52,60 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
         return Bus.shared.openUserActivity(userActivity)
+    }
+}
+
+extension AppDelegate {
+
+    private func pasteboardItems() -> Observable<[[String]]> {
+        NotificationCenter.default.rx
+            .notification(UIPasteboard.changedNotification)
+            .map { _ -> [[String]] in
+                UIPasteboard.general.items.map { item -> [String] in
+                    item.map { key, value -> String in
+                        switch value {
+                        case let data as Data:
+                            if
+                                let plist = try? PropertyListSerialization.propertyList(
+                                    from: data,
+                                    options: [],
+                                    format: nil
+                                ) {
+                                return "\(key), \(plist)"
+                            } else if
+                                let string = String(
+                                    data: data,
+                                    encoding: .utf8
+                                ) {
+                                return "\(key), \(string)"
+                            } else {
+                                assertionFailure()
+                                return "\(key), \(value)"
+                            }
+                        case let string as String:
+                            return "\(key), \(string)"
+                        default:
+                            assertionFailure()
+                            return "\(key), \(value)"
+                        }
+                    }
+                }
+            }
+            .distinctUntilChanged()
+    }
+}
+
+extension AppDelegate {
+
+    private func observeQQ() {
+        SwiftTrace.traceClasses(matchingPattern: "^QQ")
+        SwiftTrace.traceClasses(matchingPattern: "^Tencent")
+
+        _ = pasteboardItems()
+            .delay(.seconds(1), scheduler: MainScheduler.instance)
+            .takeUntil(rx.deallocating)
+            .bind(onNext: { items in
+                logger.debug("\(items)")
+            })
     }
 }
