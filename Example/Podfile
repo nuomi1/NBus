@@ -8,6 +8,7 @@ target "BusMock" do
   pod "PinLayout"
   pod "RxCocoa"
   pod "SwiftTrace"
+  pod "WoodPeckeriOS"
 end
 
 post_install do |installer|

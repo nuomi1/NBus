@@ -29,12 +29,14 @@ PODS:
     - RxSwift (~> 5)
   - RxSwift (5.1.1)
   - SwiftTrace (6.6.0)
+  - WoodPeckeriOS (1.2.9)
 
 DEPENDENCIES:
   - NBus (from `../`)
   - PinLayout
   - RxCocoa
   - SwiftTrace
+  - WoodPeckeriOS
 
 SPEC REPOS:
   trunk:
@@ -43,6 +45,7 @@ SPEC REPOS:
     - RxRelay
     - RxSwift
     - SwiftTrace
+    - WoodPeckeriOS
 
 EXTERNAL SOURCES:
   NBus:
@@ -55,7 +58,8 @@ SPEC CHECKSUMS:
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   SwiftTrace: affc6601a316add7c299a3916d9f43c286a583ef
+  WoodPeckeriOS: f16864f7a78d5c6daa605591dd66690d466d95be
 
-PODFILE CHECKSUM: f587d3fe8cbd747cd65b94bf52b0ee7e71effe2a
+PODFILE CHECKSUM: 997337f6cf183fc4e4ba8e80d4eaa8ad4f55c321
 
 COCOAPODS: 1.10.0
