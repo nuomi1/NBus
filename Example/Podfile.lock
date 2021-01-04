@@ -28,11 +28,13 @@ PODS:
   - RxRelay (5.1.1):
     - RxSwift (~> 5)
   - RxSwift (5.1.1)
+  - SwiftTrace (6.6.0)
 
 DEPENDENCIES:
   - NBus (from `../`)
   - PinLayout
   - RxCocoa
+  - SwiftTrace
 
 SPEC REPOS:
   trunk:
@@ -40,6 +42,7 @@ SPEC REPOS:
     - RxCocoa
     - RxRelay
     - RxSwift
+    - SwiftTrace
 
 EXTERNAL SOURCES:
   NBus:
@@ -51,7 +54,8 @@ SPEC CHECKSUMS:
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
+  SwiftTrace: affc6601a316add7c299a3916d9f43c286a583ef
 
-PODFILE CHECKSUM: 375fd17d41450a3e1f41c4b4dd1d218a2089309d
+PODFILE CHECKSUM: f587d3fe8cbd747cd65b94bf52b0ee7e71effe2a
 
 COCOAPODS: 1.10.0
