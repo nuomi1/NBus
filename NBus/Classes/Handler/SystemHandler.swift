@@ -185,7 +185,11 @@ extension SystemHandler {
 
     public enum ShareOptionKeys {
 
+        // swiftlint:disable line_length
+
         public static let presentingViewController = Bus.ShareOptionKey(rawValue: "com.nuomi1.bus.systemHandler.presentingViewController")
+
+        // swiftlint:enable line_length
 
         public static let sourceView = Bus.ShareOptionKey(rawValue: "com.nuomi1.bus.systemHandler.sourceView")
 
@@ -199,7 +203,11 @@ extension SystemHandler {
 
         public static let identityToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.systemHandler.identityToken")
 
+        // swiftlint:disable line_length
+
         public static let authorizationCode = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.systemHandler.authorizationCode")
+
+        // swiftlint:enable line_length
 
         public static let user = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.systemHandler.user")
 
