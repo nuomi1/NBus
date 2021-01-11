@@ -68,24 +68,29 @@ extension AppDelegate {
                         switch value {
                         case let data as Data:
                             if
+                                let object = NSKeyedUnarchiver.unarchiveObject(
+                                    with: data
+                                ) {
+                                return "[Data-Keyed] \(key), \(object)"
+                            } else if
                                 let plist = try? PropertyListSerialization.propertyList(
                                     from: data,
                                     options: [],
                                     format: nil
                                 ) {
-                                return "\(key), \(plist)"
+                                return "[Data-Plist] \(key), \(plist)"
                             } else if
                                 let string = String(
                                     data: data,
                                     encoding: .utf8
                                 ) {
-                                return "\(key), \(string)"
+                                return "[Data-String] \(key), \(string)"
                             } else {
                                 assertionFailure()
                                 return "\(key), \(value)"
                             }
                         case let string as String:
-                            return "\(key), \(string)"
+                            return "[String] \(key), \(string)"
                         default:
                             assertionFailure()
                             return "\(key), \(value)"
