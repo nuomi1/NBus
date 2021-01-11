@@ -145,6 +145,8 @@ extension QQSDKHandler: ShareHandlerType {
                 description: message.description
             )
 
+            fileObject?.fileName = message.fullName
+
             request = SendMessageToQQReq(content: fileObject)
 
         case let message as MiniProgramMessage:
