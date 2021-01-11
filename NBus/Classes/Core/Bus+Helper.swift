@@ -52,3 +52,19 @@ extension BusWrapper where Base: Bundle {
         value(forKeys: ["CFBundleDisplayName", "CFBundleName"])
     }
 }
+
+extension BusWrapper where Base: UIPasteboard {
+
+    public var oldText: String? {
+        guard
+            let typeListString = UIPasteboard.typeListString as? [String]
+        else {
+            assertionFailure()
+            return nil
+        }
+
+        guard base.contains(pasteboardTypes: typeListString) else { return nil }
+
+        return base.string
+    }
+}
