@@ -8,10 +8,12 @@
 
 import Foundation
 
-extension Dictionary where Key == Bus.OauthInfoKey, Value == String? {
+extension Dictionary: BusCompatible {}
 
-    func compactMapContent() -> [Bus.OauthInfoKey: String] {
-        compactMapValues { value -> String? in
+extension BusWrapper where Base == [Bus.OauthInfoKey: String?] {
+
+    public func compactMapContent() -> [Bus.OauthInfoKey: String] {
+        base.compactMapValues { value -> String? in
             guard
                 let value = value, !value.isEmpty
             else { return nil }

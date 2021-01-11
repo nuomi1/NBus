@@ -274,6 +274,7 @@ extension WechatSDKHandler {
                     let parameters = [
                         OauthInfoKeys.code: code,
                     ]
+                    .bus
                     .compactMapContent()
 
                     if !parameters.isEmpty {

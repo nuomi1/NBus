@@ -330,6 +330,7 @@ extension QQSDKHandler {
                 OauthInfoKeys.accessToken: owner?.oauthCoordinator.accessToken,
                 OauthInfoKeys.openID: owner?.oauthCoordinator.openId,
             ]
+            .bus
             .compactMapContent()
 
             if !parameters.isEmpty {

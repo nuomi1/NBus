@@ -205,6 +205,7 @@ extension WeiboSDKHandler {
                     let parameters = [
                         OauthInfoKeys.accessToken: accessToken,
                     ]
+                    .bus
                     .compactMapContent()
 
                     if !parameters.isEmpty {
