@@ -127,7 +127,7 @@ extension QQSDKHandler: ShareHandlerType {
             request = SendMessageToQQReq(content: videoObject)
 
         case let message as WebPageMessage:
-            let webPageObject = QQApiURLObject(
+            let webPageObject = QQApiNewsObject(
                 url: message.link,
                 title: message.title,
                 description: message.description,
@@ -150,7 +150,7 @@ extension QQSDKHandler: ShareHandlerType {
             request = SendMessageToQQReq(content: fileObject)
 
         case let message as MiniProgramMessage:
-            let webPageObject = QQApiURLObject(
+            let webPageObject = QQApiNewsObject(
                 url: message.link,
                 title: message.link.absoluteString,
                 description: "",
