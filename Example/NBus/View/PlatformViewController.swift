@@ -29,6 +29,8 @@ class PlatformViewController: UIViewController {
 
     private let disposeBag = DisposeBag()
 
+    private let handlerBarButtonItem = UIBarButtonItem()
+
     private let scrollView = UIScrollView()
     private let contentView = UIView()
 
@@ -43,6 +45,7 @@ extension PlatformViewController {
 
         view.backgroundColor = .white
 
+        setupNavigationItem()
         setupSubviews()
     }
 
@@ -75,6 +78,10 @@ extension PlatformViewController {
         scrollView.contentSize = contentView.bounds.size
     }
 
+    private func setupNavigationItem() {
+        navigationItem.rightBarButtonItem = handlerBarButtonItem
+    }
+
     private func setupSubviews() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -91,6 +98,42 @@ extension PlatformViewController {
 
         viewModel.title
             .bind(to: rx.title)
+            .disposed(by: disposeBag)
+
+        viewModel.isSwitchEnabled
+            .bind(to: handlerBarButtonItem.rx.isEnabled)
+            .disposed(by: disposeBag)
+
+        viewModel.currentCategory
+            .map {
+                switch $0 {
+                case .bus:
+                    return "开源"
+                case .sdk:
+                    return "闭源"
+                }
+            }
+            .bind(to: handlerBarButtonItem.rx.title)
+            .disposed(by: disposeBag)
+
+        viewModel.currentHandler
+            .bind(onNext: {
+                Bus.shared.handlers = [$0]
+            })
+            .disposed(by: disposeBag)
+
+        handlerBarButtonItem.rx
+            .tap
+            .withLatestFrom(viewModel.currentCategory)
+            .map {
+                switch $0 {
+                case .bus:
+                    return .sdk
+                case .sdk:
+                    return .bus
+                }
+            }
+            .bind(to: viewModel.currentCategory)
             .disposed(by: disposeBag)
 
         shareView.contentView.binding(viewModel)
