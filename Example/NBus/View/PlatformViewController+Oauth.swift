@@ -89,7 +89,7 @@ extension PlatformViewController.OauthView {
                         height: subview.intrinsicContentSize.height
                     )
                     : CGSize(
-                        width: superview.bounds.size.width - 2 * Constant.spacing,
+                        width: max(0, superview.bounds.size.width - 2 * Constant.spacing),
                         height: 5 * Constant.spacing
                     )
             }()
