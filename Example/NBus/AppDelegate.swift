@@ -27,6 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         clearPasteboard()
         clearUserDefaults()
 
+//        observeQQ()
+
         AppState.shared.setup()
 
         let viewController = ViewController()
