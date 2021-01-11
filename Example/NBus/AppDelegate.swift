@@ -43,6 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
+        logger.debug("\(url)")
         return Bus.shared.openURL(url)
     }
 
@@ -51,6 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
+        logger.debug("\(userActivity.webpageURL!)")
         return Bus.shared.openUserActivity(userActivity)
     }
 }
