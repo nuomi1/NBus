@@ -23,6 +23,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
 
+        clearKeychains()
+        clearPasteboard()
+        clearUserDefaults()
+
         AppState.shared.setup()
 
         let viewController = ViewController()
@@ -99,6 +103,41 @@ extension AppDelegate {
                 }
             }
             .distinctUntilChanged()
+    }
+}
+
+extension AppDelegate {
+
+    private func clearKeychains() {
+        let items = [
+            kSecClassGenericPassword,
+            kSecClassInternetPassword,
+            kSecClassCertificate,
+            kSecClassKey,
+            kSecClassIdentity,
+        ]
+
+        let status = items
+            .map { [kSecClass: $0] as CFDictionary }
+            .map { SecItemDelete($0) }
+
+        assert(status.allSatisfy {
+            $0 == errSecSuccess || $0 == errSecItemNotFound
+        })
+    }
+
+    private func clearPasteboard() {
+        let pasteboard = UIPasteboard.general
+
+        pasteboard.items = []
+    }
+
+    private func clearUserDefaults() {
+        let defaults = UserDefaults.standard
+
+        for (key, _) in defaults.dictionaryRepresentation() {
+            defaults.removeObject(forKey: key)
+        }
     }
 }
 
