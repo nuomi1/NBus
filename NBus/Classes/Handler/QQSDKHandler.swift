@@ -111,6 +111,8 @@ extension QQSDKHandler: ShareHandlerType {
                 targetContentType: .audio
             )
 
+            audioObject?.flashURL = message.dataLink
+
             request = SendMessageToQQReq(content: audioObject)
 
         case let message as VideoMessage:
