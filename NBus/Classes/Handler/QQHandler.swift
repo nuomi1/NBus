@@ -15,6 +15,8 @@ public class QQHandler {
         Endpoints.QQ.timeline,
     ]
 
+    public let platform: Platform = Platforms.qq
+
     public var isInstalled: Bool {
         guard let url = URL(string: "mqq://") else {
             assertionFailure()
@@ -25,6 +27,7 @@ public class QQHandler {
     }
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
+    private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
     public let appID: String
     public let universalLink: URL
@@ -314,6 +317,99 @@ extension QQHandler: ShareHandlerType {
     }
 }
 
+extension QQHandler: OauthHandlerType {
+
+    public func oauth(
+        options: [Bus.OauthOptionKey: Any],
+        completionHandler: @escaping Bus.OauthCompletionHandler
+    ) {
+        guard isInstalled else {
+            completionHandler(.failure(.missingApplication))
+            return
+        }
+
+        guard
+            let identifier = identifier(),
+            let txID = txID()
+        else {
+            assertionFailure()
+            completionHandler(.failure(.invalidMessage))
+            return
+        }
+
+        oauthCompletionHandler = completionHandler
+
+        var urlItems: [String: String] = [:]
+        var pasteBoardItems: [String: Any?] = [:]
+
+        pasteBoardItems["app_id"] = appID.trimmingCharacters(in: .letters)
+        pasteBoardItems["sdkp"] = "i"
+        pasteBoardItems["response_type"] = "token"
+        pasteBoardItems["app_name"] = Bundle.main.bus.displayName
+        pasteBoardItems["appsign_token"] = ""
+        pasteBoardItems["scope"] = "get_user_info"
+        pasteBoardItems["bundleid"] = Bundle.main.bus.identifier
+        pasteBoardItems["status_version"] = "14"
+        pasteBoardItems["sdkv"] = "3.5.1_lite"
+        pasteBoardItems["status_machine"] = "iPhone12,1"
+        pasteBoardItems["status_os"] = "14.3"
+        pasteBoardItems["client_id"] = appID.trimmingCharacters(in: .letters)
+        pasteBoardItems["refUniversallink"] = universalLink.absoluteString
+
+        let pbItems = pasteBoardItems.compactMapValues { $0 }
+        let data = NSKeyedArchiver.archivedData(withRootObject: pbItems)
+
+        urlItems["pasteboard"] = data.base64EncodedString()
+
+        urlItems["appsign_txid"] = txID
+        urlItems["bundleid"] = identifier
+        urlItems["sdkv"] = sdkVersion
+        urlItems["objectlocation"] = "url"
+
+        var components = URLComponents()
+
+        components.scheme = "https"
+        components.host = "qm.qq.com"
+        components.path = "/opensdkul/mqqOpensdkSSoLogin/SSoLogin/\(appID)"
+
+        components.queryItems = urlItems.map { key, value in
+            URLQueryItem(name: key, value: value)
+        }
+
+        guard let url = components.url else {
+            completionHandler(.failure(.invalidMessage))
+            return
+        }
+
+        guard UIApplication.shared.canOpenURL(url) else {
+            completionHandler(.failure(.unknown))
+            return
+        }
+
+        UIApplication.shared.open(url) { result in
+            if !result {
+                completionHandler(.failure(.unknown))
+            }
+        }
+    }
+}
+
+extension QQHandler: OpenURLHandlerType {
+
+    public func openURL(_ url: URL) {
+        guard
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        else { return }
+
+        switch components.host {
+        case "qzapp":
+            handleOauth(with: components)
+        default:
+            assertionFailure()
+        }
+    }
+}
+
 extension QQHandler: OpenUserActivityHandlerType {
 
     public func openUserActivity(_ userActivity: NSUserActivity) {
@@ -409,8 +505,56 @@ extension QQHandler: OpenUserActivityHandlerType {
             default:
                 shareCompletionHandler?(.failure(.unknown))
             }
+        case "qzapp":
+            handleOauth(with: components)
         default:
             assertionFailure()
         }
+    }
+
+    private func handleOauth(with components: URLComponents) {
+        guard
+            let item = components.queryItems?.first(where: { $0.name == "pasteboard" }),
+            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
+            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+        else {
+            assertionFailure()
+            return
+        }
+
+        let isUserCancelled = infos["user_cancelled"] as? String
+
+        switch isUserCancelled {
+        case "YES":
+            oauthCompletionHandler?(.failure(.userCancelled))
+        case "NO":
+            let accessToken = infos["access_token"] as? String
+            let openID = infos["openid"] as? String
+
+            let parameters = [
+                OauthInfoKeys.accessToken: accessToken,
+                OauthInfoKeys.openID: openID,
+            ]
+            .bus
+            .compactMapContent()
+
+            if !parameters.isEmpty {
+                oauthCompletionHandler?(.success(parameters))
+            } else {
+                oauthCompletionHandler?(.failure(.unknown))
+            }
+        default:
+            assertionFailure()
+        }
+    }
+}
+
+extension QQHandler {
+
+    public enum OauthInfoKeys {
+
+        public static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqHandler.accessToken")
+
+        public static let openID = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqHandler.openID")
     }
 }
