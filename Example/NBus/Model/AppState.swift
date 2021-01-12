@@ -78,10 +78,16 @@ extension AppState {
             logger.debug("\(message)", file: file, function: function, line: line)
         }
 
+        let qqHandler = QQHandler(
+            appID: AppState.getAppID(for: Platforms.qq)!,
+            universalLink: AppState.getUniversalLink(for: Platforms.qq)!
+        )
+
         let qqItem = AppState.PlatformItem(
             platform: Platforms.qq,
             category: .sdk,
             handlers: [
+                .bus: qqHandler,
                 .sdk: qqSDKHandler,
             ],
             viewController: { PlatformViewController() }
