@@ -1,7 +1,10 @@
 PODS:
-  - NBus (0.7.0):
-    - NBus/SDKHandlers (= 0.7.0)
+  - NBus/BusHandlers (0.7.0):
+    - NBus/QQHandler
+    - NBus/SystemHandler
   - NBus/Core (0.7.0)
+  - NBus/QQHandler (0.7.0):
+    - NBus/Core
   - NBus/QQSDK (0.7.0)
   - NBus/QQSDKHandler (0.7.0):
     - NBus/Core
@@ -32,7 +35,8 @@ PODS:
   - WoodPeckeriOS (1.2.9)
 
 DEPENDENCIES:
-  - NBus (from `../`)
+  - NBus/BusHandlers (from `../`)
+  - NBus/SDKHandlers (from `../`)
   - PinLayout
   - RxCocoa
   - SwiftTrace
@@ -52,7 +56,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  NBus: 956e0711f202ced6ffe2b9eaccb8b696f9e87585
+  NBus: 909effc8a33bd2e5e3549406dc8b718f028f1776
   PinLayout: 0d96022e46e8b80468d819f182a393b97ca038da
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
@@ -60,6 +64,6 @@ SPEC CHECKSUMS:
   SwiftTrace: affc6601a316add7c299a3916d9f43c286a583ef
   WoodPeckeriOS: f16864f7a78d5c6daa605591dd66690d466d95be
 
-PODFILE CHECKSUM: 997337f6cf183fc4e4ba8e80d4eaa8ad4f55c321
+PODFILE CHECKSUM: 5bd2560c0821586df3f229f1739f98be39727940
 
 COCOAPODS: 1.10.0

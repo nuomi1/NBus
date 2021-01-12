@@ -3,7 +3,8 @@ platform :ios, "10.0"
 use_frameworks! :linkage => :static
 
 target "BusMock" do
-  pod "NBus", :path => "../"
+  pod "NBus/BusHandlers", :path => "../"
+  pod "NBus/SDKHandlers", :path => "../"
 
   pod "PinLayout"
   pod "RxCocoa"
