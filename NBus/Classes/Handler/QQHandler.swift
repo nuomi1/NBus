@@ -490,25 +490,29 @@ extension QQHandler: OpenUserActivityHandlerType {
 
         switch components.host {
         case "response_from_qq":
-            guard
-                let item = components.queryItems?.first(where: { $0.name == "error" })
-            else {
-                assertionFailure()
-                return
-            }
-
-            switch item.value {
-            case "0":
-                shareCompletionHandler?(.success(()))
-            case "-4":
-                shareCompletionHandler?(.failure(.userCancelled))
-            default:
-                shareCompletionHandler?(.failure(.unknown))
-            }
+            handleShare(with: components)
         case "qzapp":
             handleOauth(with: components)
         default:
             assertionFailure()
+        }
+    }
+
+    private func handleShare(with components: URLComponents) {
+        guard
+            let item = components.queryItems?.first(where: { $0.name == "error" })
+        else {
+            assertionFailure()
+            return
+        }
+
+        switch item.value {
+        case "0":
+            shareCompletionHandler?(.success(()))
+        case "-4":
+            shareCompletionHandler?(.failure(.userCancelled))
+        default:
+            shareCompletionHandler?(.failure(.unknown))
         }
     }
 
