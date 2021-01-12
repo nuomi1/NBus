@@ -423,7 +423,7 @@ extension QQHandler: OpenUserActivityHandlerType {
         case universalLink.appendingPathComponent("\(identifier)/mqqsignapp").path:
             handleSignToken(with: components)
         case universalLink.appendingPathComponent("\(identifier)").path:
-            handleShare(with: components)
+            handleGeneral(with: components)
         default:
             assertionFailure()
         }
@@ -471,7 +471,7 @@ extension QQHandler: OpenUserActivityHandlerType {
         }
     }
 
-    private func handleShare(with components: URLComponents) {
+    private func handleGeneral(with components: URLComponents) {
         let decoder = JSONDecoder()
         decoder.dataDecodingStrategy = .base64
 
