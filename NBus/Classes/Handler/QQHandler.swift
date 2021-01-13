@@ -33,19 +33,9 @@ public class QQHandler {
     public let universalLink: URL
 
     private let sdkVersion = "3.5.1"
-    private var token: String? {
-        get {
-            let object = UserDefaults.standard
-                .object(forKey: "com.nuomi1.bus.qqHandler.token")
-            return object as? String
-        }
-        set {
-            if let token = newValue {
-                UserDefaults.standard
-                    .set(token, forKey: "com.nuomi1.bus.qqHandler.token")
-            }
-        }
-    }
+
+    @BusUserDefaults(key: ShareOptionKeys.signToken)
+    private var signToken: String?
 
     public init(appID: String, universalLink: URL) {
         self.appID = appID
@@ -99,7 +89,7 @@ extension QQHandler: ShareHandlerType {
         urlItems["thirdAppDisplayName"] = displayName
         urlItems["version"] = "1"
 
-        if let token = token {
+        if let token = signToken {
             urlItems["appsign_token"] = token
         }
 
@@ -444,7 +434,7 @@ extension QQHandler: OpenUserActivityHandlerType {
             return
         }
 
-        token = appSignToken
+        signToken = appSignToken
 
         var items: [String: String] = [:]
 
@@ -550,6 +540,14 @@ extension QQHandler: OpenUserActivityHandlerType {
         default:
             assertionFailure()
         }
+    }
+}
+
+extension QQHandler {
+
+    public enum ShareOptionKeys {
+
+        public static let signToken = Bus.ShareOptionKey(rawValue: "com.nuomi1.bus.qqHandler.signToken")
     }
 }
 
