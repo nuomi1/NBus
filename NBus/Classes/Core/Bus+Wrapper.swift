@@ -31,3 +31,34 @@ extension BusCompatible {
         set {}
     }
 }
+
+@propertyWrapper
+public struct BusUserDefaults<T> {
+
+    public let userDefaults: UserDefaults
+
+    public let key: String
+
+    public var wrappedValue: T? {
+        get { userDefaults.object(forKey: key) as? T }
+        set { userDefaults.set(newValue, forKey: key) }
+    }
+
+    public init(
+        key: String,
+        userDefaults: UserDefaults = .standard
+    ) {
+        self.key = key
+        self.userDefaults = userDefaults
+    }
+}
+
+extension BusUserDefaults {
+
+    public init<U>(
+        key: U,
+        userDefaults: UserDefaults = .standard
+    ) where U: RawRepresentable, U.RawValue == String {
+        self.init(key: key.rawValue, userDefaults: userDefaults)
+    }
+}
