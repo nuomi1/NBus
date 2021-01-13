@@ -391,14 +391,7 @@ extension QQHandler: OpenURLHandlerType {
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         else { return }
 
-        switch components.host {
-        case "response_from_qq" where components.path == "":
-            handleShare(with: components)
-        case "qzapp" where components.path == "/mqzone/0":
-            handleOauth(with: components)
-        default:
-            assertionFailure()
-        }
+        handleGeneral(with: components)
     }
 }
 
@@ -483,10 +476,14 @@ extension QQHandler {
         components.path = infos["sdk_action_path"] ?? ""
         components.query = infos["sdk_action_query"]
 
+        handleGeneral(with: components)
+    }
+
+    private func handleGeneral(with components: URLComponents) {
         switch components.host {
-        case "response_from_qq":
+        case "response_from_qq" where components.path == "":
             handleShare(with: components)
-        case "qzapp":
+        case "qzapp" where components.path == "/mqzone/0":
             handleOauth(with: components)
         default:
             assertionFailure()
