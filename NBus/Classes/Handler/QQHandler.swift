@@ -392,6 +392,8 @@ extension QQHandler: OpenURLHandlerType {
         else { return }
 
         switch components.host {
+        case "response_from_qq" where components.path == "":
+            handleShare(with: components)
         case "qzapp" where components.path == "/mqzone/0":
             handleOauth(with: components)
         default:
