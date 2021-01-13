@@ -221,12 +221,18 @@ extension PlatformViewController.ShareView {
     }
 
     private func didTapMiniProgramButton() {
+        let message: MessageType
+
         switch viewModel?.platform.value {
         case Platforms.wechat:
-            share(MediaSource.wechatMiniProgram, in: miniProgramButton)
+            message = MediaSource.wechatMiniProgram
+        case Platforms.qq:
+            message = MediaSource.qqMiniProgram
         default:
-            share(MediaSource.wechatMiniProgram, in: miniProgramButton)
+            message = MediaSource.wechatMiniProgram
         }
+
+        share(message, in: miniProgramButton)
     }
 }
 

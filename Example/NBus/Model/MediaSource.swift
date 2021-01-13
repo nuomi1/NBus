@@ -95,6 +95,20 @@ enum MediaSource {
         )
     }()
 
+    static let qqMiniProgram: MessageType = {
+        let path = "/pages/component/pages/launchApp813/launchApp813?a=aaa&b=bbb&c=ccc"
+        let url = URL(string: "https://www.apple.com.cn/iphone/")!
+
+        let miniProgramID = AppState.getMiniProgramID(for: Platforms.qq)!
+
+        return Messages.miniProgram(
+            miniProgramID: miniProgramID,
+            path: path,
+            link: url,
+            miniProgramType: .release
+        )
+    }()
+
     static let wechatMiniProgram: MessageType = {
         let path = "/pages/community/topics/id?id=565"
         let url = URL(string: "https://www.apple.com.cn/iphone/")!
