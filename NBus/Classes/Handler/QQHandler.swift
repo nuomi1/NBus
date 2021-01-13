@@ -421,48 +421,6 @@ extension QQHandler: OpenUserActivityHandlerType {
         }
     }
 
-    private func handleSignToken(with components: URLComponents) {
-        let decoder = JSONDecoder()
-        decoder.dataDecodingStrategy = .base64
-
-        guard
-            let item = components.queryItems?.first(where: { $0.name == "appsign_extrainfo" }),
-            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
-            let infos = try? decoder.decode([String: String].self, from: itemData),
-            let appSignRedirect = infos["appsign_redirect"],
-            let appSignToken = infos["appsign_token"],
-            var components = URLComponents(string: appSignRedirect)
-        else {
-            return
-        }
-
-        signToken = appSignToken
-
-        var items: [String: String] = [:]
-
-        items["openredirect"] = "1"
-        items["appsign_token"] = appSignToken
-
-        components.scheme = "https"
-        components.host = "qm.qq.com"
-        components.path = "/opensdkul/mqqapi/share/to_fri"
-
-        components.queryItems?.append(contentsOf: items.map { key, value in
-            URLQueryItem(name: key, value: value)
-        })
-
-        guard
-            let url = components.url,
-            UIApplication.shared.canOpenURL(url)
-        else { return }
-
-        UIApplication.shared.open(url) { [weak self] result in
-            if !result {
-                self?.shareCompletionHandler?(.failure(.unknown))
-            }
-        }
-    }
-
     private func handleGeneral(with components: URLComponents) {
         let decoder = JSONDecoder()
         decoder.dataDecodingStrategy = .base64
@@ -541,6 +499,51 @@ extension QQHandler: OpenUserActivityHandlerType {
             }
         default:
             assertionFailure()
+        }
+    }
+}
+
+extension QQHandler {
+
+    private func handleSignToken(with components: URLComponents) {
+        let decoder = JSONDecoder()
+        decoder.dataDecodingStrategy = .base64
+
+        guard
+            let item = components.queryItems?.first(where: { $0.name == "appsign_extrainfo" }),
+            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
+            let infos = try? decoder.decode([String: String].self, from: itemData),
+            let appSignRedirect = infos["appsign_redirect"],
+            let appSignToken = infos["appsign_token"],
+            var components = URLComponents(string: appSignRedirect)
+        else {
+            return
+        }
+
+        signToken = appSignToken
+
+        var items: [String: String] = [:]
+
+        items["openredirect"] = "1"
+        items["appsign_token"] = appSignToken
+
+        components.scheme = "https"
+        components.host = "qm.qq.com"
+        components.path = "/opensdkul/mqqapi/share/to_fri"
+
+        components.queryItems?.append(contentsOf: items.map { key, value in
+            URLQueryItem(name: key, value: value)
+        })
+
+        guard
+            let url = components.url,
+            UIApplication.shared.canOpenURL(url)
+        else { return }
+
+        UIApplication.shared.open(url) { [weak self] result in
+            if !result {
+                self?.shareCompletionHandler?(.failure(.unknown))
+            }
         }
     }
 }
