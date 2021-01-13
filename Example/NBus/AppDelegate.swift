@@ -18,6 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    private let disposeBag = DisposeBag()
+
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -149,11 +151,11 @@ extension AppDelegate {
         SwiftTrace.traceClasses(matchingPattern: "^QQ")
         SwiftTrace.traceClasses(matchingPattern: "^Tencent")
 
-        _ = pasteboardItems()
+        pasteboardItems()
             .delay(.seconds(1), scheduler: MainScheduler.instance)
-            .takeUntil(rx.deallocating)
             .bind(onNext: { items in
                 logger.debug("\(items)")
             })
+            .disposed(by: disposeBag)
     }
 }
