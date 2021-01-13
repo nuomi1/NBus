@@ -402,7 +402,7 @@ extension QQHandler: OpenURLHandlerType {
         else { return }
 
         switch components.host {
-        case "qzapp":
+        case "qzapp" where components.path == "/mqzone/0":
             handleOauth(with: components)
         default:
             assertionFailure()
