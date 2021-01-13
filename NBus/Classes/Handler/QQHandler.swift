@@ -103,6 +103,10 @@ extension QQHandler: ShareHandlerType {
             if let description = message.description?.bus.base64EncodedString {
                 urlItems["description"] = description
             }
+
+            if let thumbnail = message.thumbnail {
+                pasteBoardItems["previewimagedata"] = thumbnail
+            }
         }
 
         switch message {
@@ -184,6 +188,10 @@ extension QQHandler: ShareHandlerType {
             urlItems["file_type"] = "news"
 
             urlItems["url"] = url
+
+            if let thumbnail = message.thumbnail {
+                pasteBoardItems["previewimagedata"] = thumbnail
+            }
 
             urlItems["mini_appid"] = message.miniProgramID
             urlItems["mini_path"] = path
