@@ -147,7 +147,7 @@ extension WechatSDKHandler: ShareHandlerType {
 
         WXApi.send(request) { result in
             if !result {
-                completionHandler(.failure(.invalidMessage))
+                completionHandler(.failure(.unknown))
             }
         }
     }

@@ -192,7 +192,7 @@ extension QQSDKHandler: ShareHandlerType {
         case .EQQAPISENDSUCESS:
             break
         case .EQQAPIMESSAGECONTENTINVALID:
-            completionHandler(.failure(.invalidMessage))
+            completionHandler(.failure(.invalidParameter))
         default:
             completionHandler(.failure(.unknown))
         }
