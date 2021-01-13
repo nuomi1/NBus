@@ -252,6 +252,7 @@ extension SystemHandler {
                     OauthInfoKeys.givenName: credential.fullName?.givenName,
                     OauthInfoKeys.familyName: credential.fullName?.familyName,
                 ]
+                .bus
                 .compactMapContent()
 
                 if !parameters.isEmpty {

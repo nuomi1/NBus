@@ -139,3 +139,16 @@ extension Bus {
         return true
     }
 }
+
+extension Bus {
+
+    enum OauthInfoKeys {
+
+        enum QQ {
+
+            static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qq.accessToken")
+
+            static let openID = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qq.openID")
+        }
+    }
+}

@@ -18,7 +18,7 @@ extension Bus {
 
         case unsupportedMessage
 
-        case invalidMessage
+        case invalidParameter
 
         case userCancelled
 

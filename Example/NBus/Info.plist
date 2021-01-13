@@ -6,6 +6,12 @@
 	<array>
 		<dict>
 			<key>BMMiniProgramID</key>
+			<string>${QQ_MINIPROGRAMID}</string>
+			<key>BMPlatform</key>
+			<string>QQ</string>
+		</dict>
+		<dict>
+			<key>BMMiniProgramID</key>
 			<string>${WECHAT_MINIPROGRAMID}</string>
 			<key>BMPlatform</key>
 			<string>Wechat</string>
@@ -106,6 +112,12 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_adhp._tcp</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>WoodPeckeriOS</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
