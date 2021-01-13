@@ -95,7 +95,7 @@ enum MediaSource {
         )
     }()
 
-    static let miniProgram: MessageType = {
+    static let wechatMiniProgram: MessageType = {
         let path = "/pages/community/topics/id?id=565"
         let url = URL(string: "https://www.apple.com.cn/iphone/")!
 
