@@ -134,6 +134,10 @@ extension QQHandler: ShareHandlerType {
 
             urlItems["url"] = url
 
+            if let flashURL = message.dataLink?.absoluteString.bus.base64EncodedString {
+                urlItems["flashurl"] = flashURL
+            }
+
         case let message as VideoMessage:
             guard
                 let url = message.link.absoluteString.bus.base64EncodedString
