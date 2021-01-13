@@ -62,6 +62,7 @@ extension QQHandler: ShareHandlerType {
         guard
             let identifierEncoded = identifier?.bus.base64EncodedString,
             let cflag = cflag(endpoint, message.identifier),
+            let shareType = shareType(endpoint, message.identifier),
             let displayNameEncoded = displayName?.bus.base64EncodedString
         else {
             assertionFailure()
@@ -81,7 +82,7 @@ extension QQHandler: ShareHandlerType {
         urlItems["cflag"] = cflag
         urlItems["generalpastboard"] = "1"
         urlItems["sdkv"] = sdkShortVersion
-        urlItems["shareType"] = "0"
+        urlItems["shareType"] = shareType
         urlItems["src_type"] = "app"
         urlItems["thirdAppDisplayName"] = displayNameEncoded
         urlItems["version"] = "1"
@@ -318,6 +319,21 @@ extension QQHandler: ShareHandlerType {
         }
 
         return "\(result)"
+    }
+
+    private func shareType(_ endpoint: Endpoint, _ message: Message) -> String? {
+        switch endpoint {
+        case Endpoints.QQ.friend:
+            return "0"
+        case Endpoints.QQ.timeline:
+            return ![
+                Messages.text,
+                Messages.image,
+            ].contains(message)
+                ? "1" : "0"
+        default:
+            return nil
+        }
     }
 }
 
