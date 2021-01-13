@@ -128,6 +128,30 @@ extension AppDelegate {
 
 extension AppDelegate {
 
+    private func observeSDK() {
+        pasteboardItems()
+            .delay(.seconds(1), scheduler: MainScheduler.instance)
+            .bind(onNext: { items in
+                logger.debug("\(items)")
+            })
+            .disposed(by: disposeBag)
+
+        canOpenURL()
+            .bind(onNext: { url in
+                logger.debug("\(url)")
+            })
+            .disposed(by: disposeBag)
+
+        openURL()
+            .bind(onNext: { url in
+                logger.debug("\(url)")
+            })
+            .disposed(by: disposeBag)
+    }
+}
+
+extension AppDelegate {
+
     private func clearKeychains() {
         let items = [
             kSecClassGenericPassword,
@@ -167,23 +191,6 @@ extension AppDelegate {
 //        SwiftTrace.traceClasses(matchingPattern: "^QQ")
 //        SwiftTrace.traceClasses(matchingPattern: "^Tencent")
 
-        pasteboardItems()
-            .delay(.seconds(1), scheduler: MainScheduler.instance)
-            .bind(onNext: { items in
-                logger.debug("\(items)")
-            })
-            .disposed(by: disposeBag)
-
-        canOpenURL()
-            .bind(onNext: { url in
-                logger.debug("\(url)")
-            })
-            .disposed(by: disposeBag)
-
-        openURL()
-            .bind(onNext: { url in
-                logger.debug("\(url)")
-            })
-            .disposed(by: disposeBag)
+        observeSDK()
     }
 }
