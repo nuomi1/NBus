@@ -560,8 +560,8 @@ extension QQHandler {
 
     public enum OauthInfoKeys {
 
-        public static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqHandler.accessToken")
+        public static let accessToken = Bus.OauthInfoKeys.QQ.accessToken
 
-        public static let openID = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqHandler.openID")
+        public static let openID = Bus.OauthInfoKeys.QQ.openID
     }
 }

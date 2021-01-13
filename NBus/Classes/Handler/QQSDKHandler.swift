@@ -285,9 +285,9 @@ extension QQSDKHandler {
 
     public enum OauthInfoKeys {
 
-        public static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqSDKHandler.accessToken")
+        public static let accessToken = Bus.OauthInfoKeys.QQ.accessToken
 
-        public static let openID = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqSDKHandler.openID")
+        public static let openID = Bus.OauthInfoKeys.QQ.openID
     }
 }
 
