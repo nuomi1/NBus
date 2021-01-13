@@ -420,60 +420,6 @@ extension QQHandler: OpenUserActivityHandlerType {
             assertionFailure()
         }
     }
-
-    private func handleShare(with components: URLComponents) {
-        guard
-            let item = components.queryItems?.first(where: { $0.name == "error" })
-        else {
-            assertionFailure()
-            return
-        }
-
-        switch item.value {
-        case "0":
-            shareCompletionHandler?(.success(()))
-        case "-4":
-            shareCompletionHandler?(.failure(.userCancelled))
-        default:
-            shareCompletionHandler?(.failure(.unknown))
-        }
-    }
-
-    private func handleOauth(with components: URLComponents) {
-        guard
-            let item = components.queryItems?.first(where: { $0.name == "pasteboard" }),
-            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
-            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
-        else {
-            assertionFailure()
-            return
-        }
-
-        let isUserCancelled = infos["user_cancelled"] as? String
-
-        switch isUserCancelled {
-        case "YES":
-            oauthCompletionHandler?(.failure(.userCancelled))
-        case "NO":
-            let accessToken = infos["access_token"] as? String
-            let openID = infos["openid"] as? String
-
-            let parameters = [
-                OauthInfoKeys.accessToken: accessToken,
-                OauthInfoKeys.openID: openID,
-            ]
-            .bus
-            .compactMapContent()
-
-            if !parameters.isEmpty {
-                oauthCompletionHandler?(.success(parameters))
-            } else {
-                oauthCompletionHandler?(.failure(.unknown))
-            }
-        default:
-            assertionFailure()
-        }
-    }
 }
 
 extension QQHandler {
@@ -542,6 +488,63 @@ extension QQHandler {
             handleShare(with: components)
         case "qzapp":
             handleOauth(with: components)
+        default:
+            assertionFailure()
+        }
+    }
+}
+
+extension QQHandler {
+
+    private func handleShare(with components: URLComponents) {
+        guard
+            let item = components.queryItems?.first(where: { $0.name == "error" })
+        else {
+            assertionFailure()
+            return
+        }
+
+        switch item.value {
+        case "0":
+            shareCompletionHandler?(.success(()))
+        case "-4":
+            shareCompletionHandler?(.failure(.userCancelled))
+        default:
+            shareCompletionHandler?(.failure(.unknown))
+        }
+    }
+
+    private func handleOauth(with components: URLComponents) {
+        guard
+            let item = components.queryItems?.first(where: { $0.name == "pasteboard" }),
+            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
+            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+        else {
+            assertionFailure()
+            return
+        }
+
+        let isUserCancelled = infos["user_cancelled"] as? String
+
+        switch isUserCancelled {
+        case "YES":
+            oauthCompletionHandler?(.failure(.userCancelled))
+        case "NO":
+            let accessToken = infos["access_token"] as? String
+            let openID = infos["openid"] as? String
+
+            let parameters = [
+                OauthInfoKeys.accessToken: accessToken,
+                OauthInfoKeys.openID: openID,
+            ]
+            .bus
+            .compactMapContent()
+
+            if !parameters.isEmpty {
+                oauthCompletionHandler?(.success(parameters))
+            } else {
+                oauthCompletionHandler?(.failure(.unknown))
+            }
         default:
             assertionFailure()
         }
