@@ -164,8 +164,8 @@ extension AppDelegate {
 extension AppDelegate {
 
     private func observeQQ() {
-        SwiftTrace.traceClasses(matchingPattern: "^QQ")
-        SwiftTrace.traceClasses(matchingPattern: "^Tencent")
+//        SwiftTrace.traceClasses(matchingPattern: "^QQ")
+//        SwiftTrace.traceClasses(matchingPattern: "^Tencent")
 
         pasteboardItems()
             .delay(.seconds(1), scheduler: MainScheduler.instance)
