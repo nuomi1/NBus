@@ -415,34 +415,7 @@ extension QQHandler: OpenUserActivityHandlerType {
         case universalLink.appendingPathComponent("\(identifier)/mqqsignapp").path:
             handleSignToken(with: components)
         case universalLink.appendingPathComponent("\(identifier)").path:
-            handleGeneral(with: components)
-        default:
-            assertionFailure()
-        }
-    }
-
-    private func handleGeneral(with components: URLComponents) {
-        let decoder = JSONDecoder()
-        decoder.dataDecodingStrategy = .base64
-
-        guard
-            let item = components.queryItems?.first(where: { $0.name == "sdkactioninfo" }),
-            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
-            let infos = try? decoder.decode([String: String].self, from: itemData)
-        else { return }
-
-        var components = URLComponents()
-
-        components.scheme = infos["sdk_action_sheme"]
-        components.host = infos["sdk_action_host"]
-        components.path = infos["sdk_action_path"] ?? ""
-        components.query = infos["sdk_action_query"]
-
-        switch components.host {
-        case "response_from_qq":
-            handleShare(with: components)
-        case "qzapp":
-            handleOauth(with: components)
+            handleActionInfo(with: components)
         default:
             assertionFailure()
         }
@@ -544,6 +517,33 @@ extension QQHandler {
             if !result {
                 self?.shareCompletionHandler?(.failure(.unknown))
             }
+        }
+    }
+
+    private func handleActionInfo(with components: URLComponents) {
+        let decoder = JSONDecoder()
+        decoder.dataDecodingStrategy = .base64
+
+        guard
+            let item = components.queryItems?.first(where: { $0.name == "sdkactioninfo" }),
+            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
+            let infos = try? decoder.decode([String: String].self, from: itemData)
+        else { return }
+
+        var components = URLComponents()
+
+        components.scheme = infos["sdk_action_sheme"]
+        components.host = infos["sdk_action_host"]
+        components.path = infos["sdk_action_path"] ?? ""
+        components.query = infos["sdk_action_query"]
+
+        switch components.host {
+        case "response_from_qq":
+            handleShare(with: components)
+        case "qzapp":
+            handleOauth(with: components)
+        default:
+            assertionFailure()
         }
     }
 }
