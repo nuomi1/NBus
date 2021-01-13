@@ -6,6 +6,12 @@
 	<array>
 		<dict>
 			<key>BMMiniProgramID</key>
+			<string>${QQ_MINIPROGRAMID}</string>
+			<key>BMPlatform</key>
+			<string>QQ</string>
+		</dict>
+		<dict>
+			<key>BMMiniProgramID</key>
 			<string>${WECHAT_MINIPROGRAMID}</string>
 			<key>BMPlatform</key>
 			<string>Wechat</string>
