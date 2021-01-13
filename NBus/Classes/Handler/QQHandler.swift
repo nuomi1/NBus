@@ -32,8 +32,6 @@ public class QQHandler {
     public let appID: String
     public let universalLink: URL
 
-    private let sdkVersion = "3.5.1"
-
     @BusUserDefaults(key: ShareOptionKeys.signToken)
     private var signToken: String?
 
@@ -62,10 +60,9 @@ extension QQHandler: ShareHandlerType {
         }
 
         guard
-            let identifier = identifier(),
-            let displayName = displayName(),
+            let identifierEncoded = identifier?.bus.base64EncodedString,
             let cflag = cflag(endpoint, message.identifier),
-            let txID = txID()
+            let displayNameEncoded = displayName?.bus.base64EncodedString
         else {
             assertionFailure()
             completionHandler(.failure(.invalidMessage))
@@ -78,31 +75,31 @@ extension QQHandler: ShareHandlerType {
         var pasteBoardItems: [String: Any?] = [:]
 
         urlItems["appsign_txid"] = txID
-        urlItems["bundleid"] = identifier
+        urlItems["bundleid"] = identifierEncoded
         urlItems["callback_name"] = txID
         urlItems["callback_type"] = "scheme"
         urlItems["cflag"] = cflag
         urlItems["generalpastboard"] = "1"
-        urlItems["sdkv"] = sdkVersion
+        urlItems["sdkv"] = sdkShortVersion
         urlItems["shareType"] = "0"
         urlItems["src_type"] = "app"
-        urlItems["thirdAppDisplayName"] = displayName
+        urlItems["thirdAppDisplayName"] = displayNameEncoded
         urlItems["version"] = "1"
 
-        if let token = signToken {
-            urlItems["appsign_token"] = token
+        if let signToken = signToken {
+            urlItems["appsign_token"] = signToken
         }
 
-        if let oldText = UIPasteboard.general.bus.oldText {
+        if let oldText = oldText {
             pasteBoardItems["pasted_string"] = oldText
         }
 
         if let message = message as? MediaMessageType {
-            if let title = message.title?.data(using: .utf8)?.base64EncodedString() {
+            if let title = message.title?.bus.base64EncodedString {
                 urlItems["title"] = title
             }
 
-            if let description = message.description?.data(using: .utf8)?.base64EncodedString() {
+            if let description = message.description?.bus.base64EncodedString {
                 urlItems["description"] = description
             }
         }
@@ -110,7 +107,7 @@ extension QQHandler: ShareHandlerType {
         switch message {
         case let message as TextMessage:
             guard
-                let text = message.text.data(using: .utf8)?.base64EncodedString()
+                let text = message.text.bus.base64EncodedString
             else {
                 completionHandler(.failure(.invalidMessage))
                 return
@@ -127,7 +124,7 @@ extension QQHandler: ShareHandlerType {
 
         case let message as AudioMessage:
             guard
-                let url = message.link.absoluteString.data(using: .utf8)?.base64EncodedString()
+                let url = message.link.absoluteString.bus.base64EncodedString
             else {
                 completionHandler(.failure(.invalidMessage))
                 return
@@ -139,7 +136,7 @@ extension QQHandler: ShareHandlerType {
 
         case let message as VideoMessage:
             guard
-                let url = message.link.absoluteString.data(using: .utf8)?.base64EncodedString()
+                let url = message.link.absoluteString.bus.base64EncodedString
             else {
                 completionHandler(.failure(.invalidMessage))
                 return
@@ -151,7 +148,7 @@ extension QQHandler: ShareHandlerType {
 
         case let message as WebPageMessage:
             guard
-                let url = message.link.absoluteString.data(using: .utf8)?.base64EncodedString()
+                let url = message.link.absoluteString.bus.base64EncodedString
             else {
                 completionHandler(.failure(.invalidMessage))
                 return
@@ -164,8 +161,7 @@ extension QQHandler: ShareHandlerType {
         case let message as FileMessage:
             urlItems["file_type"] = "localFile"
 
-            if
-                let fileName = message.fullName?.data(using: .utf8)?.base64EncodedString() {
+            if let fileName = message.fullName?.bus.base64EncodedString {
                 urlItems["fileName"] = fileName
             }
 
@@ -173,8 +169,8 @@ extension QQHandler: ShareHandlerType {
 
         case let message as MiniProgramMessage:
             guard
-                let path = message.path.data(using: .utf8)?.base64EncodedString(),
-                let url = message.link.absoluteString.data(using: .utf8)?.base64EncodedString()
+                let path = message.path.bus.base64EncodedString,
+                let url = message.link.absoluteString.bus.base64EncodedString
             else {
                 completionHandler(.failure(.invalidMessage))
                 return
@@ -199,12 +195,10 @@ extension QQHandler: ShareHandlerType {
         let pbItems = pasteBoardItems.compactMapValues { $0 }
 
         if !pbItems.isEmpty {
-            urlItems["objectlocation"] = "pasteboard"
-
-            let data = NSKeyedArchiver.archivedData(withRootObject: pbItems)
+            let pbData = NSKeyedArchiver.archivedData(withRootObject: pbItems)
 
             UIPasteboard.general.setData(
-                data,
+                pbData,
                 forPasteboardType: "com.tencent.mqq.api.apiLargeData"
             )
         }
@@ -251,20 +245,32 @@ extension QQHandler: ShareHandlerType {
         }
     }
 
-    private func identifier() -> String? {
-        let identifier = Bundle.main.bus.identifier
-        return identifier?.data(using: .utf8)?.base64EncodedString()
+    private var appNumber: String {
+        appID.trimmingCharacters(in: .letters)
     }
 
-    private func displayName() -> String? {
-        let displayName = Bundle.main.bus.displayName
-        return displayName?.data(using: .utf8)?.base64EncodedString()
+    private var txID: String {
+        "QQ\(String(format: "%08llX", (appNumber as NSString).longLongValue))"
     }
 
-    private func txID() -> String? {
-        let number = appID.trimmingCharacters(in: .letters)
-        let txID = String(format: "%08llX", (number as NSString).longLongValue)
-        return "QQ\(txID)"
+    private var identifier: String? {
+        Bundle.main.bus.identifier
+    }
+
+    private var displayName: String? {
+        Bundle.main.bus.displayName
+    }
+
+    private var sdkShortVersion: String {
+        "3.5.1"
+    }
+
+    private var sdkVersion: String {
+        "3.5.1_lite"
+    }
+
+    private var oldText: String? {
+        UIPasteboard.general.bus.oldText
     }
 
     private func cflag(_ endpoint: Endpoint, _ message: Message) -> String? {
@@ -319,8 +325,9 @@ extension QQHandler: OauthHandlerType {
         }
 
         guard
-            let identifier = identifier(),
-            let txID = txID()
+            let displayName = displayName,
+            let identifier = identifier,
+            let identifierEncoded = identifier.bus.base64EncodedString
         else {
             assertionFailure()
             completionHandler(.failure(.invalidMessage))
@@ -332,29 +339,27 @@ extension QQHandler: OauthHandlerType {
         var urlItems: [String: String] = [:]
         var pasteBoardItems: [String: Any?] = [:]
 
-        pasteBoardItems["app_id"] = appID.trimmingCharacters(in: .letters)
-        pasteBoardItems["sdkp"] = "i"
-        pasteBoardItems["response_type"] = "token"
-        pasteBoardItems["app_name"] = Bundle.main.bus.displayName
-        pasteBoardItems["appsign_token"] = ""
-        pasteBoardItems["scope"] = "get_user_info"
-        pasteBoardItems["bundleid"] = Bundle.main.bus.identifier
-        pasteBoardItems["status_version"] = "14"
-        pasteBoardItems["sdkv"] = "3.5.1_lite"
-        pasteBoardItems["status_machine"] = "iPhone12,1"
-        pasteBoardItems["status_os"] = "14.3"
-        pasteBoardItems["client_id"] = appID.trimmingCharacters(in: .letters)
+        pasteBoardItems["app_id"] = appNumber
+        pasteBoardItems["app_name"] = displayName
+        pasteBoardItems["bundleid"] = identifier
+        pasteBoardItems["client_id"] = appNumber
         pasteBoardItems["refUniversallink"] = universalLink.absoluteString
+        pasteBoardItems["response_type"] = "token"
+        pasteBoardItems["scope"] = "get_user_info"
+        pasteBoardItems["sdkp"] = "i"
+        pasteBoardItems["sdkv"] = sdkVersion
+        pasteBoardItems["status_machine"] = UIDevice.current.model
+        pasteBoardItems["status_os"] = UIDevice.current.systemVersion
+        pasteBoardItems["status_version"] = UIDevice.current.systemVersion
 
         let pbItems = pasteBoardItems.compactMapValues { $0 }
-        let data = NSKeyedArchiver.archivedData(withRootObject: pbItems)
-
-        urlItems["pasteboard"] = data.base64EncodedString()
+        let pbData = NSKeyedArchiver.archivedData(withRootObject: pbItems)
 
         urlItems["appsign_txid"] = txID
-        urlItems["bundleid"] = identifier
-        urlItems["sdkv"] = sdkVersion
+        urlItems["bundleid"] = identifierEncoded
         urlItems["objectlocation"] = "url"
+        urlItems["pasteboard"] = pbData.base64EncodedString()
+        urlItems["sdkv"] = sdkShortVersion
 
         var components = URLComponents()
 
@@ -389,7 +394,10 @@ extension QQHandler: OpenURLHandlerType {
     public func openURL(_ url: URL) {
         guard
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        else { return }
+        else {
+            assertionFailure()
+            return
+        }
 
         handleGeneral(with: components)
     }
@@ -402,7 +410,10 @@ extension QQHandler: OpenUserActivityHandlerType {
             let url = userActivity.webpageURL,
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let identifier = Bundle.main.bus.identifier
-        else { return }
+        else {
+            assertionFailure()
+            return
+        }
 
         switch components.path {
         case universalLink.appendingPathComponent("\(identifier)/mqqsignapp").path:
@@ -429,6 +440,7 @@ extension QQHandler {
             let appSignToken = infos["appsign_token"],
             var components = URLComponents(string: appSignRedirect)
         else {
+            assertionFailure()
             return
         }
 
@@ -447,10 +459,15 @@ extension QQHandler {
             URLQueryItem(name: key, value: value)
         })
 
-        guard
-            let url = components.url,
-            UIApplication.shared.canOpenURL(url)
-        else { return }
+        guard let url = components.url else {
+            shareCompletionHandler?(.failure(.invalidMessage))
+            return
+        }
+
+        guard UIApplication.shared.canOpenURL(url) else {
+            shareCompletionHandler?(.failure(.unknown))
+            return
+        }
 
         UIApplication.shared.open(url) { [weak self] result in
             if !result {
@@ -467,7 +484,10 @@ extension QQHandler {
             let item = components.queryItems?.first(where: { $0.name == "sdkactioninfo" }),
             let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
             let infos = try? decoder.decode([String: String].self, from: itemData)
-        else { return }
+        else {
+            assertionFailure()
+            return
+        }
 
         var components = URLComponents()
 
