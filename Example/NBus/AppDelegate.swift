@@ -25,9 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
 
-        clearKeychains()
-        clearPasteboard()
-        clearUserDefaults()
+        clearStorage()
 
 //        observeQQ()
 
@@ -182,6 +180,15 @@ extension AppDelegate {
         for (key, _) in defaults.dictionaryRepresentation() {
             defaults.removeObject(forKey: key)
         }
+    }
+}
+
+extension AppDelegate {
+
+    private func clearStorage() {
+        clearKeychains()
+        clearPasteboard()
+        clearUserDefaults()
     }
 }
 
