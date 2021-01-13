@@ -23,6 +23,15 @@ extension BusWrapper where Base == [Bus.OauthInfoKey: String?] {
     }
 }
 
+extension String: BusCompatible {}
+
+extension BusWrapper where Base == String {
+
+    var base64EncodedString: String? {
+        base.data(using: .utf8)?.base64EncodedString()
+    }
+}
+
 extension NSObject: BusCompatible {}
 
 extension BusWrapper where Base: Bundle {
