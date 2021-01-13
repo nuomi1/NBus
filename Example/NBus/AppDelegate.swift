@@ -108,6 +108,22 @@ extension AppDelegate {
             }
             .distinctUntilChanged()
     }
+
+    private func canOpenURL() -> Observable<URL> {
+        UIApplication.shared.rx
+            .methodInvoked(#selector(UIApplication.canOpenURL(_:)))
+            .compactMap { args in
+                args[0] as? URL
+            }
+    }
+
+    private func openURL() -> Observable<URL> {
+        UIApplication.shared.rx
+            .methodInvoked(#selector(UIApplication.open(_:options:completionHandler:)))
+            .compactMap { args in
+                args[0] as? URL
+            }
+    }
 }
 
 extension AppDelegate {
@@ -155,6 +171,18 @@ extension AppDelegate {
             .delay(.seconds(1), scheduler: MainScheduler.instance)
             .bind(onNext: { items in
                 logger.debug("\(items)")
+            })
+            .disposed(by: disposeBag)
+
+        canOpenURL()
+            .bind(onNext: { url in
+                logger.debug("\(url)")
+            })
+            .disposed(by: disposeBag)
+
+        openURL()
+            .bind(onNext: { url in
+                logger.debug("\(url)")
             })
             .disposed(by: disposeBag)
     }
