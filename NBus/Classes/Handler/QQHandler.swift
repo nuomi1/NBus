@@ -203,6 +203,10 @@ extension QQHandler: ShareHandlerType {
             )
         }
 
+        if pbItems.contains(where: { $0.key == "file_data" }) {
+            urlItems["objectlocation"] = "pasteboard"
+        }
+
         var components = URLComponents()
 
         components.scheme = "https"
