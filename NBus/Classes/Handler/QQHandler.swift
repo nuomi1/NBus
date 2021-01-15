@@ -240,7 +240,7 @@ extension QQHandler: ShareHandlerType {
             return
         }
 
-        UIApplication.shared.open(url) { result in
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
             if !result {
                 completionHandler(.failure(.unknown))
             }
@@ -413,7 +413,7 @@ extension QQHandler: OauthHandlerType {
             return
         }
 
-        UIApplication.shared.open(url) { result in
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
             if !result {
                 completionHandler(.failure(.unknown))
             }
@@ -501,7 +501,7 @@ extension QQHandler {
             return
         }
 
-        UIApplication.shared.open(url) { [weak self] result in
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
             if !result {
                 self?.shareCompletionHandler?(.failure(.unknown))
             }
