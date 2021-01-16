@@ -90,12 +90,12 @@ enum MediaSource {
         let dataAsset = NSDataAsset(name: "giphy-J1ZajKJKzD0PK")!
         let data = dataAsset.data
 
-        let title = "J1ZajKJKzD0PK"
+        let fileName = "J1ZajKJKzD0PK"
 
         return Messages.file(
             data: data,
             fileExtension: "gif",
-            title: title
+            fileName: fileName
         )
     }()
 
