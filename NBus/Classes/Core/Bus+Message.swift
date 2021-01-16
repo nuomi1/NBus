@@ -104,6 +104,7 @@ public enum Messages {
     public static func file(
         data: Data,
         fileExtension: String,
+        fileName: String? = nil,
         title: String? = nil,
         description: String? = nil,
         thumbnail: Data? = nil
@@ -111,6 +112,7 @@ public enum Messages {
         FileMessage(
             data: data,
             fileExtension: fileExtension,
+            fileName: fileName,
             title: title,
             description: description,
             thumbnail: thumbnail
@@ -217,11 +219,17 @@ public struct FileMessage: MediaMessageType {
 
     public let fileExtension: String
 
+    public let fileName: String?
+
     public let title: String?
 
     public let description: String?
 
     public let thumbnail: Data?
+
+    public var fullName: String? {
+        fileName.map { "\($0).\(fileExtension)" }
+    }
 }
 
 public struct MiniProgramMessage: MessageType {

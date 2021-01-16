@@ -21,6 +21,10 @@ extension PlatformViewController {
 
         let title: Observable<String>
 
+        let isSwitchEnabled: Observable<Bool>
+        let currentCategory: BehaviorRelay<AppState.PlatformItem.Category>
+        let currentHandler: Observable<HandlerType>
+
         let endpoints: Observable<[Endpoint]>
         let currentEndpoint: BehaviorRelay<Endpoint?>
 
@@ -33,23 +37,25 @@ extension PlatformViewController {
         init(_ element: AppState.PlatformItem) {
             title = .just("\(element.platform)")
 
-            endpoints = .just(element.endpoints ?? [])
+            isSwitchEnabled = .just(element.handlers.count > 1)
+            currentCategory = .init(value: element.category)
+            currentHandler = currentCategory
+                .compactMap { element.handlers[$0] }
+
+            endpoints = currentHandler
+                .compactMap { $0 as? ShareHandlerType }
+                .map { $0.endpoints }
             currentEndpoint = .init(value: nil)
 
             platform = .init(value: element.platform)
             oauthInfo = .init(value: Self.defaultOauthInfo)
 
-            isShareEnabled = .just(element.handler is ShareHandlerType)
-            isOauthEnabled = .just(element.handler is OauthHandlerType)
+            isShareEnabled = currentHandler
+                .map { $0 is ShareHandlerType }
+            isOauthEnabled = currentHandler
+                .map { $0 is OauthHandlerType }
         }
 
         static let defaultOauthInfo = OauthInfo(isLogin: false, parameter: "未登录")
-    }
-}
-
-extension AppState.PlatformItem {
-
-    fileprivate var endpoints: [Endpoint]? {
-        (handler as? ShareHandlerType)?.endpoints
     }
 }

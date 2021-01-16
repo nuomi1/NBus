@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "NBus"
-  s.version = "0.7.0"
+  s.version = "0.8.0"
   s.summary = "A short description of NBus."
 
   s.homepage = "https://github.com/nuomi1/NBus"
@@ -14,6 +14,11 @@ Pod::Spec.new do |s|
 
   s.default_subspecs = "SDKHandlers"
 
+  s.subspec "BusHandlers" do |ss|
+    ss.dependency "NBus/QQHandler"
+    ss.dependency "NBus/SystemHandler"
+  end
+
   s.subspec "SDKHandlers" do |ss|
     ss.dependency "NBus/QQSDKHandler"
     ss.dependency "NBus/WechatSDKHandler"
@@ -22,7 +27,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec "Core" do |ss|
-    ss.source_files = ["NBus/Classes/Core/**/*.swift"]
+    ss.source_files = Dir.glob("NBus/Classes/Core/**/*.swift")
   end
 
   s.subspec "QQSDKHandler" do |ss|
@@ -30,6 +35,12 @@ Pod::Spec.new do |s|
     ss.dependency "NBus/QQSDK"
 
     ss.source_files = ["NBus/Classes/Handler/QQSDKHandler.swift"]
+  end
+
+  s.subspec "QQHandler" do |ss|
+    ss.dependency "NBus/Core"
+
+    ss.source_files = ["NBus/Classes/Handler/QQHandler.swift"]
   end
 
   s.subspec "WechatSDKHandler" do |ss|
@@ -53,31 +64,31 @@ Pod::Spec.new do |s|
   end
 
   s.subspec "QQSDK" do |ss|
-    ss.vendored_frameworks = ["NBus/Vendor/QQ_SDK/**/*.framework"]
+    ss.vendored_frameworks = Dir.glob("NBus/Vendor/QQ_SDK/**/*.framework")
     ss.frameworks = ["SystemConfiguration", "WebKit"]
 
     ss.source_files = Dir.glob("NBus/Vendor/QQ_SDK/**/*.h")
       .reject { |name| name.include?("TencentOpenApiUmbrellaHeader.h") }
 
-    ss.resources = ["NBus/Vendor/QQ_SDK/**/*.bundle"]
+    ss.resources = Dir.glob("NBus/Vendor/QQ_SDK/**/*.bundle")
   end
 
   s.subspec "WechatSDK" do |ss|
-    ss.vendored_libraries = ["NBus/Vendor/Wechat_SDK/**/*.a"]
+    ss.vendored_libraries = Dir.glob("NBus/Vendor/Wechat_SDK/**/*.a")
     ss.frameworks = ["WebKit"]
     ss.libraries = ["c++"]
 
-    ss.source_files = ["NBus/Vendor/Wechat_SDK/**/*.h"]
+    ss.source_files = Dir.glob("NBus/Vendor/Wechat_SDK/**/*.h")
 
     ss.pod_target_xcconfig = { "OTHER_LDFLAGS" => "-ObjC -all_load" }
   end
 
   s.subspec "WeiboSDK" do |ss|
-    ss.vendored_libraries = ["NBus/Vendor/Weibo_SDK/**/*.a"]
+    ss.vendored_libraries = Dir.glob("NBus/Vendor/Weibo_SDK/**/*.a")
 
-    ss.source_files = ["NBus/Vendor/Weibo_SDK/**/*.h"]
+    ss.source_files = Dir.glob("NBus/Vendor/Weibo_SDK/**/*.h")
 
-    ss.resources = ["NBus/Vendor/Weibo_SDK/**/*.bundle"]
+    ss.resources = Dir.glob("NBus/Vendor/Weibo_SDK/**/*.bundle")
   end
 
   s.prepare_command = <<-CMD

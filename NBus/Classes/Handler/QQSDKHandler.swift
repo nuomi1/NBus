@@ -111,6 +111,8 @@ extension QQSDKHandler: ShareHandlerType {
                 targetContentType: .audio
             )
 
+            audioObject?.flashURL = message.dataLink
+
             request = SendMessageToQQReq(content: audioObject)
 
         case let message as VideoMessage:
@@ -125,7 +127,7 @@ extension QQSDKHandler: ShareHandlerType {
             request = SendMessageToQQReq(content: videoObject)
 
         case let message as WebPageMessage:
-            let webPageObject = QQApiURLObject(
+            let webPageObject = QQApiNewsObject(
                 url: message.link,
                 title: message.title,
                 description: message.description,
@@ -143,10 +145,12 @@ extension QQSDKHandler: ShareHandlerType {
                 description: message.description
             )
 
+            fileObject?.fileName = message.fullName
+
             request = SendMessageToQQReq(content: fileObject)
 
         case let message as MiniProgramMessage:
-            let webPageObject = QQApiURLObject(
+            let webPageObject = QQApiNewsObject(
                 url: message.link,
                 title: message.link.absoluteString,
                 description: "",
@@ -188,7 +192,7 @@ extension QQSDKHandler: ShareHandlerType {
         case .EQQAPISENDSUCESS:
             break
         case .EQQAPIMESSAGECONTENTINVALID:
-            completionHandler(.failure(.invalidMessage))
+            completionHandler(.failure(.invalidParameter))
         default:
             completionHandler(.failure(.unknown))
         }
@@ -281,9 +285,9 @@ extension QQSDKHandler {
 
     public enum OauthInfoKeys {
 
-        public static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqSDKHandler.accessToken")
+        public static let accessToken = Bus.OauthInfoKeys.QQ.accessToken
 
-        public static let openID = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qqSDKHandler.openID")
+        public static let openID = Bus.OauthInfoKeys.QQ.openID
     }
 }
 
@@ -326,6 +330,7 @@ extension QQSDKHandler {
                 OauthInfoKeys.accessToken: owner?.oauthCoordinator.accessToken,
                 OauthInfoKeys.openID: owner?.oauthCoordinator.openId,
             ]
+            .bus
             .compactMapContent()
 
             if !parameters.isEmpty {

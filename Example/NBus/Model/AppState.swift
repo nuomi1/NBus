@@ -23,8 +23,17 @@ extension AppState {
 
     struct PlatformItem {
         let platform: Platform
-        let handler: HandlerType
+        let category: Category
+        let handlers: [Category: HandlerType]
         let viewController: () -> UIViewController
+    }
+}
+
+extension AppState.PlatformItem {
+
+    enum Category: Hashable {
+        case bus
+        case sdk
     }
 }
 
@@ -51,7 +60,10 @@ extension AppState {
 
         let wechatItem = AppState.PlatformItem(
             platform: Platforms.wechat,
-            handler: wechatSDKHandler,
+            category: .sdk,
+            handlers: [
+                .sdk: wechatSDKHandler,
+            ],
             viewController: { PlatformViewController() }
         )
 
@@ -66,9 +78,18 @@ extension AppState {
             logger.debug("\(message)", file: file, function: function, line: line)
         }
 
+        let qqHandler = QQHandler(
+            appID: AppState.getAppID(for: Platforms.qq)!,
+            universalLink: AppState.getUniversalLink(for: Platforms.qq)!
+        )
+
         let qqItem = AppState.PlatformItem(
             platform: Platforms.qq,
-            handler: qqSDKHandler,
+            category: .sdk,
+            handlers: [
+                .bus: qqHandler,
+                .sdk: qqSDKHandler,
+            ],
             viewController: { PlatformViewController() }
         )
 
@@ -86,7 +107,10 @@ extension AppState {
 
         let weiboItem = AppState.PlatformItem(
             platform: Platforms.weibo,
-            handler: weiboSDKHandler,
+            category: .sdk,
+            handlers: [
+                .sdk: weiboSDKHandler,
+            ],
             viewController: { PlatformViewController() }
         )
 
@@ -100,7 +124,10 @@ extension AppState {
 
         let systemItem = AppState.PlatformItem(
             platform: Platforms.system,
-            handler: systemHandler,
+            category: .bus,
+            handlers: [
+                .bus: systemHandler,
+            ],
             viewController: { PlatformViewController() }
         )
 
@@ -110,13 +137,6 @@ extension AppState {
             weiboItem,
             systemItem,
         ])
-
-        Bus.shared.handlers = [
-            wechatSDKHandler,
-            qqSDKHandler,
-            weiboSDKHandler,
-            systemHandler,
-        ]
     }
 
     // swiftlint:enable function_body_length

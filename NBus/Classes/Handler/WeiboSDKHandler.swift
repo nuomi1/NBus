@@ -107,7 +107,7 @@ extension WeiboSDKHandler: ShareHandlerType {
 
         WeiboSDK.send(request) { result in
             if !result {
-                completionHandler(.failure(.invalidMessage))
+                completionHandler(.failure(.unknown))
             }
         }
     }
@@ -205,6 +205,7 @@ extension WeiboSDKHandler {
                     let parameters = [
                         OauthInfoKeys.accessToken: accessToken,
                     ]
+                    .bus
                     .compactMapContent()
 
                     if !parameters.isEmpty {

@@ -13,7 +13,6 @@ identifier_name:
 line_length:
   ignores_comments: true
   ignores_interpolated_strings: true
-  warning: 140
 
 type_name:
   excluded:
