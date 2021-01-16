@@ -35,7 +35,7 @@ nuomi1, nuomi1@qq.com
 - [NBus 之 WechatSDKHandler](https://blog.nuomi1.com/archives/2020/12/nbus-wechatsdkhandler.html)
 - [NBus 之 WeiboSDKHandler](https://blog.nuomi1.com/archives/2020/12/nbus-weibosdkhandler.html)
 
-## Credits
+## Thanks
 
 - [MonkeyKing](https://github.com/nixzhu/MonkeyKing)
 - [LQThirdParty](https://github.com/LQi2009/LQThirdParty)
