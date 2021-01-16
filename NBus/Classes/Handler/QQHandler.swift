@@ -103,6 +103,10 @@ extension QQHandler: ShareHandlerType {
             if let description = message.description?.bus.base64EncodedString {
                 urlItems["description"] = description
             }
+
+            if let thumbnail = message.thumbnail {
+                pasteBoardItems["previewimagedata"] = thumbnail
+            }
         }
 
         switch message {
@@ -185,6 +189,10 @@ extension QQHandler: ShareHandlerType {
 
             urlItems["url"] = url
 
+            if let thumbnail = message.thumbnail {
+                pasteBoardItems["previewimagedata"] = thumbnail
+            }
+
             urlItems["mini_appid"] = message.miniProgramID
             urlItems["mini_path"] = path
             urlItems["mini_weburl"] = url
@@ -232,7 +240,7 @@ extension QQHandler: ShareHandlerType {
             return
         }
 
-        UIApplication.shared.open(url) { result in
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
             if !result {
                 completionHandler(.failure(.unknown))
             }
@@ -372,9 +380,9 @@ extension QQHandler: OauthHandlerType {
         pasteBoardItems["scope"] = "get_user_info"
         pasteBoardItems["sdkp"] = "i"
         pasteBoardItems["sdkv"] = sdkVersion
-        pasteBoardItems["status_machine"] = UIDevice.current.model
-        pasteBoardItems["status_os"] = UIDevice.current.systemVersion
-        pasteBoardItems["status_version"] = UIDevice.current.systemVersion
+        pasteBoardItems["status_machine"] = statusMachine
+        pasteBoardItems["status_os"] = statusOS
+        pasteBoardItems["status_version"] = statusVersion
 
         let pbItems = pasteBoardItems.compactMapValues { $0 }
         let pbData = NSKeyedArchiver.archivedData(withRootObject: pbItems)
@@ -405,11 +413,23 @@ extension QQHandler: OauthHandlerType {
             return
         }
 
-        UIApplication.shared.open(url) { result in
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
             if !result {
                 completionHandler(.failure(.unknown))
             }
         }
+    }
+
+    private var statusMachine: String {
+        UIDevice.current.bus.machine
+    }
+
+    private var statusOS: String {
+        UIDevice.current.systemVersion
+    }
+
+    private var statusVersion: String {
+        "\(ProcessInfo.processInfo.operatingSystemVersion.majorVersion)"
     }
 }
 
@@ -493,7 +513,7 @@ extension QQHandler {
             return
         }
 
-        UIApplication.shared.open(url) { [weak self] result in
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
             if !result {
                 self?.shareCompletionHandler?(.failure(.unknown))
             }

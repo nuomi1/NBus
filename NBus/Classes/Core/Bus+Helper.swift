@@ -62,6 +62,25 @@ extension BusWrapper where Base: Bundle {
     }
 }
 
+extension BusWrapper where Base: UIDevice {
+
+    private var systemInfo: utsname {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        return systemInfo
+    }
+
+    private func toString(from mirror: Mirror) -> String {
+        let cString = mirror.children.compactMap { $1 as? Int8 }
+        return String(cString: cString)
+    }
+
+    public var machine: String {
+        let mirror = Mirror(reflecting: systemInfo.machine)
+        return toString(from: mirror)
+    }
+}
+
 extension BusWrapper where Base: UIPasteboard {
 
     public var oldText: String? {

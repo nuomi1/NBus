@@ -33,8 +33,12 @@ enum MediaSource {
         // https://giphy.com/gifs/bus-J1ZajKJKzD0PK
         let dataAsset = NSDataAsset(name: "giphy-J1ZajKJKzD0PK")!
         let data = dataAsset.data
+        let thumbnail = UIImage(data: data)?.jpegData(compressionQuality: 0.2)
 
-        return Messages.image(data: data)
+        return Messages.image(
+            data: data,
+            thumbnail: thumbnail
+        )
     }()
 
     static let audio: MessageType = {
@@ -86,12 +90,12 @@ enum MediaSource {
         let dataAsset = NSDataAsset(name: "giphy-J1ZajKJKzD0PK")!
         let data = dataAsset.data
 
-        let title = "J1ZajKJKzD0PK"
+        let fileName = "J1ZajKJKzD0PK"
 
         return Messages.file(
             data: data,
             fileExtension: "gif",
-            title: title
+            fileName: fileName
         )
     }()
 
