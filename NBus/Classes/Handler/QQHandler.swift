@@ -380,9 +380,9 @@ extension QQHandler: OauthHandlerType {
         pasteBoardItems["scope"] = "get_user_info"
         pasteBoardItems["sdkp"] = "i"
         pasteBoardItems["sdkv"] = sdkVersion
-        pasteBoardItems["status_machine"] = UIDevice.current.model
-        pasteBoardItems["status_os"] = UIDevice.current.systemVersion
-        pasteBoardItems["status_version"] = UIDevice.current.systemVersion
+        pasteBoardItems["status_machine"] = statusMachine
+        pasteBoardItems["status_os"] = statusOS
+        pasteBoardItems["status_version"] = statusVersion
 
         let pbItems = pasteBoardItems.compactMapValues { $0 }
         let pbData = NSKeyedArchiver.archivedData(withRootObject: pbItems)
@@ -418,6 +418,18 @@ extension QQHandler: OauthHandlerType {
                 completionHandler(.failure(.unknown))
             }
         }
+    }
+
+    private var statusMachine: String {
+        UIDevice.current.bus.machine
+    }
+
+    private var statusOS: String {
+        UIDevice.current.systemVersion
+    }
+
+    private var statusVersion: String {
+        "\(ProcessInfo.processInfo.operatingSystemVersion.majorVersion)"
     }
 }
 
