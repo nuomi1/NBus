@@ -8,6 +8,8 @@
 
 import Foundation
 
+// swiftlint:disable file_length
+
 public class QQHandler {
 
     public let endpoints: [Endpoint] = [
@@ -42,6 +44,8 @@ public class QQHandler {
 }
 
 extension QQHandler: ShareHandlerType {
+
+    // swiftlint:disable cyclomatic_complexity function_body_length
 
     public func share(
         message: MessageType,
@@ -247,6 +251,8 @@ extension QQHandler: ShareHandlerType {
         }
     }
 
+    // swiftlint:enable cyclomatic_complexity function_body_length
+
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
         case Endpoints.QQ.friend:
@@ -347,6 +353,8 @@ extension QQHandler: ShareHandlerType {
 
 extension QQHandler: OauthHandlerType {
 
+    // swiftlint:disable function_body_length
+
     public func oauth(
         options: [Bus.OauthOptionKey: Any],
         completionHandler: @escaping Bus.OauthCompletionHandler
@@ -419,6 +427,8 @@ extension QQHandler: OauthHandlerType {
             }
         }
     }
+
+    // swiftlint:enable function_body_length
 
     private var statusMachine: String {
         UIDevice.current.bus.machine
