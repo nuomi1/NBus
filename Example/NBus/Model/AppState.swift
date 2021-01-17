@@ -49,6 +49,24 @@ extension AppState.PlatformItem.Category: CustomStringConvertible {
     }
 }
 
+extension AppState.PlatformItem.Category {
+
+    mutating func toggle() {
+        switch self {
+        case .bus:
+            self = .sdk
+        case .sdk:
+            self = .bus
+        }
+    }
+
+    func toggled() -> Self {
+        var copy = self
+        copy.toggle()
+        return copy
+    }
+}
+
 extension AppState {
 
     func setup() {

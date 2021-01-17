@@ -118,14 +118,7 @@ extension PlatformViewController {
         handlerBarButtonItem.rx
             .tap
             .withLatestFrom(viewModel.currentCategory)
-            .map {
-                switch $0 {
-                case .bus:
-                    return .sdk
-                case .sdk:
-                    return .bus
-                }
-            }
+            .map { category in category.toggled() }
             .bind(to: viewModel.currentCategory)
             .disposed(by: disposeBag)
 
