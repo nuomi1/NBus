@@ -105,14 +105,7 @@ extension PlatformViewController {
             .disposed(by: disposeBag)
 
         viewModel.currentCategory
-            .map {
-                switch $0 {
-                case .bus:
-                    return "开源"
-                case .sdk:
-                    return "闭源"
-                }
-            }
+            .map { category in "\(category)" }
             .bind(to: handlerBarButtonItem.rx.title)
             .disposed(by: disposeBag)
 
