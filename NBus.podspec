@@ -127,6 +127,8 @@ Pod::Spec.new do |s|
     QQ_SEARCH="Lite/TencentOpenApi(Lite)_3"
     download_sdk ${QQ} ${QQ_VER} ${QQ_URL} ${QQ_SHA1} ${QQ_SEARCH}
 
+    sed -i "" "s/imoort/import/g" "QQ_SDK/TencentOpenAPI.framework/Headers/TencentOpenApiUmbrellaHeader.h"
+
     WECHAT="Wechat"
     WECHAT_VER="1.8.7.1"
     WECHAT_URL="https://res.wx.qq.com/op_res/DHI055JVxYur-5c7ss5McQZj2Y9KZQlp24xwD7FYnF88x8LA8rWCzSfdStN5tiCD"
