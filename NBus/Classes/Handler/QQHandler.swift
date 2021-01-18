@@ -473,13 +473,8 @@ extension QQHandler: OpenUserActivityHandlerType {
 extension QQHandler {
 
     private func handleSignToken(with components: URLComponents) {
-        let decoder = JSONDecoder()
-        decoder.dataDecodingStrategy = .base64
-
         guard
-            let item = components.queryItems?.first(where: { $0.name == "appsign_extrainfo" }),
-            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
-            let infos = try? decoder.decode([String: String].self, from: itemData),
+            let infos = getSignTokenInfos(from: components) ?? getSignTokenInfos(from: .general),
             let appSignRedirect = infos["appsign_redirect"],
             let appSignToken = infos["appsign_token"],
             var components = URLComponents(string: appSignRedirect)
@@ -513,6 +508,41 @@ extension QQHandler {
                 self?.shareCompletionHandler?(.failure(.unknown))
             }
         }
+    }
+
+    private func getSignTokenInfos(from components: URLComponents) -> [String: String]? {
+        let decoder = JSONDecoder()
+        decoder.dataDecodingStrategy = .base64
+
+        guard
+            let item = components.queryItems?.first(where: { $0.name == "appsign_extrainfo" }),
+            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
+            let infos = try? decoder.decode([String: String].self, from: itemData)
+        else {
+            return nil
+        }
+
+        return infos
+    }
+
+    private func getSignTokenInfos(from pasteboard: UIPasteboard) -> [String: String]? {
+        guard
+            let itemData = pasteboard.data(forPasteboardType: "com.tencent.\(appID)"),
+            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+        else {
+            return nil
+        }
+
+        if let pbItems = infos["appsign_redirect_pasteboard"] {
+            let pbData = NSKeyedArchiver.archivedData(withRootObject: pbItems)
+
+            UIPasteboard.general.setData(
+                pbData,
+                forPasteboardType: "com.tencent.mqq.api.apiLargeData"
+            )
+        }
+
+        return infos.compactMapValues { $0 as? String }
     }
 
     private func handleActionInfo(with components: URLComponents) {
