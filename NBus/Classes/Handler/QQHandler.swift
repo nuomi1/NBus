@@ -239,11 +239,6 @@ extension QQHandler: ShareHandlerType {
             return
         }
 
-        guard UIApplication.shared.canOpenURL(url) else {
-            completionHandler(.failure(.unknown))
-            return
-        }
-
         UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
             if !result {
                 completionHandler(.failure(.unknown))
@@ -416,11 +411,6 @@ extension QQHandler: OauthHandlerType {
             return
         }
 
-        guard UIApplication.shared.canOpenURL(url) else {
-            completionHandler(.failure(.unknown))
-            return
-        }
-
         UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
             if !result {
                 completionHandler(.failure(.unknown))
@@ -515,11 +505,6 @@ extension QQHandler {
 
         guard let url = components.url else {
             shareCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        guard UIApplication.shared.canOpenURL(url) else {
-            shareCompletionHandler?(.failure(.unknown))
             return
         }
 
