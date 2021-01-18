@@ -21,14 +21,13 @@ public protocol BusCompatible {
 
     associatedtype BusBase
 
-    var bus: BusWrapper<BusBase> { get set }
+    var bus: BusWrapper<BusBase> { get }
 }
 
 extension BusCompatible {
 
     public var bus: BusWrapper<Self> {
-        get { BusWrapper(self) }
-        set {}
+        BusWrapper(self)
     }
 }
 

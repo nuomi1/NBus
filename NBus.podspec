@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec "Core" do |ss|
-    ss.source_files = Dir.glob("NBus/Classes/Core/**/*.swift")
+    ss.source_files = ["NBus/Classes/Core/**/*.swift"]
   end
 
   s.subspec "QQSDKHandler" do |ss|
@@ -64,31 +64,30 @@ Pod::Spec.new do |s|
   end
 
   s.subspec "QQSDK" do |ss|
-    ss.vendored_frameworks = Dir.glob("NBus/Vendor/QQ_SDK/**/*.framework")
+    ss.vendored_frameworks = ["NBus/Vendor/QQ_SDK/**/*.framework"]
     ss.frameworks = ["SystemConfiguration", "WebKit"]
 
-    ss.source_files = Dir.glob("NBus/Vendor/QQ_SDK/**/*.h")
-      .reject { |name| name.include?("TencentOpenApiUmbrellaHeader.h") }
+    ss.source_files = ["NBus/Vendor/QQ_SDK/**/*.h"]
 
-    ss.resources = Dir.glob("NBus/Vendor/QQ_SDK/**/*.bundle")
+    ss.resources = ["NBus/Vendor/QQ_SDK/**/*.bundle"]
   end
 
   s.subspec "WechatSDK" do |ss|
-    ss.vendored_libraries = Dir.glob("NBus/Vendor/Wechat_SDK/**/*.a")
+    ss.vendored_libraries = ["NBus/Vendor/Wechat_SDK/**/*.a"]
     ss.frameworks = ["WebKit"]
     ss.libraries = ["c++"]
 
-    ss.source_files = Dir.glob("NBus/Vendor/Wechat_SDK/**/*.h")
+    ss.source_files = ["NBus/Vendor/Wechat_SDK/**/*.h"]
 
     ss.pod_target_xcconfig = { "OTHER_LDFLAGS" => "-ObjC -all_load" }
   end
 
   s.subspec "WeiboSDK" do |ss|
-    ss.vendored_libraries = Dir.glob("NBus/Vendor/Weibo_SDK/**/*.a")
+    ss.vendored_libraries = ["NBus/Vendor/Weibo_SDK/**/*.a"]
 
-    ss.source_files = Dir.glob("NBus/Vendor/Weibo_SDK/**/*.h")
+    ss.source_files = ["NBus/Vendor/Weibo_SDK/**/*.h"]
 
-    ss.resources = Dir.glob("NBus/Vendor/Weibo_SDK/**/*.bundle")
+    ss.resources = ["NBus/Vendor/Weibo_SDK/**/*.bundle"]
   end
 
   s.prepare_command = <<-CMD
@@ -127,6 +126,8 @@ Pod::Spec.new do |s|
     QQ_SHA1="15976ed9b90cd340818fe3ae3b1e266c67cf02d9"
     QQ_SEARCH="Lite/TencentOpenApi(Lite)_3"
     download_sdk ${QQ} ${QQ_VER} ${QQ_URL} ${QQ_SHA1} ${QQ_SEARCH}
+
+    sed -i "" "s/imoort/import/g" "QQ_SDK/TencentOpenAPI.framework/Headers/TencentOpenApiUmbrellaHeader.h"
 
     WECHAT="Wechat"
     WECHAT_VER="1.8.7.1"
