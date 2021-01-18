@@ -511,18 +511,7 @@ extension QQHandler {
     }
 
     private func getSignTokenInfos(from components: URLComponents) -> [String: String]? {
-        let decoder = JSONDecoder()
-        decoder.dataDecodingStrategy = .base64
-
-        guard
-            let item = components.queryItems?.first(where: { $0.name == "appsign_extrainfo" }),
-            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
-            let infos = try? decoder.decode([String: String].self, from: itemData)
-        else {
-            return nil
-        }
-
-        return infos
+        getJSON(from: components, with: "appsign_extrainfo")
     }
 
     private func getSignTokenInfos(from pasteboard: UIPasteboard) -> [String: String]? {
@@ -545,14 +534,24 @@ extension QQHandler {
         return infos.compactMapValues { $0 as? String }
     }
 
-    private func handleActionInfo(with components: URLComponents) {
+    private func getJSON(from components: URLComponents, with name: String) -> [String: String]? {
         let decoder = JSONDecoder()
         decoder.dataDecodingStrategy = .base64
 
         guard
-            let item = components.queryItems?.first(where: { $0.name == "sdkactioninfo" }),
+            let item = components.queryItems?.first(where: { $0.name == name }),
             let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
             let infos = try? decoder.decode([String: String].self, from: itemData)
+        else {
+            return nil
+        }
+
+        return infos
+    }
+
+    private func handleActionInfo(with components: URLComponents) {
+        guard
+            let infos = getJSON(from: components, with: "sdkactioninfo")
         else {
             assertionFailure()
             return
