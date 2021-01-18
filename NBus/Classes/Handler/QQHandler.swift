@@ -549,6 +549,18 @@ extension QQHandler {
         return infos
     }
 
+    private func getPlist(from components: URLComponents, with name: String) -> [String: Any]? {
+        guard
+            let item = components.queryItems?.first(where: { $0.name == name }),
+            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
+            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+        else {
+            return nil
+        }
+
+        return infos
+    }
+
     private func handleActionInfo(with components: URLComponents) {
         guard
             let infos = getJSON(from: components, with: "sdkactioninfo")
@@ -601,9 +613,7 @@ extension QQHandler {
 
     private func handleOauth(with components: URLComponents) {
         guard
-            let item = components.queryItems?.first(where: { $0.name == "pasteboard" }),
-            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
-            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+            let infos = getPlist(from: components, with: "pasteboard")
         else {
             assertionFailure()
             return
