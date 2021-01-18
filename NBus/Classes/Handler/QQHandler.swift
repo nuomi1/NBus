@@ -174,7 +174,7 @@ extension QQHandler: ShareHandlerType {
         case let message as FileMessage:
             urlItems["file_type"] = "localFile"
 
-            if let fileName = message.fullName?.bus.base64EncodedString {
+            if let fileName = message.fullName {
                 urlItems["fileName"] = fileName
             }
 
