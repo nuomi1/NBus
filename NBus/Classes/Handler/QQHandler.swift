@@ -191,6 +191,7 @@ extension QQHandler: ShareHandlerType {
 
             urlItems["file_type"] = "news"
 
+            urlItems["title"] = url
             urlItems["url"] = url
 
             if let thumbnail = message.thumbnail {
@@ -222,6 +223,8 @@ extension QQHandler: ShareHandlerType {
 
         if pbItems.contains(where: { $0.key == "file_data" }) {
             urlItems["objectlocation"] = "pasteboard"
+        } else if message is MiniProgramMessage {
+            urlItems["objectlocation"] = "url"
         }
 
         var components = URLComponents()
