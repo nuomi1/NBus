@@ -49,6 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
+        UIPasteboard.general.items = UIPasteboard.general.items
         logger.debug("\(url)")
         return Bus.shared.openURL(url)
     }
@@ -58,6 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
+        UIPasteboard.general.items = UIPasteboard.general.items
         logger.debug("\(userActivity.webpageURL!)")
         return Bus.shared.openUserActivity(userActivity)
     }
@@ -128,7 +130,6 @@ extension AppDelegate {
 
     private func observeSDK() {
         pasteboardItems()
-            .delay(.seconds(1), scheduler: MainScheduler.instance)
             .bind(onNext: { items in
                 logger.debug("\(items)")
             })

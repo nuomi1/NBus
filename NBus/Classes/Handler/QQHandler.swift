@@ -118,6 +118,7 @@ extension QQHandler: ShareHandlerType {
             guard
                 let text = message.text.bus.base64EncodedString
             else {
+                assertionFailure()
                 completionHandler(.failure(.invalidParameter))
                 return
             }
@@ -135,6 +136,7 @@ extension QQHandler: ShareHandlerType {
             guard
                 let url = message.link.absoluteString.bus.base64EncodedString
             else {
+                assertionFailure()
                 completionHandler(.failure(.invalidParameter))
                 return
             }
@@ -151,6 +153,7 @@ extension QQHandler: ShareHandlerType {
             guard
                 let url = message.link.absoluteString.bus.base64EncodedString
             else {
+                assertionFailure()
                 completionHandler(.failure(.invalidParameter))
                 return
             }
@@ -163,6 +166,7 @@ extension QQHandler: ShareHandlerType {
             guard
                 let url = message.link.absoluteString.bus.base64EncodedString
             else {
+                assertionFailure()
                 completionHandler(.failure(.invalidParameter))
                 return
             }
@@ -174,7 +178,7 @@ extension QQHandler: ShareHandlerType {
         case let message as FileMessage:
             urlItems["file_type"] = "localFile"
 
-            if let fileName = message.fullName?.bus.base64EncodedString {
+            if let fileName = message.fullName {
                 urlItems["fileName"] = fileName
             }
 
@@ -185,12 +189,14 @@ extension QQHandler: ShareHandlerType {
                 let path = message.path.bus.base64EncodedString,
                 let url = message.link.absoluteString.bus.base64EncodedString
             else {
+                assertionFailure()
                 completionHandler(.failure(.invalidParameter))
                 return
             }
 
             urlItems["file_type"] = "news"
 
+            urlItems["title"] = url
             urlItems["url"] = url
 
             if let thumbnail = message.thumbnail {
@@ -222,6 +228,8 @@ extension QQHandler: ShareHandlerType {
 
         if pbItems.contains(where: { $0.key == "file_data" }) {
             urlItems["objectlocation"] = "pasteboard"
+        } else if message is MiniProgramMessage {
+            urlItems["objectlocation"] = "url"
         }
 
         var components = URLComponents()
@@ -235,12 +243,8 @@ extension QQHandler: ShareHandlerType {
         }
 
         guard let url = components.url else {
+            assertionFailure()
             completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        guard UIApplication.shared.canOpenURL(url) else {
-            completionHandler(.failure(.unknown))
             return
         }
 
@@ -412,12 +416,8 @@ extension QQHandler: OauthHandlerType {
         }
 
         guard let url = components.url else {
+            assertionFailure()
             completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        guard UIApplication.shared.canOpenURL(url) else {
-            completionHandler(.failure(.unknown))
             return
         }
 
@@ -483,18 +483,14 @@ extension QQHandler: OpenUserActivityHandlerType {
 extension QQHandler {
 
     private func handleSignToken(with components: URLComponents) {
-        let decoder = JSONDecoder()
-        decoder.dataDecodingStrategy = .base64
-
         guard
-            let item = components.queryItems?.first(where: { $0.name == "appsign_extrainfo" }),
-            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
-            let infos = try? decoder.decode([String: String].self, from: itemData),
+            let infos = getSignTokenInfos(from: components) ?? getSignTokenInfos(from: .general),
             let appSignRedirect = infos["appsign_redirect"],
             let appSignToken = infos["appsign_token"],
             var components = URLComponents(string: appSignRedirect)
         else {
             assertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
 
@@ -514,12 +510,8 @@ extension QQHandler {
         })
 
         guard let url = components.url else {
+            assertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        guard UIApplication.shared.canOpenURL(url) else {
-            shareCompletionHandler?(.failure(.unknown))
             return
         }
 
@@ -530,14 +522,60 @@ extension QQHandler {
         }
     }
 
-    private func handleActionInfo(with components: URLComponents) {
+    private func getSignTokenInfos(from components: URLComponents) -> [String: String]? {
+        getJSON(from: components, with: "appsign_extrainfo")
+    }
+
+    private func getSignTokenInfos(from pasteboard: UIPasteboard) -> [String: String]? {
+        guard
+            let itemData = pasteboard.data(forPasteboardType: "com.tencent.\(appID)"),
+            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+        else {
+            return nil
+        }
+
+        if let pbItems = infos["appsign_redirect_pasteboard"] {
+            let pbData = NSKeyedArchiver.archivedData(withRootObject: pbItems)
+
+            UIPasteboard.general.setData(
+                pbData,
+                forPasteboardType: "com.tencent.mqq.api.apiLargeData"
+            )
+        }
+
+        return infos.compactMapValues { $0 as? String }
+    }
+
+    private func getJSON(from components: URLComponents, with name: String) -> [String: String]? {
         let decoder = JSONDecoder()
         decoder.dataDecodingStrategy = .base64
 
         guard
-            let item = components.queryItems?.first(where: { $0.name == "sdkactioninfo" }),
+            let item = components.queryItems?.first(where: { $0.name == name }),
             let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
             let infos = try? decoder.decode([String: String].self, from: itemData)
+        else {
+            return nil
+        }
+
+        return infos
+    }
+
+    private func getPlist(from components: URLComponents, with name: String) -> [String: Any]? {
+        guard
+            let item = components.queryItems?.first(where: { $0.name == name }),
+            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
+            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+        else {
+            return nil
+        }
+
+        return infos
+    }
+
+    private func handleActionInfo(with components: URLComponents) {
+        guard
+            let infos = getJSON(from: components, with: "sdkactioninfo")
         else {
             assertionFailure()
             return
@@ -587,9 +625,7 @@ extension QQHandler {
 
     private func handleOauth(with components: URLComponents) {
         guard
-            let item = components.queryItems?.first(where: { $0.name == "pasteboard" }),
-            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
-            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+            let infos = getPlist(from: components, with: "pasteboard")
         else {
             assertionFailure()
             return
