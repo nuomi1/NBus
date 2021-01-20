@@ -490,6 +490,7 @@ extension QQHandler {
             var components = URLComponents(string: appSignRedirect)
         else {
             assertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
 
