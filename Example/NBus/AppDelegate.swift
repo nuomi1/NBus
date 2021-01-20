@@ -130,7 +130,6 @@ extension AppDelegate {
 
     private func observeSDK() {
         pasteboardItems()
-            .delay(.seconds(1), scheduler: MainScheduler.instance)
             .bind(onNext: { items in
                 logger.debug("\(items)")
             })
