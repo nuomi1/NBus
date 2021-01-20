@@ -37,6 +37,36 @@ extension AppState.PlatformItem {
     }
 }
 
+extension AppState.PlatformItem.Category: CustomStringConvertible {
+
+    var description: String {
+        switch self {
+        case .bus:
+            return "开源"
+        case .sdk:
+            return "官方"
+        }
+    }
+}
+
+extension AppState.PlatformItem.Category {
+
+    mutating func toggle() {
+        switch self {
+        case .bus:
+            self = .sdk
+        case .sdk:
+            self = .bus
+        }
+    }
+
+    func toggled() -> Self {
+        var copy = self
+        copy.toggle()
+        return copy
+    }
+}
+
 extension AppState {
 
     func setup() {

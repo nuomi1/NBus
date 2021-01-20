@@ -10,6 +10,10 @@ identifier_name:
   excluded:
     - qq
 
+included:
+  - Example
+  - NBus
+
 line_length:
   ignores_comments: true
   ignores_interpolated_strings: true
