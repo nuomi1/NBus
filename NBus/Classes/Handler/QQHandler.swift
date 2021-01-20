@@ -118,6 +118,7 @@ extension QQHandler: ShareHandlerType {
             guard
                 let text = message.text.bus.base64EncodedString
             else {
+                assertionFailure()
                 completionHandler(.failure(.invalidParameter))
                 return
             }
@@ -135,6 +136,7 @@ extension QQHandler: ShareHandlerType {
             guard
                 let url = message.link.absoluteString.bus.base64EncodedString
             else {
+                assertionFailure()
                 completionHandler(.failure(.invalidParameter))
                 return
             }
@@ -151,6 +153,7 @@ extension QQHandler: ShareHandlerType {
             guard
                 let url = message.link.absoluteString.bus.base64EncodedString
             else {
+                assertionFailure()
                 completionHandler(.failure(.invalidParameter))
                 return
             }
@@ -163,6 +166,7 @@ extension QQHandler: ShareHandlerType {
             guard
                 let url = message.link.absoluteString.bus.base64EncodedString
             else {
+                assertionFailure()
                 completionHandler(.failure(.invalidParameter))
                 return
             }
@@ -185,6 +189,7 @@ extension QQHandler: ShareHandlerType {
                 let path = message.path.bus.base64EncodedString,
                 let url = message.link.absoluteString.bus.base64EncodedString
             else {
+                assertionFailure()
                 completionHandler(.failure(.invalidParameter))
                 return
             }
@@ -238,6 +243,7 @@ extension QQHandler: ShareHandlerType {
         }
 
         guard let url = components.url else {
+            assertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -410,6 +416,7 @@ extension QQHandler: OauthHandlerType {
         }
 
         guard let url = components.url else {
+            assertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -502,6 +509,7 @@ extension QQHandler {
         })
 
         guard let url = components.url else {
+            assertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
