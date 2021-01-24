@@ -135,10 +135,17 @@ extension AppState {
             logger.debug("\(message)", file: file, function: function, line: line)
         }
 
+        let weiboHandler = WeiboHandler(
+            appID: AppState.getAppID(for: Platforms.weibo)!,
+            universalLink: AppState.getUniversalLink(for: Platforms.weibo)!,
+            redirectLink: AppState.getRedirectLink(for: Platforms.weibo)!
+        )
+
         let weiboItem = AppState.PlatformItem(
             platform: Platforms.weibo,
             category: .sdk,
             handlers: [
+                .bus: weiboHandler,
                 .sdk: weiboSDKHandler,
             ],
             viewController: { PlatformViewController() }

@@ -78,10 +78,15 @@ enum MediaSource {
         let title = "iPhone"
         let description = "Apple"
 
+        let dataAsset = NSDataAsset(name: "giphy-J1ZajKJKzD0PK")!
+        let data = dataAsset.data
+        let thumbnail = UIImage(data: data)?.jpegData(compressionQuality: 0.2)
+
         return Messages.webPage(
             link: url,
             title: title,
-            description: description
+            description: description,
+            thumbnail: thumbnail
         )
     }()
 

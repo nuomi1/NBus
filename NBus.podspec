@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "NBus"
-  s.version = "0.8.1"
+  s.version = "0.9.0"
   s.summary = "A short description of NBus."
 
   s.homepage = "https://github.com/nuomi1/NBus"
@@ -16,6 +16,7 @@ Pod::Spec.new do |s|
 
   s.subspec "BusHandlers" do |ss|
     ss.dependency "NBus/QQHandler"
+    ss.dependency "NBus/WeiboHandler"
     ss.dependency "NBus/SystemHandler"
   end
 
@@ -55,6 +56,12 @@ Pod::Spec.new do |s|
     ss.dependency "NBus/WeiboSDK"
 
     ss.source_files = ["NBus/Classes/Handler/WeiboSDKHandler.swift"]
+  end
+
+  s.subspec "WeiboHandler" do |ss|
+    ss.dependency "NBus/Core"
+
+    ss.source_files = ["NBus/Classes/Handler/WeiboHandler.swift"]
   end
 
   s.subspec "SystemHandler" do |ss|

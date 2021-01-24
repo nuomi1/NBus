@@ -150,5 +150,10 @@ extension Bus {
 
             static let openID = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qq.openID")
         }
+
+        enum Weibo {
+
+            public static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.weibo.accessToken")
+        }
     }
 }
