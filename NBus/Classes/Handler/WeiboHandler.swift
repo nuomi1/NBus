@@ -94,21 +94,24 @@ extension WeiboHandler: ShareHandlerType {
             messageItems["mediaObject"] = webPageItems(
                 link: message.link,
                 title: message.title,
-                description: message.description
+                description: message.description,
+                thumbnail: message.thumbnail
             )
 
         case let message as VideoMessage:
             messageItems["mediaObject"] = webPageItems(
                 link: message.link,
                 title: message.title,
-                description: message.description
+                description: message.description,
+                thumbnail: message.thumbnail
             )
 
         case let message as WebPageMessage:
             messageItems["mediaObject"] = webPageItems(
                 link: message.link,
                 title: message.title,
-                description: message.description
+                description: message.description,
+                thumbnail: message.thumbnail
             )
 
         default:
@@ -155,13 +158,15 @@ extension WeiboHandler: ShareHandlerType {
     private func webPageItems(
         link: URL,
         title: String?,
-        description: String?
+        description: String?,
+        thumbnail: Data?
     ) -> [String: Any] {
         var webPageItems: [String: Any] = [:]
 
         webPageItems["__class"] = "WBWebpageObject"
         webPageItems["description"] = description
         webPageItems["objectID"] = UUID().uuidString
+        webPageItems["thumbnailData"] = thumbnail
         webPageItems["title"] = title
         webPageItems["webpageUrl"] = link.absoluteString
 
