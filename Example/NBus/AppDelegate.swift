@@ -136,11 +136,19 @@ extension AppDelegate {
     }
 
     private func openURL() -> Observable<URL> {
-        UIApplication.shared.rx
+        let oldURL = UIApplication.shared.rx
+            .methodInvoked(#selector(UIApplication.openURL(_:)))
+            .compactMap { args in
+                args[0] as? URL
+            }
+
+        let newURL = UIApplication.shared.rx
             .methodInvoked(#selector(UIApplication.open(_:options:completionHandler:)))
             .compactMap { args in
                 args[0] as? URL
             }
+
+        return Observable.merge([oldURL, newURL])
     }
 }
 
