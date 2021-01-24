@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         clearStorage()
 
-//        observeQQ()
+//        observeSDK()
 
         AppState.shared.setup()
 
@@ -154,7 +154,7 @@ extension AppDelegate {
 
 extension AppDelegate {
 
-    private func observeSDK() {
+    private func observeSystem() {
         pasteboardItems()
             .bind(onNext: { items in
                 logger.debug("\(items)")
@@ -221,10 +221,10 @@ extension AppDelegate {
 
 extension AppDelegate {
 
-    private func observeQQ() {
+    private func observeSDK() {
 //        SwiftTrace.traceClasses(matchingPattern: "^QQ")
 //        SwiftTrace.traceClasses(matchingPattern: "^Tencent")
 
-        observeSDK()
+        observeSystem()
     }
 }
