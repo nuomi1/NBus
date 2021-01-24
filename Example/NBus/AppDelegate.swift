@@ -225,6 +225,9 @@ extension AppDelegate {
 //        SwiftTrace.traceClasses(matchingPattern: "^QQ")
 //        SwiftTrace.traceClasses(matchingPattern: "^Tencent")
 
+//        SwiftTrace.traceClasses(matchingPattern: "^WB")
+//        SwiftTrace.traceClasses(matchingPattern: "^Weibo")
+
         observeSystem()
     }
 }
