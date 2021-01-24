@@ -67,47 +67,65 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate {
 
+    // swiftlint:disable function_body_length
+
     private func pasteboardItems() -> Observable<[[String]]> {
         NotificationCenter.default.rx
             .notification(UIPasteboard.changedNotification)
             .map { _ -> [[String]] in
-                UIPasteboard.general.items.map { item -> [String] in
+                let items = UIPasteboard.general.items
+
+                return items.enumerated().map { (index, item) -> [String] in
                     item.map { key, value -> String in
+                        let identity: String
+                        let index = "(\(index + 1)/\(items.count))"
+                        let content: String
+
                         switch value {
                         case let data as Data:
                             if
+                                let string = String(
+                                    data: data,
+                                    encoding: .utf8
+                                ) {
+                                identity = "[Data-String]"
+                                content = string
+                            } else if
                                 let object = NSKeyedUnarchiver.unarchiveObject(
                                     with: data
                                 ) {
-                                return "[Data-Keyed] \(key), \(object)"
+                                identity = "[Data-Keyed]"
+                                content = "\(object)"
                             } else if
                                 let plist = try? PropertyListSerialization.propertyList(
                                     from: data,
                                     options: [],
                                     format: nil
                                 ) {
-                                return "[Data-Plist] \(key), \(plist)"
-                            } else if
-                                let string = String(
-                                    data: data,
-                                    encoding: .utf8
-                                ) {
-                                return "[Data-String] \(key), \(string)"
+                                identity = "[Data-Plist]"
+                                content = "\(plist)"
                             } else {
                                 assertionFailure()
-                                return "\(key), \(value)"
+                                identity = "[Data-Unknown]"
+                                content = "\(value)"
                             }
                         case let string as String:
-                            return "[String] \(key), \(string)"
+                            identity = "[String]"
+                            content = "\(string)"
                         default:
                             assertionFailure()
-                            return "\(key), \(value)"
+                            identity = "[Unknown]"
+                            content = "\(value)"
                         }
+
+                        return "\(identity)\(index), \(key), \(content)"
                     }
                 }
             }
             .distinctUntilChanged()
     }
+
+    // swiftlint:enable function_body_length
 
     private func canOpenURL() -> Observable<URL> {
         UIApplication.shared.rx
