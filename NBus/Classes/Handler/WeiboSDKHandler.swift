@@ -170,7 +170,7 @@ extension WeiboSDKHandler {
 
     public enum OauthInfoKeys {
 
-        public static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.weiboSDKHandler.accessToken")
+        public static let accessToken = Bus.OauthInfoKeys.Weibo.accessToken
     }
 }
 
