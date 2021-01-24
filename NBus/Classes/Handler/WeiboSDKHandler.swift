@@ -88,16 +88,29 @@ extension WeiboSDKHandler: ShareHandlerType {
 
             request.message.imageObject = imageObject
 
+        case let message as AudioMessage:
+            request.message.mediaObject = wbWebpageObject(
+                link: message.link,
+                title: message.title,
+                description: message.description,
+                thumbnail: message.thumbnail
+            )
+
+        case let message as VideoMessage:
+            request.message.mediaObject = wbWebpageObject(
+                link: message.link,
+                title: message.title,
+                description: message.description,
+                thumbnail: message.thumbnail
+            )
+
         case let message as WebPageMessage:
-            let webPageObject = WBWebpageObject()
-            webPageObject.webpageUrl = message.link.absoluteString
-            webPageObject.title = message.title
-            webPageObject.description = message.description
-            webPageObject.thumbnailData = message.thumbnail
-
-            webPageObject.objectID = UUID().uuidString
-
-            request.message.mediaObject = webPageObject
+            request.message.mediaObject = wbWebpageObject(
+                link: message.link,
+                title: message.title,
+                description: message.description,
+                thumbnail: message.thumbnail
+            )
 
         default:
             assertionFailure()
@@ -116,8 +129,6 @@ extension WeiboSDKHandler: ShareHandlerType {
         switch endpoint {
         case Endpoints.Weibo.timeline:
             return ![
-                Messages.audio,
-                Messages.video,
                 Messages.file,
                 Messages.miniProgram,
             ].contains(message)
@@ -125,6 +136,23 @@ extension WeiboSDKHandler: ShareHandlerType {
             assertionFailure()
             return false
         }
+    }
+
+    private func wbWebpageObject(
+        link: URL,
+        title: String?,
+        description: String?,
+        thumbnail: Data?
+    ) -> WBWebpageObject {
+        let webPageObject = WBWebpageObject()
+        webPageObject.webpageUrl = link.absoluteString
+        webPageObject.title = title
+        webPageObject.description = description
+        webPageObject.thumbnailData = thumbnail
+
+        webPageObject.objectID = UUID().uuidString
+
+        return webPageObject
     }
 }
 
