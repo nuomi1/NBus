@@ -313,6 +313,25 @@ extension WeiboHandler {
     }
 }
 
+extension WeiboHandler: OpenURLHandlerType {
+
+    public func openURL(_ url: URL) {
+        guard
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        else {
+            assertionFailure()
+            return
+        }
+
+        switch components.host {
+        case "response" where components.path == "":
+            handleGeneral()
+        default:
+            assertionFailure()
+        }
+    }
+}
+
 extension WeiboHandler: OpenUserActivityHandlerType {
 
     public func openUserActivity(_ userActivity: NSUserActivity) {
