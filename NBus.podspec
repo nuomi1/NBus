@@ -16,6 +16,7 @@ Pod::Spec.new do |s|
 
   s.subspec "BusHandlers" do |ss|
     ss.dependency "NBus/QQHandler"
+    ss.dependency "NBus/WechatHandler"
     ss.dependency "NBus/WeiboHandler"
     ss.dependency "NBus/SystemHandler"
   end
@@ -49,6 +50,12 @@ Pod::Spec.new do |s|
     ss.dependency "NBus/WechatSDK"
 
     ss.source_files = ["NBus/Classes/Handler/WechatSDKHandler.swift"]
+  end
+
+  s.subspec "WechatHandler" do |ss|
+    ss.dependency "NBus/Core"
+
+    ss.source_files = ["NBus/Classes/Handler/WechatHandler.swift"]
   end
 
   s.subspec "WeiboSDKHandler" do |ss|
