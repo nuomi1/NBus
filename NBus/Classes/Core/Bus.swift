@@ -155,5 +155,10 @@ extension Bus {
 
             public static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.weibo.accessToken")
         }
+
+        enum Wechat {
+
+            public static let code = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.wechat.code")
+        }
     }
 }
