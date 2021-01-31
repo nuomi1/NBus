@@ -79,7 +79,7 @@ extension WechatHandler: ShareHandlerType {
         var pasteBoardItems: [String: Any] = [:]
 
         pasteBoardItems["command"] = "1010"
-        pasteBoardItems["isAutoResend"] = "0"
+        pasteBoardItems["isAutoResend"] = false
         pasteBoardItems["result"] = "1"
         pasteBoardItems["returnFromApp"] = "0"
         pasteBoardItems["scene"] = scene
@@ -192,7 +192,7 @@ extension WechatHandler: ShareHandlerType {
         return "\(result)"
     }
 
-    private func miniProgramType(_ miniProgramType: MiniProgramMessage.MiniProgramType) -> String {
+    private func miniProgramType(_ miniProgramType: MiniProgramMessage.MiniProgramType) -> Int {
         let result: Int
 
         switch miniProgramType {
@@ -204,7 +204,7 @@ extension WechatHandler: ShareHandlerType {
             result = 2 // WXMiniProgramTypePreview
         }
 
-        return "\(result)"
+        return result
     }
 }
 
