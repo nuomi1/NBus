@@ -40,7 +40,8 @@ extension BusWrapper where Base == String {
             _ = CC_SHA1(pointer.baseAddress, CC_LONG(data.count), &digest)
         }
 
-        return String(bytes: digest, encoding: .ascii)
+        let bytes = digest.map { String(format: "%02hhx", $0) }
+        return bytes.joined()
     }
 }
 
