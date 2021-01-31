@@ -261,6 +261,10 @@ extension WechatHandler {
     private var sdkVersion: String {
         "1.8.7.1"
     }
+
+    private var oldText: String? {
+        UIPasteboard.general.bus.oldText
+    }
 }
 
 extension WechatHandler {
@@ -273,6 +277,10 @@ extension WechatHandler {
         var pbItems: [String: Any] = [:]
 
         pbItems[appID] = pasteBoardItems
+
+        if let oldText = oldText {
+            pbItems["old_text"] = oldText
+        }
 
         guard
             let pbData = try? PropertyListSerialization.data(
