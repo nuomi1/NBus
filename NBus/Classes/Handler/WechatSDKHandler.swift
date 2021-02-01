@@ -241,7 +241,7 @@ extension WechatSDKHandler {
 
     public enum OauthInfoKeys {
 
-        public static let code = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.wechatSDKHandler.code")
+        public static let code = Bus.OauthInfoKeys.Wechat.code
     }
 }
 

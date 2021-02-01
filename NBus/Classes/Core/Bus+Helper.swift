@@ -6,6 +6,7 @@
 //  Copyright © 2020 nuomi1. All rights reserved.
 //
 
+import CommonCrypto
 import Foundation
 
 extension Dictionary: BusCompatible {}
@@ -29,6 +30,18 @@ extension BusWrapper where Base == String {
 
     var base64EncodedString: String? {
         base.data(using: .utf8)?.base64EncodedString()
+    }
+
+    var sha1: String? {
+        let data = Data(base.utf8)
+
+        var digest = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
+        data.withUnsafeBytes { pointer in
+            _ = CC_SHA1(pointer.baseAddress, CC_LONG(data.count), &digest)
+        }
+
+        let bytes = digest.map { String(format: "%02hhx", $0) }
+        return bytes.joined()
     }
 }
 

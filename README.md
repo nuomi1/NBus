@@ -33,6 +33,7 @@ nuomi1, nuomi1@qq.com
 - [NBus 之 QQHandler](https://blog.nuomi1.com/archives/2021/01/nbus-qqhandler.html)
 - [NBus 之 QQSDKHandler](https://blog.nuomi1.com/archives/2020/12/nbus-qqsdkhandler.html)
 - [NBus 之 SystemHandler](https://blog.nuomi1.com/archives/2020/12/nbus-systemhandler.html)
+- [NBus 之 WechatHandler](https://blog.nuomi1.com/archives/2021/01/nbus-wechathandler.html)
 - [NBus 之 WechatSDKHandler](https://blog.nuomi1.com/archives/2020/12/nbus-wechatsdkhandler.html)
 - [NBus 之 WeiboHandler](https://blog.nuomi1.com/archives/2021/01/nbus-weibohandler.html)
 - [NBus 之 WeiboSDKHandler](https://blog.nuomi1.com/archives/2020/12/nbus-weibosdkhandler.html)

@@ -124,11 +124,16 @@ enum MediaSource {
 
         let miniProgramID = AppState.getMiniProgramID(for: Platforms.wechat)!
 
+        let dataAsset = NSDataAsset(name: "giphy-J1ZajKJKzD0PK")!
+        let data = dataAsset.data
+        let thumbnail = UIImage(data: data)?.jpegData(compressionQuality: 0.2)
+
         return Messages.miniProgram(
             miniProgramID: miniProgramID,
             path: path,
             link: url,
-            miniProgramType: .release
+            miniProgramType: .release,
+            thumbnail: thumbnail
         )
     }()
 }

@@ -88,10 +88,16 @@ extension AppState {
             logger.debug("\(message)", file: file, function: function, line: line)
         }
 
+        let wechatHandler = WechatHandler(
+            appID: AppState.getAppID(for: Platforms.wechat)!,
+            universalLink: AppState.getUniversalLink(for: Platforms.wechat)!
+        )
+
         let wechatItem = AppState.PlatformItem(
             platform: Platforms.wechat,
             category: .sdk,
             handlers: [
+                .bus: wechatHandler,
                 .sdk: wechatSDKHandler,
             ],
             viewController: { PlatformViewController() }
