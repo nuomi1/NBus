@@ -199,6 +199,8 @@ extension AppDelegate {
         let pasteboard = UIPasteboard.general
 
         pasteboard.items = []
+
+        pasteboard.string = "NBus"
     }
 
     private func clearUserDefaults() {
