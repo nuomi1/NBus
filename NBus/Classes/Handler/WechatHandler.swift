@@ -265,21 +265,21 @@ extension WechatHandler: OauthHandlerType {
 
 extension WechatHandler {
 
-    private var identifier: String? {
-        Bundle.main.bus.identifier
-    }
-
     private var contextID: String? {
         let timestamp = Date().timeIntervalSince1970
         return "\(timestamp)".bus.sha1
     }
 
-    private var sdkVersion: String {
-        "1.8.7.1"
+    private var identifier: String? {
+        Bundle.main.bus.identifier
     }
 
     private var oldText: String? {
         UIPasteboard.general.bus.oldText
+    }
+
+    private var sdkVersion: String {
+        "1.8.7.1"
     }
 }
 
@@ -319,6 +319,9 @@ extension WechatHandler {
     private func setPasteboard(with data: Data, in pasteboard: UIPasteboard) {
         pasteboard.setData(data, forPasteboardType: "content")
     }
+}
+
+extension WechatHandler {
 
     private func getShareUniversalLink() -> URL? {
         guard
@@ -434,17 +437,6 @@ extension WechatHandler {
         }
     }
 
-    private func getPlist(from pasteboard: UIPasteboard) -> [String: Any]? {
-        guard
-            let itemData = pasteboard.data(forPasteboardType: "content"),
-            let infos = try? PropertyListSerialization.propertyList(from: itemData, format: nil) as? [String: Any]
-        else {
-            return nil
-        }
-
-        return infos[appID] as? [String: Any]
-    }
-
     private func handleGeneral() {
         guard let infos = getPlist(from: .general) else {
             assertionFailure()
@@ -512,6 +504,20 @@ extension WechatHandler {
         } else {
             oauthCompletionHandler?(.failure(.unknown))
         }
+    }
+}
+
+extension WechatHandler {
+
+    private func getPlist(from pasteboard: UIPasteboard) -> [String: Any]? {
+        guard
+            let itemData = pasteboard.data(forPasteboardType: "content"),
+            let infos = try? PropertyListSerialization.propertyList(from: itemData, format: nil) as? [String: Any]
+        else {
+            return nil
+        }
+
+        return infos[appID] as? [String: Any]
     }
 }
 

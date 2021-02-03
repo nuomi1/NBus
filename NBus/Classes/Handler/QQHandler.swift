@@ -283,34 +283,6 @@ extension QQHandler: ShareHandlerType {
         }
     }
 
-    private var appNumber: String {
-        appID.trimmingCharacters(in: .letters)
-    }
-
-    private var txID: String {
-        "QQ\(String(format: "%08llX", (appNumber as NSString).longLongValue))"
-    }
-
-    private var identifier: String? {
-        Bundle.main.bus.identifier
-    }
-
-    private var displayName: String? {
-        Bundle.main.bus.displayName
-    }
-
-    private var sdkShortVersion: String {
-        "3.5.1"
-    }
-
-    private var sdkVersion: String {
-        "3.5.1_lite"
-    }
-
-    private var oldText: String? {
-        UIPasteboard.general.bus.oldText
-    }
-
     private func cflag(_ endpoint: Endpoint, _ message: Message) -> String? {
         var flags: [Int] = []
 
@@ -335,21 +307,6 @@ extension QQHandler: ShareHandlerType {
         return "\(result)"
     }
 
-    private func miniProgramType(_ miniProgramType: MiniProgramMessage.MiniProgramType) -> String {
-        let result: Int
-
-        switch miniProgramType {
-        case .release:
-            result = 3 // online
-        case .test:
-            result = 1 // test
-        case .preview:
-            result = 4 // preview
-        }
-
-        return "\(result)"
-    }
-
     private func shareType(_ endpoint: Endpoint, _ message: Message) -> String? {
         switch endpoint {
         case Endpoints.QQ.friend:
@@ -363,6 +320,21 @@ extension QQHandler: ShareHandlerType {
         default:
             return nil
         }
+    }
+
+    private func miniProgramType(_ miniProgramType: MiniProgramMessage.MiniProgramType) -> String {
+        let result: Int
+
+        switch miniProgramType {
+        case .release:
+            result = 3 // online
+        case .test:
+            result = 1 // test
+        case .preview:
+            result = 4 // preview
+        }
+
+        return "\(result)"
     }
 }
 
@@ -440,6 +412,33 @@ extension QQHandler: OauthHandlerType {
     }
 
     // swiftlint:enable function_body_length
+}
+
+extension QQHandler {
+
+    private var appNumber: String {
+        appID.trimmingCharacters(in: .letters)
+    }
+
+    private var displayName: String? {
+        Bundle.main.bus.displayName
+    }
+
+    private var identifier: String? {
+        Bundle.main.bus.identifier
+    }
+
+    private var oldText: String? {
+        UIPasteboard.general.bus.oldText
+    }
+
+    private var sdkShortVersion: String {
+        "3.5.1"
+    }
+
+    private var sdkVersion: String {
+        "3.5.1_lite"
+    }
 
     private var statusMachine: String {
         UIDevice.current.bus.machine
@@ -451,6 +450,10 @@ extension QQHandler: OauthHandlerType {
 
     private var statusVersion: String {
         "\(ProcessInfo.processInfo.operatingSystemVersion.majorVersion)"
+    }
+
+    private var txID: String {
+        "QQ\(String(format: "%08llX", (appNumber as NSString).longLongValue))"
     }
 }
 
@@ -531,57 +534,6 @@ extension QQHandler {
                 self?.shareCompletionHandler?(.failure(.unknown))
             }
         }
-    }
-
-    private func getSignTokenInfos(from components: URLComponents) -> [String: String]? {
-        getJSON(from: components, with: "appsign_extrainfo")
-    }
-
-    private func getSignTokenInfos(from pasteboard: UIPasteboard) -> [String: String]? {
-        guard
-            let itemData = pasteboard.data(forPasteboardType: "com.tencent.\(appID)"),
-            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
-        else {
-            return nil
-        }
-
-        if let pbItems = infos["appsign_redirect_pasteboard"] {
-            let pbData = NSKeyedArchiver.archivedData(withRootObject: pbItems)
-
-            UIPasteboard.general.setData(
-                pbData,
-                forPasteboardType: "com.tencent.mqq.api.apiLargeData"
-            )
-        }
-
-        return infos.compactMapValues { $0 as? String }
-    }
-
-    private func getJSON(from components: URLComponents, with name: String) -> [String: String]? {
-        let decoder = JSONDecoder()
-        decoder.dataDecodingStrategy = .base64
-
-        guard
-            let item = components.queryItems?.first(where: { $0.name == name }),
-            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
-            let infos = try? decoder.decode([String: String].self, from: itemData)
-        else {
-            return nil
-        }
-
-        return infos
-    }
-
-    private func getPlist(from components: URLComponents, with name: String) -> [String: Any]? {
-        guard
-            let item = components.queryItems?.first(where: { $0.name == name }),
-            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
-            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
-        else {
-            return nil
-        }
-
-        return infos
     }
 
     private func handleActionInfo(with components: URLComponents) {
@@ -666,6 +618,60 @@ extension QQHandler {
         default:
             assertionFailure()
         }
+    }
+}
+
+extension QQHandler {
+
+    private func getSignTokenInfos(from components: URLComponents) -> [String: String]? {
+        getJSON(from: components, with: "appsign_extrainfo")
+    }
+
+    private func getSignTokenInfos(from pasteboard: UIPasteboard) -> [String: String]? {
+        guard
+            let itemData = pasteboard.data(forPasteboardType: "com.tencent.\(appID)"),
+            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+        else {
+            return nil
+        }
+
+        if let pbItems = infos["appsign_redirect_pasteboard"] {
+            let pbData = NSKeyedArchiver.archivedData(withRootObject: pbItems)
+
+            UIPasteboard.general.setData(
+                pbData,
+                forPasteboardType: "com.tencent.mqq.api.apiLargeData"
+            )
+        }
+
+        return infos.compactMapValues { $0 as? String }
+    }
+
+    private func getJSON(from components: URLComponents, with name: String) -> [String: String]? {
+        let decoder = JSONDecoder()
+        decoder.dataDecodingStrategy = .base64
+
+        guard
+            let item = components.queryItems?.first(where: { $0.name == name }),
+            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
+            let infos = try? decoder.decode([String: String].self, from: itemData)
+        else {
+            return nil
+        }
+
+        return infos
+    }
+
+    private func getPlist(from components: URLComponents, with name: String) -> [String: Any]? {
+        guard
+            let item = components.queryItems?.first(where: { $0.name == name }),
+            let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
+            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+        else {
+            return nil
+        }
+
+        return infos
     }
 }
 

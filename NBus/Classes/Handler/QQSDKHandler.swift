@@ -226,6 +226,17 @@ extension QQSDKHandler: ShareHandlerType {
         }
     }
 
+    private func miniProgramType(_ miniProgramType: MiniProgramMessage.MiniProgramType) -> MiniProgramType {
+        switch miniProgramType {
+        case .release:
+            return .online
+        case .test:
+            return .test
+        case .preview:
+            return .preview
+        }
+    }
+
     private func cflag(_ endpoint: Endpoint, _ message: Message) -> [kQQAPICtrlFlag] {
         var result: [kQQAPICtrlFlag] = []
 
@@ -241,17 +252,6 @@ extension QQSDKHandler: ShareHandlerType {
         }
 
         return result
-    }
-
-    private func miniProgramType(_ miniProgramType: MiniProgramMessage.MiniProgramType) -> MiniProgramType {
-        switch miniProgramType {
-        case .release:
-            return .online
-        case .test:
-            return .test
-        case .preview:
-            return .preview
-        }
     }
 }
 
