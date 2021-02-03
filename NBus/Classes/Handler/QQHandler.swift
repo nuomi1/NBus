@@ -77,7 +77,7 @@ extension QQHandler: ShareHandlerType {
         shareCompletionHandler = completionHandler
 
         var urlItems: [String: String] = [:]
-        var pasteBoardItems: [String: Any?] = [:]
+        var pasteBoardItems: [String: Any] = [:]
 
         urlItems["appsign_txid"] = txID
         urlItems["bundleid"] = bundleIDEncoded
@@ -215,18 +215,9 @@ extension QQHandler: ShareHandlerType {
             return
         }
 
-        let pbItems = pasteBoardItems.compactMapValues { $0 }
+        setPasteboard(with: pasteBoardItems, in: .general)
 
-        if !pbItems.isEmpty {
-            let pbData = NSKeyedArchiver.archivedData(withRootObject: pbItems)
-
-            UIPasteboard.general.setData(
-                pbData,
-                forPasteboardType: "com.tencent.mqq.api.apiLargeData"
-            )
-        }
-
-        if pbItems.contains(where: { $0.key == "file_data" }) {
+        if pasteBoardItems.contains(where: { $0.key == "file_data" }) {
             urlItems["objectlocation"] = "pasteboard"
         } else if message is MiniProgramMessage {
             urlItems["objectlocation"] = "url"
@@ -364,7 +355,7 @@ extension QQHandler: OauthHandlerType {
         oauthCompletionHandler = completionHandler
 
         var urlItems: [String: String] = [:]
-        var pasteBoardItems: [String: Any?] = [:]
+        var pasteBoardItems: [String: Any] = [:]
 
         pasteBoardItems["app_id"] = appNumber
         pasteBoardItems["app_name"] = displayName
@@ -379,8 +370,7 @@ extension QQHandler: OauthHandlerType {
         pasteBoardItems["status_os"] = statusOS
         pasteBoardItems["status_version"] = statusVersion
 
-        let pbItems = pasteBoardItems.compactMapValues { $0 }
-        let pbData = NSKeyedArchiver.archivedData(withRootObject: pbItems)
+        let pbData = generatePasteboardData(with: pasteBoardItems)
 
         urlItems["appsign_txid"] = txID
         urlItems["bundleid"] = bundleIDEncoded
@@ -454,6 +444,22 @@ extension QQHandler {
 
     private var txID: String {
         "QQ\(String(format: "%08llX", (appNumber as NSString).longLongValue))"
+    }
+}
+
+extension QQHandler {
+
+    private func setPasteboard(
+        with pasteBoardItems: [String: Any],
+        in pasteboard: UIPasteboard
+    ) {
+        let pbData = generatePasteboardData(with: pasteBoardItems)
+
+        pasteboard.setData(pbData, forPasteboardType: "com.tencent.mqq.api.apiLargeData")
+    }
+
+    private func generatePasteboardData(with pasteBoardItems: [String: Any]) -> Data {
+        NSKeyedArchiver.archivedData(withRootObject: pasteBoardItems)
     }
 }
 
@@ -635,13 +641,8 @@ extension QQHandler {
             return nil
         }
 
-        if let pbItems = infos["appsign_redirect_pasteboard"] {
-            let pbData = NSKeyedArchiver.archivedData(withRootObject: pbItems)
-
-            UIPasteboard.general.setData(
-                pbData,
-                forPasteboardType: "com.tencent.mqq.api.apiLargeData"
-            )
+        if let pasteboardItems = infos["appsign_redirect_pasteboard"] as? [String: Any] {
+            setPasteboard(with: pasteboardItems, in: .general)
         }
 
         return infos.compactMapValues { $0 as? String }
