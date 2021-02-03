@@ -146,8 +146,13 @@ extension SystemHandler: ShareHandlerType {
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
         case Endpoints.System.activity:
-            return ![
-                Messages.miniProgram,
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+                Messages.file,
             ].contains(message)
         default:
             assertionFailure()

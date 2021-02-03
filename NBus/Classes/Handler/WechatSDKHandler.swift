@@ -157,15 +157,31 @@ extension WechatSDKHandler: ShareHandlerType {
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
         case Endpoints.Wechat.friend:
-            return true
-        case Endpoints.Wechat.timeline:
-            return ![
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
                 Messages.file,
                 Messages.miniProgram,
             ].contains(message)
+        case Endpoints.Wechat.timeline:
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+            ].contains(message)
         case Endpoints.Wechat.favorite:
-            return ![
-                Messages.miniProgram,
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+                Messages.file,
             ].contains(message)
         default:
             assertionFailure()

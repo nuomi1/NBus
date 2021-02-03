@@ -260,11 +260,22 @@ extension QQHandler: ShareHandlerType {
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
         case Endpoints.QQ.friend:
-            return true
-        case Endpoints.QQ.timeline:
-            return ![
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
                 Messages.file,
                 Messages.miniProgram,
+            ].contains(message)
+        case Endpoints.QQ.timeline:
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
             ].contains(message)
         default:
             assertionFailure()

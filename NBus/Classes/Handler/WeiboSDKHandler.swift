@@ -128,9 +128,12 @@ extension WeiboSDKHandler: ShareHandlerType {
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
         case Endpoints.Weibo.timeline:
-            return ![
-                Messages.file,
-                Messages.miniProgram,
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
             ].contains(message)
         default:
             assertionFailure()
