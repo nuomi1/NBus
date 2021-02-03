@@ -265,13 +265,13 @@ extension WechatHandler: OauthHandlerType {
 
 extension WechatHandler {
 
+    private var bundleID: String? {
+        Bundle.main.bus.identifier
+    }
+
     private var contextID: String? {
         let timestamp = Date().timeIntervalSince1970
         return "\(timestamp)".bus.sha1
-    }
-
-    private var identifier: String? {
-        Bundle.main.bus.identifier
     }
 
     private var oldText: String? {
@@ -325,7 +325,7 @@ extension WechatHandler {
 
     private func getShareUniversalLink() -> URL? {
         guard
-            let identifier = identifier,
+            let bundleID = bundleID,
             let contextID = contextID
         else {
             return nil
@@ -339,7 +339,7 @@ extension WechatHandler {
 
         var urlItems: [String: String] = [:]
 
-        urlItems["wechat_app_bundleId"] = identifier
+        urlItems["wechat_app_bundleId"] = bundleID
         urlItems["wechat_auth_context_id"] = contextID
 
         if let signToken = signToken {
@@ -355,7 +355,7 @@ extension WechatHandler {
 
     private func getOauthUniversalLink() -> URL? {
         guard
-            let identifier = identifier,
+            let bundleID = bundleID,
             let contextID = contextID
         else {
             return nil
@@ -370,7 +370,7 @@ extension WechatHandler {
         var urlItems: [String: String] = [:]
 
         urlItems["scope"] = "snsapi_userinfo"
-        urlItems["wechat_app_bundleId"] = identifier
+        urlItems["wechat_app_bundleId"] = bundleID
         urlItems["wechat_auth_context_id"] = contextID
 
         components.queryItems = urlItems.map { key, value in

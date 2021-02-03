@@ -223,7 +223,7 @@ extension WeiboHandler {
         appID.trimmingCharacters(in: .letters)
     }
 
-    private var identifier: String? {
+    private var bundleID: String? {
         Bundle.main.bus.identifier
     }
 
@@ -243,7 +243,7 @@ extension WeiboHandler {
         in pasteboard: UIPasteboard
     ) {
         guard
-            let identifier = identifier
+            let bundleID = bundleID
         else {
             assertionFailure()
             return
@@ -255,7 +255,7 @@ extension WeiboHandler {
         userInfoItems["startTime"] = dateFormatter.string(from: Date())
 
         appItems["appKey"] = appNumber
-        appItems["bundleID"] = identifier
+        appItems["bundleID"] = bundleID
         appItems["universalLink"] = universalLink.absoluteString
 
         setPasteboard(
@@ -288,7 +288,7 @@ extension WeiboHandler {
 
     private func getRequestUniversalLink(uuidString: String) -> URL? {
         guard
-            let identifier = identifier
+            let bundleID = bundleID
         else {
             return nil
         }
@@ -301,7 +301,7 @@ extension WeiboHandler {
 
         var urlItems: [String: String] = [:]
 
-        urlItems["lfid"] = identifier
+        urlItems["lfid"] = bundleID
         urlItems["luicode"] = "10000360"
         urlItems["newVersion"] = sdkShortVersion
         urlItems["objId"] = uuidString

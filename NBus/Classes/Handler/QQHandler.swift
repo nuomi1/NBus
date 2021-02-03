@@ -64,7 +64,7 @@ extension QQHandler: ShareHandlerType {
         }
 
         guard
-            let identifierEncoded = identifier?.bus.base64EncodedString,
+            let bundleIDEncoded = bundleID?.bus.base64EncodedString,
             let cflag = cflag(endpoint, message.identifier),
             let shareType = shareType(endpoint, message.identifier),
             let displayNameEncoded = displayName?.bus.base64EncodedString
@@ -80,7 +80,7 @@ extension QQHandler: ShareHandlerType {
         var pasteBoardItems: [String: Any?] = [:]
 
         urlItems["appsign_txid"] = txID
-        urlItems["bundleid"] = identifierEncoded
+        urlItems["bundleid"] = bundleIDEncoded
         urlItems["callback_name"] = txID
         urlItems["callback_type"] = "scheme"
         urlItems["cflag"] = cflag
@@ -353,8 +353,8 @@ extension QQHandler: OauthHandlerType {
 
         guard
             let displayName = displayName,
-            let identifier = identifier,
-            let identifierEncoded = identifier.bus.base64EncodedString
+            let bundleID = bundleID,
+            let bundleIDEncoded = bundleID.bus.base64EncodedString
         else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
@@ -368,7 +368,7 @@ extension QQHandler: OauthHandlerType {
 
         pasteBoardItems["app_id"] = appNumber
         pasteBoardItems["app_name"] = displayName
-        pasteBoardItems["bundleid"] = identifier
+        pasteBoardItems["bundleid"] = bundleID
         pasteBoardItems["client_id"] = appNumber
         pasteBoardItems["refUniversallink"] = universalLink.absoluteString
         pasteBoardItems["response_type"] = "token"
@@ -383,7 +383,7 @@ extension QQHandler: OauthHandlerType {
         let pbData = NSKeyedArchiver.archivedData(withRootObject: pbItems)
 
         urlItems["appsign_txid"] = txID
-        urlItems["bundleid"] = identifierEncoded
+        urlItems["bundleid"] = bundleIDEncoded
         urlItems["objectlocation"] = "url"
         urlItems["pasteboard"] = pbData.base64EncodedString()
         urlItems["sdkv"] = sdkShortVersion
@@ -420,12 +420,12 @@ extension QQHandler {
         appID.trimmingCharacters(in: .letters)
     }
 
-    private var displayName: String? {
-        Bundle.main.bus.displayName
+    private var bundleID: String? {
+        Bundle.main.bus.identifier
     }
 
-    private var identifier: String? {
-        Bundle.main.bus.identifier
+    private var displayName: String? {
+        Bundle.main.bus.displayName
     }
 
     private var oldText: String? {
