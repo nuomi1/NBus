@@ -64,10 +64,8 @@ extension QQHandler: ShareHandlerType {
         }
 
         guard
-            let bundleIDEncoded = bundleID?.bus.base64EncodedString,
             let cflag = cflag(endpoint, message.identifier),
-            let shareType = shareType(endpoint, message.identifier),
-            let displayNameEncoded = displayName?.bus.base64EncodedString
+            let shareType = shareType(endpoint, message.identifier)
         else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
@@ -79,21 +77,8 @@ extension QQHandler: ShareHandlerType {
         var urlItems: [String: String] = [:]
         var pasteBoardItems: [String: Any] = [:]
 
-        urlItems["appsign_txid"] = txID
-        urlItems["bundleid"] = bundleIDEncoded
-        urlItems["callback_name"] = txID
-        urlItems["callback_type"] = "scheme"
         urlItems["cflag"] = cflag
-        urlItems["generalpastboard"] = "1"
-        urlItems["sdkv"] = sdkShortVersion
         urlItems["shareType"] = shareType
-        urlItems["src_type"] = "app"
-        urlItems["thirdAppDisplayName"] = displayNameEncoded
-        urlItems["version"] = "1"
-
-        if let signToken = signToken {
-            urlItems["appsign_token"] = signToken
-        }
 
         if let oldText = oldText {
             pasteBoardItems["pasted_string"] = oldText
@@ -223,17 +208,7 @@ extension QQHandler: ShareHandlerType {
             urlItems["objectlocation"] = "url"
         }
 
-        var components = URLComponents()
-
-        components.scheme = "https"
-        components.host = "qm.qq.com"
-        components.path = "/opensdkul/mqqapi/share/to_fri"
-
-        components.queryItems = urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
-        }
-
-        guard let url = components.url else {
+        guard let url = generateShareUniversalLink(with: urlItems) else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
@@ -344,8 +319,7 @@ extension QQHandler: OauthHandlerType {
 
         guard
             let displayName = displayName,
-            let bundleID = bundleID,
-            let bundleIDEncoded = bundleID.bus.base64EncodedString
+            let bundleID = bundleID
         else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
@@ -372,23 +346,10 @@ extension QQHandler: OauthHandlerType {
 
         let pbData = generatePasteboardData(with: pasteBoardItems)
 
-        urlItems["appsign_txid"] = txID
-        urlItems["bundleid"] = bundleIDEncoded
         urlItems["objectlocation"] = "url"
         urlItems["pasteboard"] = pbData.base64EncodedString()
-        urlItems["sdkv"] = sdkShortVersion
 
-        var components = URLComponents()
-
-        components.scheme = "https"
-        components.host = "qm.qq.com"
-        components.path = "/opensdkul/mqqOpensdkSSoLogin/SSoLogin/\(appID)"
-
-        components.queryItems = urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
-        }
-
-        guard let url = components.url else {
+        guard let url = generateOauthUniversalLink(with: urlItems) else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
@@ -460,6 +421,80 @@ extension QQHandler {
 
     private func generatePasteboardData(with pasteBoardItems: [String: Any]) -> Data {
         NSKeyedArchiver.archivedData(withRootObject: pasteBoardItems)
+    }
+}
+
+extension QQHandler {
+
+    private func generateShareUniversalLink(with urlItems: [String: String]) -> URL? {
+        guard
+            var components = generateGeneralUniversalLink(),
+            let displayNameEncoded = displayName?.bus.base64EncodedString
+        else {
+            return nil
+        }
+
+        components.path = "/opensdkul/mqqapi/share/to_fri"
+
+        var urlItems = urlItems
+
+        if let signToken = signToken {
+            urlItems["appsign_token"] = signToken
+        }
+
+        urlItems["callback_name"] = txID
+        urlItems["callback_type"] = "scheme"
+        urlItems["generalpastboard"] = "1"
+        urlItems["src_type"] = "app"
+        urlItems["thirdAppDisplayName"] = displayNameEncoded
+        urlItems["version"] = "1"
+
+        components.queryItems?.append(contentsOf: urlItems.map { key, value in
+            URLQueryItem(name: key, value: value)
+        })
+
+        return components.url
+    }
+
+    private func generateOauthUniversalLink(with urlItems: [String: String]) -> URL? {
+        guard
+            var components = generateGeneralUniversalLink()
+        else {
+            return nil
+        }
+
+        components.path = "/opensdkul/mqqOpensdkSSoLogin/SSoLogin/\(appID)"
+
+        components.queryItems?.append(contentsOf: urlItems.map { key, value in
+            URLQueryItem(name: key, value: value)
+        })
+
+        return components.url
+    }
+
+    private func generateGeneralUniversalLink() -> URLComponents? {
+        guard
+            let bundleIDEncoded = bundleID?.bus.base64EncodedString
+        else {
+            return nil
+        }
+
+        var components = URLComponents()
+
+        components.scheme = "https"
+        components.host = "qm.qq.com"
+
+        var urlItems: [String: String] = [:]
+
+        urlItems["appsign_txid"] = txID
+        urlItems["bundleid"] = bundleIDEncoded
+        urlItems["sdkv"] = sdkShortVersion
+
+        components.queryItems = urlItems.map { key, value in
+            URLQueryItem(name: key, value: value)
+        }
+
+        return components
     }
 }
 
