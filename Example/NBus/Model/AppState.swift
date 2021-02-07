@@ -84,10 +84,6 @@ extension AppState {
             universalLink: AppState.getUniversalLink(for: Platforms.wechat)!
         )
 
-        wechatSDKHandler.logHandler = { message, file, function, line in
-            logger.debug("\(message)", file: file, function: function, line: line)
-        }
-
         let wechatHandler = WechatHandler(
             appID: AppState.getAppID(for: Platforms.wechat)!,
             universalLink: AppState.getUniversalLink(for: Platforms.wechat)!
@@ -109,10 +105,6 @@ extension AppState {
             appID: AppState.getAppID(for: Platforms.qq)!,
             universalLink: AppState.getUniversalLink(for: Platforms.qq)!
         )
-
-        qqSDKHandler.logHandler = { message, file, function, line in
-            logger.debug("\(message)", file: file, function: function, line: line)
-        }
 
         let qqHandler = QQHandler(
             appID: AppState.getAppID(for: Platforms.qq)!,
@@ -137,10 +129,6 @@ extension AppState {
             redirectLink: AppState.getRedirectLink(for: Platforms.weibo)!
         )
 
-        weiboSDKHandler.logHandler = { message, file, function, line in
-            logger.debug("\(message)", file: file, function: function, line: line)
-        }
-
         let weiboHandler = WeiboHandler(
             appID: AppState.getAppID(for: Platforms.weibo)!,
             universalLink: AppState.getUniversalLink(for: Platforms.weibo)!,
@@ -160,10 +148,6 @@ extension AppState {
         // MARK: System
 
         let systemHandler = SystemHandler()
-
-        systemHandler.logHandler = { message, file, function, line in
-            logger.debug("\(message)", file: file, function: function, line: line)
-        }
 
         let systemItem = AppState.PlatformItem(
             platform: Platforms.system,
