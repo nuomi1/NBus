@@ -542,7 +542,7 @@ extension QQHandler {
             let infos = getSignTokenInfos(from: components) ?? getSignTokenInfos(from: .general),
             let appSignRedirect = infos["appsign_redirect"],
             let appSignToken = infos["appsign_token"],
-            var components = URLComponents(string: appSignRedirect)
+            let components = URLComponents(string: appSignRedirect)
         else {
             assertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
@@ -551,20 +551,13 @@ extension QQHandler {
 
         signToken = appSignToken
 
-        var items: [String: String] = [:]
+        let items = components.queryItems?.reduce(into: [String: String]()) { result, item in
+            if let value = item.value {
+                result[item.name] = value
+            }
+        } ?? [:]
 
-        items["openredirect"] = "1"
-        items["appsign_token"] = appSignToken
-
-        components.scheme = "https"
-        components.host = "qm.qq.com"
-        components.path = "/opensdkul/mqqapi/share/to_fri"
-
-        components.queryItems?.append(contentsOf: items.map { key, value in
-            URLQueryItem(name: key, value: value)
-        })
-
-        guard let url = components.url else {
+        guard let url = generateShareUniversalLink(with: items) else {
             assertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
             return
