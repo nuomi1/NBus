@@ -360,17 +360,6 @@ extension WeiboHandler: OpenUserActivityHandlerType {
 
 extension WeiboHandler {
 
-    private func getPlist(from pasteboard: UIPasteboard) -> [String: Any]? {
-        guard
-            let itemData = pasteboard.data(forPasteboardType: "transferObject"),
-            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
-        else {
-            return nil
-        }
-
-        return infos
-    }
-
     private func handleGeneral() {
         guard
             let infos = getPlist(from: .general)
@@ -432,6 +421,20 @@ extension WeiboHandler {
             assertionFailure()
             oauthCompletionHandler?(.failure(.unknown))
         }
+    }
+}
+
+extension WeiboHandler {
+
+    private func getPlist(from pasteboard: UIPasteboard) -> [String: Any]? {
+        guard
+            let itemData = pasteboard.data(forPasteboardType: "transferObject"),
+            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+        else {
+            return nil
+        }
+
+        return infos
     }
 }
 
