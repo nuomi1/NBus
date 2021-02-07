@@ -28,12 +28,6 @@ public class WechatSDKHandler {
     public let appID: String
     public let universalLink: URL
 
-    public var logHandler: Bus.LogHandler = { message, _, _, _ in
-        #if DEBUG
-            print(message)
-        #endif
-    }
-
     private var coordinator: Coordinator!
 
     public init(appID: String, universalLink: URL) {
@@ -42,20 +36,12 @@ public class WechatSDKHandler {
 
         coordinator = Coordinator(owner: self)
 
-        #if DEBUG
-            WXApi.startLog(by: .detail) { [weak self] message in
-                self?.log(message)
-            }
-        #endif
-
         WXApi.registerApp(
             appID,
             universalLink: universalLink.absoluteString
         )
     }
 }
-
-extension WechatSDKHandler: LogHandlerProxyType {}
 
 extension WechatSDKHandler: ShareHandlerType {
 
