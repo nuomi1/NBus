@@ -142,7 +142,7 @@ extension WechatHandler: ShareHandlerType {
 
         setPasteboard(with: pasteBoardItems, in: .general, saveData: true)
 
-        guard let url = getShareUniversalLink() else {
+        guard let url = generateShareUniversalLink() else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
@@ -249,7 +249,7 @@ extension WechatHandler: OauthHandlerType {
 
         setPasteboard(with: pasteBoardItems, in: .general)
 
-        guard let url = getOauthUniversalLink() else {
+        guard let url = generateOauthUniversalLink() else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
@@ -323,37 +323,41 @@ extension WechatHandler {
 
 extension WechatHandler {
 
-    private func getShareUniversalLink() -> URL? {
+    private func generateShareUniversalLink() -> URL? {
         guard
-            let bundleID = bundleID,
-            let contextID = contextID
+            var components = generateGeneralUniversalLink()
         else {
             return nil
         }
 
-        var components = URLComponents()
-
-        components.scheme = "https"
-        components.host = "help.wechat.com"
         components.path = "/app/\(appID)/sendreq/"
 
-        var urlItems: [String: String] = [:]
-
-        urlItems["wechat_app_bundleId"] = bundleID
-        urlItems["wechat_auth_context_id"] = contextID
-
         if let signToken = signToken {
-            urlItems["wechat_auth_token"] = signToken
-        }
-
-        components.queryItems = urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
+            components.queryItems?.append(
+                URLQueryItem(name: "wechat_auth_token", value: signToken)
+            )
         }
 
         return components.url
     }
 
-    private func getOauthUniversalLink() -> URL? {
+    private func generateOauthUniversalLink() -> URL? {
+        guard
+            var components = generateGeneralUniversalLink()
+        else {
+            return nil
+        }
+
+        components.path = "/app/\(appID)/auth/"
+
+        components.queryItems?.append(
+            URLQueryItem(name: "scope", value: "snsapi_userinfo")
+        )
+
+        return components.url
+    }
+
+    private func generateGeneralUniversalLink() -> URLComponents? {
         guard
             let bundleID = bundleID,
             let contextID = contextID
@@ -365,11 +369,9 @@ extension WechatHandler {
 
         components.scheme = "https"
         components.host = "help.wechat.com"
-        components.path = "/app/\(appID)/auth/"
 
         var urlItems: [String: String] = [:]
 
-        urlItems["scope"] = "snsapi_userinfo"
         urlItems["wechat_app_bundleId"] = bundleID
         urlItems["wechat_auth_context_id"] = contextID
 
@@ -377,7 +379,7 @@ extension WechatHandler {
             URLQueryItem(name: key, value: value)
         }
 
-        return components.url
+        return components
     }
 }
 
@@ -424,7 +426,7 @@ extension WechatHandler {
         setPasteboard(with: pbData, in: .general)
         lastMessageData = nil
 
-        guard let url = getShareUniversalLink() else {
+        guard let url = generateShareUniversalLink() else {
             assertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
             return
