@@ -127,7 +127,7 @@ extension WeiboHandler: ShareHandlerType {
             in: .general
         )
 
-        guard let url = getRequestUniversalLink(uuidString: uuidString) else {
+        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
@@ -203,7 +203,7 @@ extension WeiboHandler: OauthHandlerType {
             in: .general
         )
 
-        guard let url = getRequestUniversalLink(uuidString: uuidString) else {
+        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
@@ -285,8 +285,11 @@ extension WeiboHandler {
 
         pasteboard.items = pbItems
     }
+}
 
-    private func getRequestUniversalLink(uuidString: String) -> URL? {
+extension WeiboHandler {
+
+    private func generateGeneralUniversalLink(uuidString: String) -> URL? {
         guard
             let bundleID = bundleID
         else {
