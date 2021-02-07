@@ -413,6 +413,7 @@ extension WeiboHandler {
             if !parameters.isEmpty {
                 oauthCompletionHandler?(.success(parameters))
             } else {
+                assertionFailure()
                 oauthCompletionHandler?(.failure(.unknown))
             }
         case -1:

@@ -623,6 +623,7 @@ extension QQHandler {
         case "-4":
             shareCompletionHandler?(.failure(.userCancelled))
         default:
+            assertionFailure()
             shareCompletionHandler?(.failure(.unknown))
         }
     }
@@ -654,6 +655,7 @@ extension QQHandler {
             if !parameters.isEmpty {
                 oauthCompletionHandler?(.success(parameters))
             } else {
+                assertionFailure()
                 oauthCompletionHandler?(.failure(.unknown))
             }
         default:

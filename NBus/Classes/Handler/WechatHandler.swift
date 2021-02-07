@@ -504,6 +504,7 @@ extension WechatHandler {
         if !parameters.isEmpty {
             oauthCompletionHandler?(.success(parameters))
         } else {
+            assertionFailure()
             oauthCompletionHandler?(.failure(.unknown))
         }
     }
