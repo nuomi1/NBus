@@ -27,12 +27,6 @@ public class WeiboSDKHandler {
     public let universalLink: URL
     private let redirectLink: URL
 
-    public var logHandler: Bus.LogHandler = { message, _, _, _ in
-        #if DEBUG
-            print(message)
-        #endif
-    }
-
     private var coordinator: Coordinator!
 
     public init(appID: String, universalLink: URL, redirectLink: URL) {
@@ -42,18 +36,12 @@ public class WeiboSDKHandler {
 
         coordinator = Coordinator(owner: self)
 
-        #if DEBUG
-            WeiboSDK.enableDebugMode(true)
-        #endif
-
         WeiboSDK.registerApp(
             appID.trimmingCharacters(in: .letters),
             universalLink: universalLink.absoluteString
         )
     }
 }
-
-extension WeiboSDKHandler: LogHandlerProxyType {}
 
 extension WeiboSDKHandler: ShareHandlerType {
 
