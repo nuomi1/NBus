@@ -81,8 +81,16 @@ public protocol OpenUserActivityHandlerType: HandlerType {
 extension OpenUserActivityHandlerType {
 
     public func canOpenUserActivity(_ userActivity: NSUserActivity) -> Bool {
-        let lhs = userActivity.webpageURL?.absoluteString ?? ""
+        guard
+            userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+            let webpageURL = userActivity.webpageURL
+        else {
+            return false
+        }
+
+        let lhs = webpageURL.absoluteString
         let rhs = universalLink.absoluteString
+
         return lhs.hasPrefix(rhs)
     }
 }
