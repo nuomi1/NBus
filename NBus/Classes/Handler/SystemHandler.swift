@@ -23,12 +23,6 @@ public class SystemHandler {
 
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
-    public var logHandler: Bus.LogHandler = { message, _, _, _ in
-        #if DEBUG
-            print(message)
-        #endif
-    }
-
     private var boxedCoordinator: Any!
 
     @available(iOS 13.0, *)
@@ -44,8 +38,6 @@ public class SystemHandler {
         }
     }
 }
-
-extension SystemHandler: LogHandlerProxyType {}
 
 extension SystemHandler: ShareHandlerType {
 
