@@ -216,6 +216,7 @@ extension WeiboSDKHandler {
                 case .userCancel:
                     owner?.shareCompletionHandler?(.failure(.userCancelled))
                 default:
+                    assertionFailure()
                     owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             case let response as WBAuthorizeResponse:
@@ -230,11 +231,13 @@ extension WeiboSDKHandler {
                     if !parameters.isEmpty {
                         owner?.oauthCompletionHandler?(.success(parameters))
                     } else {
+                        assertionFailure()
                         owner?.oauthCompletionHandler?(.failure(.unknown))
                     }
                 case (.userCancel, _):
                     owner?.oauthCompletionHandler?(.failure(.userCancelled))
                 default:
+                    assertionFailure()
                     owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
             default:

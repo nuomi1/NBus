@@ -179,6 +179,7 @@ extension QQSDKHandler: ShareHandlerType {
         case .EQQAPIMESSAGECONTENTINVALID:
             completionHandler(.failure(.invalidParameter))
         default:
+            assertionFailure()
             completionHandler(.failure(.unknown))
         }
     }
@@ -310,6 +311,7 @@ extension QQSDKHandler {
                 case "-4":
                     owner?.shareCompletionHandler?(.failure(.userCancelled))
                 default:
+                    assertionFailure()
                     owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             default:
@@ -332,6 +334,7 @@ extension QQSDKHandler {
             if !parameters.isEmpty {
                 owner?.oauthCompletionHandler?(.success(parameters))
             } else {
+                assertionFailure()
                 owner?.oauthCompletionHandler?(.failure(.unknown))
             }
         }
@@ -340,6 +343,7 @@ extension QQSDKHandler {
             if cancelled {
                 owner?.oauthCompletionHandler?(.failure(.userCancelled))
             } else {
+                assertionFailure()
                 owner?.oauthCompletionHandler?(.failure(.unknown))
             }
         }

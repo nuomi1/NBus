@@ -268,6 +268,7 @@ extension WechatSDKHandler {
                 case WXSuccess.rawValue:
                     owner?.shareCompletionHandler?(.success(()))
                 default:
+                    assertionFailure()
                     owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             case let response as SendAuthResp:
@@ -282,9 +283,11 @@ extension WechatSDKHandler {
                     if !parameters.isEmpty {
                         owner?.oauthCompletionHandler?(.success(parameters))
                     } else {
+                        assertionFailure()
                         owner?.oauthCompletionHandler?(.failure(.unknown))
                     }
                 default:
+                    assertionFailure()
                     owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
             default:
