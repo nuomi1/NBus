@@ -27,12 +27,6 @@ public class QQSDKHandler {
     public let appID: String
     public let universalLink: URL
 
-    public var logHandler: Bus.LogHandler = { message, _, _, _ in
-        #if DEBUG
-            print(message)
-        #endif
-    }
-
     private var coordinator: Coordinator!
     private var oauthCoordinator: TencentOAuth!
 
@@ -42,13 +36,6 @@ public class QQSDKHandler {
 
         coordinator = Coordinator(owner: self)
 
-        #if DEBUG
-            QQApiInterface.startLog { [weak self] message in
-                guard let message = message else { return }
-                self?.log("\(message)")
-            }
-        #endif
-
         oauthCoordinator = TencentOAuth(
             appId: appID.trimmingCharacters(in: .letters),
             enableUniveralLink: true,
@@ -57,8 +44,6 @@ public class QQSDKHandler {
         )
     }
 }
-
-extension QQSDKHandler: LogHandlerProxyType {}
 
 extension QQSDKHandler: ShareHandlerType {
 
