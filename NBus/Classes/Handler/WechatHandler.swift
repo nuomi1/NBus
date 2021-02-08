@@ -467,6 +467,8 @@ extension WechatHandler {
         switch result {
         case "0":
             shareCompletionHandler?(.success(()))
+        case "-2":
+            shareCompletionHandler?(.failure(.userCancelled))
         default:
             assertionFailure()
             shareCompletionHandler?(.failure(.unknown))
