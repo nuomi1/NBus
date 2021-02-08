@@ -130,9 +130,11 @@ extension WechatHandler: ShareHandlerType {
 
             pasteBoardItems["appBrandPath"] = message.path
             pasteBoardItems["appBrandUserName"] = message.miniProgramID
+            pasteBoardItems["disableForward"] = false
             pasteBoardItems["hdThumbData"] = message.thumbnail
             pasteBoardItems["mediaUrl"] = message.link.absoluteString
             pasteBoardItems["miniprogramType"] = miniProgramType(message.miniProgramType)
+            pasteBoardItems["withShareTicket"] = false
 
         default:
             assertionFailure()
