@@ -79,12 +79,7 @@ extension WechatHandler: ShareHandlerType {
         var pasteBoardItems: [String: Any] = [:]
 
         pasteBoardItems["command"] = "1010"
-        pasteBoardItems["isAutoResend"] = false
-        pasteBoardItems["result"] = "1"
-        pasteBoardItems["returnFromApp"] = "0"
         pasteBoardItems["scene"] = scene
-        pasteBoardItems["sdkver"] = sdkVersion
-        pasteBoardItems["universalLink"] = universalLink.absoluteString
 
         if let message = message as? MediaMessageType {
             pasteBoardItems["title"] = message.title
@@ -243,11 +238,6 @@ extension WechatHandler: OauthHandlerType {
         var pasteBoardItems: [String: Any] = [:]
 
         pasteBoardItems["command"] = "0"
-        pasteBoardItems["isAutoResend"] = "0"
-        pasteBoardItems["result"] = "1"
-        pasteBoardItems["returnFromApp"] = "0"
-        pasteBoardItems["sdkver"] = sdkVersion
-        pasteBoardItems["universalLink"] = universalLink.absoluteString
 
         setPasteboard(with: pasteBoardItems, in: .general)
 
@@ -292,13 +282,18 @@ extension WechatHandler {
         in pasteboard: UIPasteboard,
         saveData: Bool = false
     ) {
+        var pasteBoardItems = pasteBoardItems
+
+        pasteBoardItems["isAutoResend"] = false
+        pasteBoardItems["result"] = "1"
+        pasteBoardItems["returnFromApp"] = "0"
+        pasteBoardItems["sdkver"] = sdkVersion
+        pasteBoardItems["universalLink"] = universalLink.absoluteString
+
         var pbItems: [String: Any] = [:]
 
         pbItems[appID] = pasteBoardItems
-
-        if let oldText = oldText {
-            pbItems["old_text"] = oldText
-        }
+        pbItems["old_text"] = oldText
 
         guard
             let pbData = try? PropertyListSerialization.data(
