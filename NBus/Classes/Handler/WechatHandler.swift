@@ -304,7 +304,7 @@ extension WechatHandler {
 
         setPasteboard(with: pbData, in: .general)
 
-        if saveData {
+        if saveData, signToken == nil {
             lastMessageData = pbData
         }
     }
