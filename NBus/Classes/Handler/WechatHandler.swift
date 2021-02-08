@@ -296,11 +296,7 @@ extension WechatHandler {
         pbItems["old_text"] = oldText
 
         guard
-            let pbData = try? PropertyListSerialization.data(
-                fromPropertyList: pbItems,
-                format: .binary,
-                options: .zero
-            )
+            let pbData = generatePasteboardData(with: pbItems)
         else {
             assertionFailure()
             return
@@ -315,6 +311,14 @@ extension WechatHandler {
 
     private func setPasteboard(with data: Data, in pasteboard: UIPasteboard) {
         pasteboard.setData(data, forPasteboardType: "content")
+    }
+
+    private func generatePasteboardData(with pasteBoardItems: [String: Any]) -> Data? {
+        try? PropertyListSerialization.data(
+            fromPropertyList: pasteBoardItems,
+            format: .binary,
+            options: .zero
+        )
     }
 }
 
