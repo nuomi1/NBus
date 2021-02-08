@@ -267,6 +267,8 @@ extension WechatSDKHandler {
                 switch response.errCode {
                 case WXSuccess.rawValue:
                     owner?.shareCompletionHandler?(.success(()))
+                case WXErrCodeUserCancel.rawValue:
+                    owner?.shareCompletionHandler?(.failure(.userCancelled))
                 default:
                     assertionFailure()
                     owner?.shareCompletionHandler?(.failure(.unknown))
