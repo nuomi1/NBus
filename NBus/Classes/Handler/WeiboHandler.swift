@@ -84,11 +84,9 @@ extension WeiboHandler: ShareHandlerType {
             messageItems["text"] = message.text
 
         case let message as ImageMessage:
-            var imageItems: [String: Any] = [:]
-
-            imageItems["imageData"] = message.data
-
-            messageItems["imageObject"] = imageItems
+            messageItems["imageObject"] = imageItems(
+                data: message.data
+            )
 
         case let message as AudioMessage:
             messageItems["mediaObject"] = webPageItems(
@@ -156,6 +154,16 @@ extension WeiboHandler: ShareHandlerType {
             assertionFailure()
             return false
         }
+    }
+
+    private func imageItems(
+        data: Data
+    ) -> [String: Any] {
+        var imageItems: [String: Any] = [:]
+
+        imageItems["imageData"] = data
+
+        return imageItems
     }
 
     private func webPageItems(
