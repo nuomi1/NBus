@@ -100,6 +100,8 @@ enum MediaSource {
             path: path,
             link: defaultLink,
             miniProgramType: .release,
+            title: defaultTitle,
+            description: defaultDescription,
             thumbnail: defaultThumbnail
         )
     }()
@@ -113,6 +115,8 @@ enum MediaSource {
             path: path,
             link: defaultLink,
             miniProgramType: .release,
+            title: defaultTitle,
+            description: defaultDescription,
             thumbnail: defaultThumbnail
         )
     }()
