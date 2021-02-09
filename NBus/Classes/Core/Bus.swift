@@ -148,6 +148,8 @@ extension Bus {
 
             static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qq.accessToken")
 
+            static let expirationDate = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qq.expirationDate")
+
             static let openID = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qq.openID")
         }
 
