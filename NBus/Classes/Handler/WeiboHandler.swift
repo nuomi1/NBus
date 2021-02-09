@@ -277,13 +277,14 @@ extension WeiboHandler {
         let transferObjectData = NSKeyedArchiver.archivedData(withRootObject: transferObjectItems)
         let userInfoData = NSKeyedArchiver.archivedData(withRootObject: userInfoItems)
         let appData = NSKeyedArchiver.archivedData(withRootObject: appItems)
+        let sdkVersionData = Data(sdkVersion.utf8)
 
         var pbItems: [[String: Any]] = []
 
         pbItems.append(["transferObject": transferObjectData])
         pbItems.append(["userInfo": userInfoData])
         pbItems.append(["app": appData])
-        pbItems.append(["sdkVersion": sdkVersion])
+        pbItems.append(["sdkVersion": sdkVersionData])
 
         pasteboard.items = pbItems
     }
