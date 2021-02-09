@@ -46,6 +46,15 @@ public class QQHandler {
         return UIApplication.shared.canOpenURL(url)
     }
 
+    private var isNoPasteboardSupported: Bool {
+        guard let url = URL(string: "mqqopensdknopasteboard://") else {
+            assertionFailure()
+            return false
+        }
+
+        return UIApplication.shared.canOpenURL(url)
+    }
+
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
@@ -396,10 +405,16 @@ extension QQHandler: OauthHandlerType {
         pasteBoardItems["status_os"] = statusOS
         pasteBoardItems["status_version"] = statusVersion
 
-        let pbData = generatePasteboardData(with: pasteBoardItems)
+        if isNoPasteboardSupported {
+            let pbData = generatePasteboardData(with: pasteBoardItems)
 
-        urlItems["objectlocation"] = "url"
-        urlItems["pasteboard"] = pbData.base64EncodedString()
+            urlItems["objectlocation"] = "url"
+            urlItems["pasteboard"] = pbData.base64EncodedString()
+        } else {
+            setPasteboard(with: pasteBoardItems, in: .general)
+
+            urlItems["generalpastboard"] = "1"
+        }
 
         guard let url = generateOauthUniversalLink(with: urlItems) else {
             assertionFailure()
@@ -675,7 +690,7 @@ extension QQHandler {
 
     private func handleOauth(with components: URLComponents) {
         guard
-            let infos = getPlist(from: components, with: "pasteboard")
+            let infos = getOauthInfos(from: components) ?? getOauthInfos(from: .general)
         else {
             assertionFailure()
             return
@@ -723,8 +738,7 @@ extension QQHandler {
 
     private func getSignTokenInfos(from pasteboard: UIPasteboard) -> [String: String]? {
         guard
-            let itemData = pasteboard.data(forPasteboardType: "com.tencent.\(appID)"),
-            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+            let infos = getPlist(from: pasteboard)
         else {
             return nil
         }
@@ -734,6 +748,14 @@ extension QQHandler {
         }
 
         return infos.compactMapValues { $0 as? String }
+    }
+
+    private func getOauthInfos(from components: URLComponents) -> [String: Any]? {
+        getPlist(from: components, with: "pasteboard")
+    }
+
+    private func getOauthInfos(from pasteboard: UIPasteboard) -> [String: Any]? {
+        getPlist(from: pasteboard)
     }
 
     private func getJSON(from components: URLComponents, with name: String) -> [String: String]? {
@@ -755,6 +777,17 @@ extension QQHandler {
         guard
             let item = components.queryItems?.first(where: { $0.name == name }),
             let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
+            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+        else {
+            return nil
+        }
+
+        return infos
+    }
+
+    private func getPlist(from pasteboard: UIPasteboard) -> [String: Any]? {
+        guard
+            let itemData = pasteboard.data(forPasteboardType: "com.tencent.\(appID)"),
             let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
         else {
             return nil
