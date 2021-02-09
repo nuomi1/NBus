@@ -220,10 +220,10 @@ extension WeiboSDKHandler {
                     owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             case let response as WBAuthorizeResponse:
-                switch (response.statusCode, response.accessToken) {
-                case let (.success, accessToken):
+                switch response.statusCode {
+                case .success:
                     let parameters = [
-                        OauthInfoKeys.accessToken: accessToken,
+                        OauthInfoKeys.accessToken: response.accessToken,
                     ]
                     .bus
                     .compactMapContent()
@@ -234,7 +234,7 @@ extension WeiboSDKHandler {
                         assertionFailure()
                         owner?.oauthCompletionHandler?(.failure(.unknown))
                     }
-                case (.userCancel, _):
+                case .userCancel:
                     owner?.oauthCompletionHandler?(.failure(.userCancelled))
                 default:
                     assertionFailure()
