@@ -142,8 +142,8 @@ extension QQSDKHandler: ShareHandlerType {
         case let message as MiniProgramMessage:
             let webPageObject = QQApiNewsObject(
                 url: message.link,
-                title: message.link.absoluteString,
-                description: "",
+                title: message.title,
+                description: message.description,
                 previewImageData: message.thumbnail,
                 targetContentType: .news
             )

@@ -214,12 +214,7 @@ extension QQHandler: ShareHandlerType {
 
             urlItems["file_type"] = "news"
 
-            urlItems["title"] = url
             urlItems["url"] = url
-
-            if let thumbnail = message.thumbnail {
-                pasteBoardItems["previewimagedata"] = thumbnail
-            }
 
             urlItems["mini_appid"] = message.miniProgramID
             urlItems["mini_path"] = path
