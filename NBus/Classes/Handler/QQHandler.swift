@@ -37,6 +37,15 @@ public class QQHandler {
         return UIApplication.shared.canOpenURL(url)
     }
 
+    private var isMiniProgramSupported: Bool {
+        guard let url = URL(string: "mqqopensdkminiapp://") else {
+            assertionFailure()
+            return false
+        }
+
+        return UIApplication.shared.canOpenURL(url)
+    }
+
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
@@ -189,6 +198,11 @@ extension QQHandler: ShareHandlerType {
             pasteBoardItems["file_data"] = message.data
 
         case let message as MiniProgramMessage:
+            guard isMiniProgramSupported else {
+                completionHandler(.failure(.unsupportedApplication))
+                return
+            }
+
             guard
                 let path = message.path.bus.base64EncodedString,
                 let url = message.link.absoluteString.bus.base64EncodedString
