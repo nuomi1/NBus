@@ -447,5 +447,11 @@ extension WeiboHandler {
     public enum OauthInfoKeys {
 
         public static let accessToken = Bus.OauthInfoKeys.Weibo.accessToken
+
+        public static let expirationDate = Bus.OauthInfoKeys.Weibo.expirationDate
+
+        public static let refreshToken = Bus.OauthInfoKeys.Weibo.refreshToken
+
+        public static let userID = Bus.OauthInfoKeys.Weibo.userID
     }
 }
