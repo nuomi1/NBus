@@ -160,6 +160,7 @@ extension SystemHandler: OauthHandlerType {
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
         guard #available(iOS 13.0, *) else {
+            assertionFailure()
             completionHandler(.failure(.unknown))
             return
         }
@@ -255,6 +256,7 @@ extension SystemHandler {
                 if !parameters.isEmpty {
                     owner?.oauthCompletionHandler?(.success(parameters))
                 } else {
+                    assertionFailure()
                     owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
             default:
@@ -267,6 +269,7 @@ extension SystemHandler {
             case ASAuthorizationError.canceled:
                 owner?.oauthCompletionHandler?(.failure(.userCancelled))
             default:
+                assertionFailure()
                 owner?.oauthCompletionHandler?(.failure(.unknown))
             }
         }
