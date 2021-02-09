@@ -13,30 +13,6 @@ public protocol HandlerType {
     var isInstalled: Bool { get }
 }
 
-public protocol LogHandlerProxyType: HandlerType {
-
-    var logHandler: Bus.LogHandler { get }
-
-    func log(
-        _ message: String,
-        file: String,
-        function: String,
-        line: UInt
-    )
-}
-
-extension LogHandlerProxyType {
-
-    public func log(
-        _ message: String,
-        file: String = #file,
-        function: String = #function,
-        line: UInt = #line
-    ) {
-        logHandler(message, file, function, line)
-    }
-}
-
 public protocol ShareHandlerType: HandlerType {
 
     var endpoints: [Endpoint] { get }
@@ -105,8 +81,16 @@ public protocol OpenUserActivityHandlerType: HandlerType {
 extension OpenUserActivityHandlerType {
 
     public func canOpenUserActivity(_ userActivity: NSUserActivity) -> Bool {
-        let lhs = userActivity.webpageURL?.absoluteString ?? ""
+        guard
+            userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+            let webpageURL = userActivity.webpageURL
+        else {
+            return false
+        }
+
+        let lhs = webpageURL.absoluteString
         let rhs = universalLink.absoluteString
+
         return lhs.hasPrefix(rhs)
     }
 }

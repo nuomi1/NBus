@@ -28,12 +28,6 @@ public class WechatSDKHandler {
     public let appID: String
     public let universalLink: URL
 
-    public var logHandler: Bus.LogHandler = { message, _, _, _ in
-        #if DEBUG
-            print(message)
-        #endif
-    }
-
     private var coordinator: Coordinator!
 
     public init(appID: String, universalLink: URL) {
@@ -42,20 +36,12 @@ public class WechatSDKHandler {
 
         coordinator = Coordinator(owner: self)
 
-        #if DEBUG
-            WXApi.startLog(by: .detail) { [weak self] message in
-                self?.log(message)
-            }
-        #endif
-
         WXApi.registerApp(
             appID,
             universalLink: universalLink.absoluteString
         )
     }
 }
-
-extension WechatSDKHandler: LogHandlerProxyType {}
 
 extension WechatSDKHandler: ShareHandlerType {
 
@@ -157,15 +143,31 @@ extension WechatSDKHandler: ShareHandlerType {
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
         case Endpoints.Wechat.friend:
-            return true
-        case Endpoints.Wechat.timeline:
-            return ![
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
                 Messages.file,
                 Messages.miniProgram,
             ].contains(message)
+        case Endpoints.Wechat.timeline:
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+            ].contains(message)
         case Endpoints.Wechat.favorite:
-            return ![
-                Messages.miniProgram,
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+                Messages.file,
             ].contains(message)
         default:
             assertionFailure()
@@ -265,14 +267,17 @@ extension WechatSDKHandler {
                 switch response.errCode {
                 case WXSuccess.rawValue:
                     owner?.shareCompletionHandler?(.success(()))
+                case WXErrCodeUserCancel.rawValue:
+                    owner?.shareCompletionHandler?(.failure(.userCancelled))
                 default:
+                    assertionFailure()
                     owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             case let response as SendAuthResp:
-                switch (response.errCode, response.code) {
-                case let (WXSuccess.rawValue, code):
+                switch response.errCode {
+                case WXSuccess.rawValue:
                     let parameters = [
-                        OauthInfoKeys.code: code,
+                        OauthInfoKeys.code: response.code,
                     ]
                     .bus
                     .compactMapContent()
@@ -280,9 +285,14 @@ extension WechatSDKHandler {
                     if !parameters.isEmpty {
                         owner?.oauthCompletionHandler?(.success(parameters))
                     } else {
+                        assertionFailure()
                         owner?.oauthCompletionHandler?(.failure(.unknown))
                     }
+                case WXErrCodeAuthDeny.rawValue,
+                     WXErrCodeUserCancel.rawValue:
+                    owner?.oauthCompletionHandler?(.failure(.userCancelled))
                 default:
+                    assertionFailure()
                     owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
             default:

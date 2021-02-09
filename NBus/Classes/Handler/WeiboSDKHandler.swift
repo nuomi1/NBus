@@ -27,13 +27,12 @@ public class WeiboSDKHandler {
     public let universalLink: URL
     private let redirectLink: URL
 
-    public var logHandler: Bus.LogHandler = { message, _, _, _ in
-        #if DEBUG
-            print(message)
-        #endif
-    }
-
     private var coordinator: Coordinator!
+
+    private lazy var iso8601DateFormatter: ISO8601DateFormatter = {
+        let dateFormatter = ISO8601DateFormatter()
+        return dateFormatter
+    }()
 
     public init(appID: String, universalLink: URL, redirectLink: URL) {
         self.appID = appID
@@ -42,18 +41,12 @@ public class WeiboSDKHandler {
 
         coordinator = Coordinator(owner: self)
 
-        #if DEBUG
-            WeiboSDK.enableDebugMode(true)
-        #endif
-
         WeiboSDK.registerApp(
             appID.trimmingCharacters(in: .letters),
             universalLink: universalLink.absoluteString
         )
     }
 }
-
-extension WeiboSDKHandler: LogHandlerProxyType {}
 
 extension WeiboSDKHandler: ShareHandlerType {
 
@@ -128,9 +121,12 @@ extension WeiboSDKHandler: ShareHandlerType {
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
         case Endpoints.Weibo.timeline:
-            return ![
-                Messages.file,
-                Messages.miniProgram,
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
             ].contains(message)
         default:
             assertionFailure()
@@ -199,6 +195,12 @@ extension WeiboSDKHandler {
     public enum OauthInfoKeys {
 
         public static let accessToken = Bus.OauthInfoKeys.Weibo.accessToken
+
+        public static let expirationDate = Bus.OauthInfoKeys.Weibo.expirationDate
+
+        public static let refreshToken = Bus.OauthInfoKeys.Weibo.refreshToken
+
+        public static let userID = Bus.OauthInfoKeys.Weibo.userID
     }
 }
 
@@ -225,13 +227,21 @@ extension WeiboSDKHandler {
                 case .userCancel:
                     owner?.shareCompletionHandler?(.failure(.userCancelled))
                 default:
+                    assertionFailure()
                     owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             case let response as WBAuthorizeResponse:
-                switch (response.statusCode, response.accessToken) {
-                case let (.success, accessToken):
+                switch response.statusCode {
+                case .success:
+                    let expirationDate = response.expirationDate.flatMap {
+                        owner?.iso8601DateFormatter.string(from: $0)
+                    }
+
                     let parameters = [
-                        OauthInfoKeys.accessToken: accessToken,
+                        OauthInfoKeys.accessToken: response.accessToken,
+                        OauthInfoKeys.expirationDate: expirationDate,
+                        OauthInfoKeys.refreshToken: response.refreshToken,
+                        OauthInfoKeys.userID: response.userID,
                     ]
                     .bus
                     .compactMapContent()
@@ -239,11 +249,13 @@ extension WeiboSDKHandler {
                     if !parameters.isEmpty {
                         owner?.oauthCompletionHandler?(.success(parameters))
                     } else {
+                        assertionFailure()
                         owner?.oauthCompletionHandler?(.failure(.unknown))
                     }
-                case (.userCancel, _):
+                case .userCancel:
                     owner?.oauthCompletionHandler?(.failure(.userCancelled))
                 default:
+                    assertionFailure()
                     owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
             default:

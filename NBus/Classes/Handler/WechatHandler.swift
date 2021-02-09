@@ -29,6 +29,15 @@ public class WechatHandler {
         return UIApplication.shared.canOpenURL(url)
     }
 
+    private var isSupported: Bool {
+        guard let url = URL(string: "weixinULAPI://") else {
+            assertionFailure()
+            return false
+        }
+
+        return UIApplication.shared.canOpenURL(url)
+    }
+
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
@@ -61,6 +70,11 @@ extension WechatHandler: ShareHandlerType {
             return
         }
 
+        guard isSupported else {
+            completionHandler(.failure(.unsupportedApplication))
+            return
+        }
+
         guard canShare(message: message.identifier, to: endpoint) else {
             completionHandler(.failure(.unsupportedMessage))
             return
@@ -79,12 +93,7 @@ extension WechatHandler: ShareHandlerType {
         var pasteBoardItems: [String: Any] = [:]
 
         pasteBoardItems["command"] = "1010"
-        pasteBoardItems["isAutoResend"] = false
-        pasteBoardItems["result"] = "1"
-        pasteBoardItems["returnFromApp"] = "0"
         pasteBoardItems["scene"] = scene
-        pasteBoardItems["sdkver"] = sdkVersion
-        pasteBoardItems["universalLink"] = universalLink.absoluteString
 
         if let message = message as? MediaMessageType {
             pasteBoardItems["title"] = message.title
@@ -130,9 +139,11 @@ extension WechatHandler: ShareHandlerType {
 
             pasteBoardItems["appBrandPath"] = message.path
             pasteBoardItems["appBrandUserName"] = message.miniProgramID
+            pasteBoardItems["disableForward"] = false
             pasteBoardItems["hdThumbData"] = message.thumbnail
             pasteBoardItems["mediaUrl"] = message.link.absoluteString
             pasteBoardItems["miniprogramType"] = miniProgramType(message.miniProgramType)
+            pasteBoardItems["withShareTicket"] = false
 
         default:
             assertionFailure()
@@ -142,7 +153,7 @@ extension WechatHandler: ShareHandlerType {
 
         setPasteboard(with: pasteBoardItems, in: .general, saveData: true)
 
-        guard let url = getShareUniversalLink() else {
+        guard let url = generateShareUniversalLink() else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
@@ -160,15 +171,31 @@ extension WechatHandler: ShareHandlerType {
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
         case Endpoints.Wechat.friend:
-            return true
-        case Endpoints.Wechat.timeline:
-            return ![
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
                 Messages.file,
                 Messages.miniProgram,
             ].contains(message)
+        case Endpoints.Wechat.timeline:
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+            ].contains(message)
         case Endpoints.Wechat.favorite:
-            return ![
-                Messages.miniProgram,
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+                Messages.file,
             ].contains(message)
         default:
             assertionFailure()
@@ -220,20 +247,20 @@ extension WechatHandler: OauthHandlerType {
             return
         }
 
+        guard isSupported else {
+            completionHandler(.failure(.unsupportedApplication))
+            return
+        }
+
         oauthCompletionHandler = completionHandler
 
         var pasteBoardItems: [String: Any] = [:]
 
         pasteBoardItems["command"] = "0"
-        pasteBoardItems["isAutoResend"] = "0"
-        pasteBoardItems["result"] = "1"
-        pasteBoardItems["returnFromApp"] = "0"
-        pasteBoardItems["sdkver"] = sdkVersion
-        pasteBoardItems["universalLink"] = universalLink.absoluteString
 
         setPasteboard(with: pasteBoardItems, in: .general)
 
-        guard let url = getOauthUniversalLink() else {
+        guard let url = generateOauthUniversalLink() else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
@@ -249,7 +276,7 @@ extension WechatHandler: OauthHandlerType {
 
 extension WechatHandler {
 
-    private var identifier: String? {
+    private var bundleID: String? {
         Bundle.main.bus.identifier
     }
 
@@ -258,12 +285,12 @@ extension WechatHandler {
         return "\(timestamp)".bus.sha1
     }
 
-    private var sdkVersion: String {
-        "1.8.7.1"
-    }
-
     private var oldText: String? {
         UIPasteboard.general.bus.oldText
+    }
+
+    private var sdkVersion: String {
+        "1.8.7.1"
     }
 }
 
@@ -274,20 +301,21 @@ extension WechatHandler {
         in pasteboard: UIPasteboard,
         saveData: Bool = false
     ) {
+        var pasteBoardItems = pasteBoardItems
+
+        pasteBoardItems["isAutoResend"] = false
+        pasteBoardItems["result"] = "1"
+        pasteBoardItems["returnFromApp"] = "0"
+        pasteBoardItems["sdkver"] = sdkVersion
+        pasteBoardItems["universalLink"] = universalLink.absoluteString
+
         var pbItems: [String: Any] = [:]
 
         pbItems[appID] = pasteBoardItems
-
-        if let oldText = oldText {
-            pbItems["old_text"] = oldText
-        }
+        pbItems["old_text"] = oldText
 
         guard
-            let pbData = try? PropertyListSerialization.data(
-                fromPropertyList: pbItems,
-                format: .binary,
-                options: .zero
-            )
+            let pbData = generatePasteboardData(with: pbItems)
         else {
             assertionFailure()
             return
@@ -295,7 +323,7 @@ extension WechatHandler {
 
         setPasteboard(with: pbData, in: .general)
 
-        if saveData {
+        if saveData, signToken == nil {
             lastMessageData = pbData
         }
     }
@@ -304,39 +332,54 @@ extension WechatHandler {
         pasteboard.setData(data, forPasteboardType: "content")
     }
 
-    private func getShareUniversalLink() -> URL? {
+    private func generatePasteboardData(with pasteBoardItems: [String: Any]) -> Data? {
+        try? PropertyListSerialization.data(
+            fromPropertyList: pasteBoardItems,
+            format: .binary,
+            options: .zero
+        )
+    }
+}
+
+extension WechatHandler {
+
+    private func generateShareUniversalLink() -> URL? {
         guard
-            let identifier = identifier,
-            let contextID = contextID
+            var components = generateGeneralUniversalLink()
         else {
             return nil
         }
 
-        var components = URLComponents()
-
-        components.scheme = "https"
-        components.host = "help.wechat.com"
         components.path = "/app/\(appID)/sendreq/"
 
-        var urlItems: [String: String] = [:]
-
-        urlItems["wechat_app_bundleId"] = identifier
-        urlItems["wechat_auth_context_id"] = contextID
-
         if let signToken = signToken {
-            urlItems["wechat_auth_token"] = signToken
-        }
-
-        components.queryItems = urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
+            components.queryItems?.append(
+                URLQueryItem(name: "wechat_auth_token", value: signToken)
+            )
         }
 
         return components.url
     }
 
-    private func getOauthUniversalLink() -> URL? {
+    private func generateOauthUniversalLink() -> URL? {
         guard
-            let identifier = identifier,
+            var components = generateGeneralUniversalLink()
+        else {
+            return nil
+        }
+
+        components.path = "/app/\(appID)/auth/"
+
+        components.queryItems?.append(
+            URLQueryItem(name: "scope", value: "snsapi_userinfo")
+        )
+
+        return components.url
+    }
+
+    private func generateGeneralUniversalLink() -> URLComponents? {
+        guard
+            let bundleID = bundleID,
             let contextID = contextID
         else {
             return nil
@@ -346,19 +389,17 @@ extension WechatHandler {
 
         components.scheme = "https"
         components.host = "help.wechat.com"
-        components.path = "/app/\(appID)/auth/"
 
         var urlItems: [String: String] = [:]
 
-        urlItems["scope"] = "snsapi_userinfo"
-        urlItems["wechat_app_bundleId"] = identifier
+        urlItems["wechat_app_bundleId"] = bundleID
         urlItems["wechat_auth_context_id"] = contextID
 
         components.queryItems = urlItems.map { key, value in
             URLQueryItem(name: key, value: value)
         }
 
-        return components.url
+        return components
     }
 }
 
@@ -405,7 +446,7 @@ extension WechatHandler {
         setPasteboard(with: pbData, in: .general)
         lastMessageData = nil
 
-        guard let url = getShareUniversalLink() else {
+        guard let url = generateShareUniversalLink() else {
             assertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
             return
@@ -416,17 +457,6 @@ extension WechatHandler {
                 self?.shareCompletionHandler?(.failure(.unknown))
             }
         }
-    }
-
-    private func getPlist(from pasteboard: UIPasteboard) -> [String: Any]? {
-        guard
-            let itemData = pasteboard.data(forPasteboardType: "content"),
-            let infos = try? PropertyListSerialization.propertyList(from: itemData, format: nil) as? [String: Any]
-        else {
-            return nil
-        }
-
-        return infos[appID] as? [String: Any]
     }
 
     private func handleGeneral() {
@@ -456,6 +486,8 @@ extension WechatHandler {
         switch result {
         case "0":
             shareCompletionHandler?(.success(()))
+        case "-2":
+            shareCompletionHandler?(.failure(.userCancelled))
         default:
             assertionFailure()
             shareCompletionHandler?(.failure(.unknown))
@@ -494,8 +526,23 @@ extension WechatHandler {
         if !parameters.isEmpty {
             oauthCompletionHandler?(.success(parameters))
         } else {
+            assertionFailure()
             oauthCompletionHandler?(.failure(.unknown))
         }
+    }
+}
+
+extension WechatHandler {
+
+    private func getPlist(from pasteboard: UIPasteboard) -> [String: Any]? {
+        guard
+            let itemData = pasteboard.data(forPasteboardType: "content"),
+            let infos = try? PropertyListSerialization.propertyList(from: itemData, format: nil) as? [String: Any]
+        else {
+            return nil
+        }
+
+        return infos[appID] as? [String: Any]
     }
 }
 
