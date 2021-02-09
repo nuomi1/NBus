@@ -28,6 +28,15 @@ public class QQHandler {
         return UIApplication.shared.canOpenURL(url)
     }
 
+    private var isSupported: Bool {
+        guard let url = URL(string: "mqqopensdkapiV2://") else {
+            assertionFailure()
+            return false
+        }
+
+        return UIApplication.shared.canOpenURL(url)
+    }
+
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
@@ -60,6 +69,11 @@ extension QQHandler: ShareHandlerType {
     ) {
         guard isInstalled else {
             completionHandler(.failure(.missingApplication))
+            return
+        }
+
+        guard isSupported else {
+            completionHandler(.failure(.unsupportedApplication))
             return
         }
 
@@ -338,6 +352,11 @@ extension QQHandler: OauthHandlerType {
     ) {
         guard isInstalled else {
             completionHandler(.failure(.missingApplication))
+            return
+        }
+
+        guard isSupported else {
+            completionHandler(.failure(.unsupportedApplication))
             return
         }
 

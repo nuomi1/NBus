@@ -27,6 +27,15 @@ public class WeiboHandler {
         return UIApplication.shared.canOpenURL(url)
     }
 
+    private var isSupported: Bool {
+        guard let url = URL(string: "weibosdk3.3://") else {
+            assertionFailure()
+            return false
+        }
+
+        return UIApplication.shared.canOpenURL(url)
+    }
+
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
@@ -64,6 +73,11 @@ extension WeiboHandler: ShareHandlerType {
     ) {
         guard isInstalled else {
             completionHandler(.failure(.missingApplication))
+            return
+        }
+
+        guard isSupported else {
+            completionHandler(.failure(.unsupportedApplication))
             return
         }
 
@@ -195,6 +209,11 @@ extension WeiboHandler: OauthHandlerType {
     ) {
         guard isInstalled else {
             completionHandler(.failure(.missingApplication))
+            return
+        }
+
+        guard isSupported else {
+            completionHandler(.failure(.unsupportedApplication))
             return
         }
 
