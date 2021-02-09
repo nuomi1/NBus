@@ -319,6 +319,8 @@ extension QQSDKHandler {
                     owner?.shareCompletionHandler?(.success(()))
                 case "-4":
                     owner?.shareCompletionHandler?(.failure(.userCancelled))
+                case "--100070005":
+                    owner?.shareCompletionHandler?(.failure(.invalidParameter))
                 default:
                     assertionFailure()
                     owner?.shareCompletionHandler?(.failure(.unknown))
