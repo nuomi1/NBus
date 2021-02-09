@@ -40,6 +40,11 @@ public class WeiboHandler {
         return dateFormatter
     }()
 
+    private lazy var iso8601DateFormatter: ISO8601DateFormatter = {
+        let dateFormatter = ISO8601DateFormatter()
+        return dateFormatter
+    }()
+
     public init(appID: String, universalLink: URL, redirectLink: URL) {
         self.appID = appID
         self.universalLink = universalLink
@@ -406,9 +411,17 @@ extension WeiboHandler {
         switch statusCode {
         case 0:
             let accessToken = infos["accessToken"] as? String
+            let expirationDate = (infos["expirationDate"] as? Date).map {
+                iso8601DateFormatter.string(from: $0)
+            }
+            let refreshToken = infos["refreshToken"] as? String
+            let userID = infos["userID"] as? String
 
             let parameters = [
                 OauthInfoKeys.accessToken: accessToken,
+                OauthInfoKeys.expirationDate: expirationDate,
+                OauthInfoKeys.refreshToken: refreshToken,
+                OauthInfoKeys.userID: userID,
             ]
             .bus
             .compactMapContent()
