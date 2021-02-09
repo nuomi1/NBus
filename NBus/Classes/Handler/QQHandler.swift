@@ -716,6 +716,8 @@ extension QQHandler {
 
         public static let accessToken = Bus.OauthInfoKeys.QQ.accessToken
 
+        public static let expirationDate = Bus.OauthInfoKeys.QQ.expirationDate
+
         public static let openID = Bus.OauthInfoKeys.QQ.openID
     }
 }
