@@ -30,6 +30,11 @@ public class QQSDKHandler {
     private var coordinator: Coordinator!
     private var oauthCoordinator: TencentOAuth!
 
+    private lazy var iso8601DateFormatter: ISO8601DateFormatter = {
+        let dateFormatter = ISO8601DateFormatter()
+        return dateFormatter
+    }()
+
     public init(appID: String, universalLink: URL) {
         self.appID = appID
         self.universalLink = universalLink
@@ -328,8 +333,13 @@ extension QQSDKHandler {
         }
 
         func tencentDidLogin() {
+            let expirationDate = (owner?.oauthCoordinator.expirationDate).flatMap {
+                owner?.iso8601DateFormatter.string(from: $0)
+            }
+
             let parameters = [
                 OauthInfoKeys.accessToken: owner?.oauthCoordinator.accessToken,
+                OauthInfoKeys.expirationDate: expirationDate,
                 OauthInfoKeys.openID: owner?.oauthCoordinator.openId,
             ]
             .bus
