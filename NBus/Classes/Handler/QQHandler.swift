@@ -279,18 +279,39 @@ extension QQHandler: ShareHandlerType {
     }
 
     private func shareType(_ endpoint: Endpoint, _ message: Message) -> String? {
+        let result: Int
+
         switch endpoint {
         case Endpoints.QQ.friend:
-            return "0"
+            switch message {
+            case Messages.text,
+                 Messages.image,
+                 Messages.audio,
+                 Messages.video,
+                 Messages.webPage,
+                 Messages.file,
+                 Messages.miniProgram:
+                result = 0
+            default:
+                return nil
+            }
         case Endpoints.QQ.timeline:
-            return ![
-                Messages.text,
-                Messages.image,
-            ].contains(message)
-                ? "1" : "0"
+            switch message {
+            case Messages.text,
+                 Messages.image:
+                result = 0
+            case Messages.audio,
+                 Messages.video,
+                 Messages.webPage:
+                result = 1
+            default:
+                return nil
+            }
         default:
             return nil
         }
+
+        return "\(result)"
     }
 
     private func miniProgramType(_ miniProgramType: MiniProgramMessage.MiniProgramType) -> String {
