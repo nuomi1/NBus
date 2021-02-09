@@ -29,6 +29,11 @@ public class WeiboSDKHandler {
 
     private var coordinator: Coordinator!
 
+    private lazy var iso8601DateFormatter: ISO8601DateFormatter = {
+        let dateFormatter = ISO8601DateFormatter()
+        return dateFormatter
+    }()
+
     public init(appID: String, universalLink: URL, redirectLink: URL) {
         self.appID = appID
         self.universalLink = universalLink
@@ -228,8 +233,15 @@ extension WeiboSDKHandler {
             case let response as WBAuthorizeResponse:
                 switch response.statusCode {
                 case .success:
+                    let expirationDate = response.expirationDate.flatMap {
+                        owner?.iso8601DateFormatter.string(from: $0)
+                    }
+
                     let parameters = [
                         OauthInfoKeys.accessToken: response.accessToken,
+                        OauthInfoKeys.expirationDate: expirationDate,
+                        OauthInfoKeys.refreshToken: response.refreshToken,
+                        OauthInfoKeys.userID: response.userID,
                     ]
                     .bus
                     .compactMapContent()
