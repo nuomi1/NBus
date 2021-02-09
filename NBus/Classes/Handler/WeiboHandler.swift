@@ -120,10 +120,7 @@ extension WeiboHandler: ShareHandlerType {
 
         transferObjectItems["message"] = messageItems
 
-        setPasteboard(
-            with: transferObjectItems,
-            in: .general
-        )
+        setPasteboard(with: transferObjectItems, in: .general)
 
         guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
             assertionFailure()
@@ -206,10 +203,7 @@ extension WeiboHandler: OauthHandlerType {
         transferObjectItems["redirectURI"] = redirectLink.absoluteString
         transferObjectItems["requestID"] = uuidString
 
-        setPasteboard(
-            with: transferObjectItems,
-            in: .general
-        )
+        setPasteboard(with: transferObjectItems, in: .general)
 
         guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
             assertionFailure()
