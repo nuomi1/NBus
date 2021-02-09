@@ -37,6 +37,11 @@ public class QQHandler {
     @BusUserDefaults(key: ShareOptionKeys.signToken)
     private var signToken: String?
 
+    private lazy var iso8601DateFormatter: ISO8601DateFormatter = {
+        let dateFormatter = ISO8601DateFormatter()
+        return dateFormatter
+    }()
+
     public init(appID: String, universalLink: URL) {
         self.appID = appID
         self.universalLink = universalLink
@@ -632,10 +637,16 @@ extension QQHandler {
             oauthCompletionHandler?(.failure(.userCancelled))
         case "NO":
             let accessToken = infos["access_token"] as? String
+            let expirationDate: String? = (infos["expires_in"] as? Int).map {
+                let timeInterval = TimeInterval($0)
+                let date = Date().addingTimeInterval(timeInterval)
+                return iso8601DateFormatter.string(from: date)
+            }
             let openID = infos["openid"] as? String
 
             let parameters = [
                 OauthInfoKeys.accessToken: accessToken,
+                OauthInfoKeys.expirationDate: expirationDate,
                 OauthInfoKeys.openID: openID,
             ]
             .bus
