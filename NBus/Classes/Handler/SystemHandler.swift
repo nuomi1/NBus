@@ -54,7 +54,7 @@ extension SystemHandler: ShareHandlerType {
             ?? UIApplication.shared.keyWindow?.rootViewController
         else {
             assertionFailure()
-            completionHandler(.failure(.unknown))
+            completionHandler(.failure(.invalidParameter))
             return
         }
 
@@ -116,7 +116,7 @@ extension SystemHandler: ShareHandlerType {
                 let sourceView = options[ShareOptionKeys.sourceView] as? UIView
             else {
                 assertionFailure()
-                completionHandler(.failure(.unknown))
+                completionHandler(.failure(.invalidParameter))
                 return
             }
 
