@@ -274,10 +274,10 @@ extension WechatSDKHandler {
                     owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             case let response as SendAuthResp:
-                switch (response.errCode, response.code) {
-                case let (WXSuccess.rawValue, code):
+                switch response.errCode {
+                case WXSuccess.rawValue:
                     let parameters = [
-                        OauthInfoKeys.code: code,
+                        OauthInfoKeys.code: response.code,
                     ]
                     .bus
                     .compactMapContent()
@@ -288,8 +288,8 @@ extension WechatSDKHandler {
                         assertionFailure()
                         owner?.oauthCompletionHandler?(.failure(.unknown))
                     }
-                case (WXErrCodeAuthDeny.rawValue, nil),
-                     (WXErrCodeUserCancel.rawValue, nil):
+                case WXErrCodeAuthDeny.rawValue,
+                     WXErrCodeUserCancel.rawValue:
                     owner?.oauthCompletionHandler?(.failure(.userCancelled))
                 default:
                     assertionFailure()
