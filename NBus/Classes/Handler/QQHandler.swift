@@ -665,6 +665,8 @@ extension QQHandler {
             shareCompletionHandler?(.success(()))
         case "-4":
             shareCompletionHandler?(.failure(.userCancelled))
+        case "--100070005":
+            shareCompletionHandler?(.failure(.invalidParameter))
         default:
             assertionFailure()
             shareCompletionHandler?(.failure(.unknown))
