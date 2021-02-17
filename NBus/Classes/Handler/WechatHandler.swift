@@ -401,6 +401,66 @@ extension WechatHandler {
 
         return components
     }
+
+    private func generateShareURLScheme() -> URL? {
+        guard
+            var components = generateGeneralURLScheme()
+        else {
+            return nil
+        }
+
+        components.path = "/\(appID)/sendreq/"
+
+        return components.url
+    }
+
+    private func generateGeneralURLScheme() -> URLComponents? {
+        guard
+            let bundleID = bundleID
+        else {
+            return nil
+        }
+
+        var components = URLComponents()
+
+        components.scheme = "weixin"
+        components.host = "app"
+
+        var urlItems: [String: String] = [:]
+
+        urlItems["wechat_app_bundleId"] = bundleID
+
+        components.queryItems = urlItems.map { key, value in
+            URLQueryItem(name: key, value: value)
+        }
+
+        return components
+    }
+}
+
+extension WechatHandler: OpenURLHandlerType {
+
+    public func openURL(_ url: URL) {
+        guard
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        else {
+            assertionFailure()
+            return
+        }
+
+        switch components.host {
+        case "resendContextReqByScheme" where components.path == "":
+            handleSignTokenFailure()
+        case "platformId=wechat" where components.path == "":
+            handleGeneral()
+        case "oauth" where components.path == "":
+            handleOauth(with: components)
+        case "" where components.path == "":
+            handleGeneral()
+        default:
+            assertionFailure()
+        }
+    }
 }
 
 extension WechatHandler: OpenUserActivityHandlerType {
@@ -453,6 +513,31 @@ extension WechatHandler {
         }
 
         UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.shareCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+
+    private func handleSignTokenFailure() {
+        guard
+            let pbData = lastMessageData
+        else {
+            assertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        setPasteboard(with: pbData, in: .general)
+        lastMessageData = nil
+
+        guard let url = generateShareURLScheme() else {
+            assertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url) { [weak self] result in
             if !result {
                 self?.shareCompletionHandler?(.failure(.unknown))
             }
