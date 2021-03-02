@@ -137,17 +137,9 @@ extension QQHandler: ShareHandlerType {
 
         switch message {
         case let message as TextMessage:
-            guard
-                let text = message.text.bus.base64EncodedString
-            else {
-                assertionFailure()
-                completionHandler(.failure(.invalidParameter))
-                return
-            }
-
             urlItems["file_type"] = "text"
 
-            urlItems["file_data"] = text
+            urlItems["file_data"] = message.text.bus.base64EncodedString
 
         case let message as ImageMessage:
             urlItems["file_type"] = "img"
@@ -155,47 +147,23 @@ extension QQHandler: ShareHandlerType {
             pasteBoardItems["file_data"] = message.data
 
         case let message as AudioMessage:
-            guard
-                let url = message.link.absoluteString.bus.base64EncodedString
-            else {
-                assertionFailure()
-                completionHandler(.failure(.invalidParameter))
-                return
-            }
-
             urlItems["file_type"] = "audio"
 
-            urlItems["url"] = url
+            urlItems["url"] = message.link.absoluteString.bus.base64EncodedString
 
             if let flashURL = message.dataLink?.absoluteString.bus.base64EncodedString {
                 urlItems["flashurl"] = flashURL
             }
 
         case let message as VideoMessage:
-            guard
-                let url = message.link.absoluteString.bus.base64EncodedString
-            else {
-                assertionFailure()
-                completionHandler(.failure(.invalidParameter))
-                return
-            }
-
             urlItems["file_type"] = "video"
 
-            urlItems["url"] = url
+            urlItems["url"] = message.link.absoluteString.bus.base64EncodedString
 
         case let message as WebPageMessage:
-            guard
-                let url = message.link.absoluteString.bus.base64EncodedString
-            else {
-                assertionFailure()
-                completionHandler(.failure(.invalidParameter))
-                return
-            }
-
             urlItems["file_type"] = "news"
 
-            urlItems["url"] = url
+            urlItems["url"] = message.link.absoluteString.bus.base64EncodedString
 
         case let message as FileMessage:
             urlItems["file_type"] = "localFile"
@@ -212,22 +180,13 @@ extension QQHandler: ShareHandlerType {
                 return
             }
 
-            guard
-                let path = message.path.bus.base64EncodedString,
-                let url = message.link.absoluteString.bus.base64EncodedString
-            else {
-                assertionFailure()
-                completionHandler(.failure(.invalidParameter))
-                return
-            }
-
             urlItems["file_type"] = "news"
 
-            urlItems["url"] = url
+            urlItems["url"] = message.link.absoluteString.bus.base64EncodedString
 
             urlItems["mini_appid"] = message.miniProgramID
-            urlItems["mini_path"] = path
-            urlItems["mini_weburl"] = url
+            urlItems["mini_path"] = message.path.bus.base64EncodedString
+            urlItems["mini_weburl"] = message.link.absoluteString.bus.base64EncodedString
             urlItems["mini_type"] = miniProgramType(message.miniProgramType)
             urlItems["mini_code64"] = "1"
 
