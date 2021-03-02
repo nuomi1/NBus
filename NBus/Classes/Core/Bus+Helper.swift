@@ -17,7 +17,9 @@ extension BusWrapper where Base == [Bus.OauthInfoKey: String?] {
         base.compactMapValues { value -> String? in
             guard
                 let value = value, !value.isEmpty
-            else { return nil }
+            else {
+                return nil
+            }
 
             return value
         }
@@ -28,8 +30,10 @@ extension String: BusCompatible {}
 
 extension BusWrapper where Base == String {
 
-    var base64EncodedString: String? {
-        base.data(using: .utf8)?.base64EncodedString()
+    var base64EncodedString: String {
+        let data = Data(base.utf8)
+
+        return data.base64EncodedString()
     }
 
     var sha1: String? {
@@ -104,7 +108,11 @@ extension BusWrapper where Base: UIPasteboard {
             return nil
         }
 
-        guard base.contains(pasteboardTypes: typeListString) else { return nil }
+        guard
+            base.contains(pasteboardTypes: typeListString)
+        else {
+            return nil
+        }
 
         return base.string
     }

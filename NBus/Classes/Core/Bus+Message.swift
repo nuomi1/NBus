@@ -124,6 +124,8 @@ public enum Messages {
         path: String,
         link: URL,
         miniProgramType: MiniProgramMessage.MiniProgramType,
+        title: String? = nil,
+        description: String? = nil,
         thumbnail: Data? = nil
     ) -> MiniProgramMessage {
         MiniProgramMessage(
@@ -131,6 +133,8 @@ public enum Messages {
             path: path,
             link: link,
             miniProgramType: miniProgramType,
+            title: title,
+            description: description,
             thumbnail: thumbnail
         )
     }
@@ -232,7 +236,7 @@ public struct FileMessage: MediaMessageType {
     }
 }
 
-public struct MiniProgramMessage: MessageType {
+public struct MiniProgramMessage: MediaMessageType {
 
     public enum MiniProgramType {
         case release
@@ -249,6 +253,10 @@ public struct MiniProgramMessage: MessageType {
     public let link: URL
 
     public let miniProgramType: MiniProgramType
+
+    public let title: String?
+
+    public let description: String?
 
     public let thumbnail: Data?
 }

@@ -27,6 +27,15 @@ public class WeiboHandler {
         return UIApplication.shared.canOpenURL(url)
     }
 
+    private var isSupported: Bool {
+        guard let url = URL(string: "weibosdk3.3://") else {
+            assertionFailure()
+            return false
+        }
+
+        return UIApplication.shared.canOpenURL(url)
+    }
+
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
@@ -40,6 +49,11 @@ public class WeiboHandler {
         return dateFormatter
     }()
 
+    private lazy var iso8601DateFormatter: ISO8601DateFormatter = {
+        let dateFormatter = ISO8601DateFormatter()
+        return dateFormatter
+    }()
+
     public init(appID: String, universalLink: URL, redirectLink: URL) {
         self.appID = appID
         self.universalLink = universalLink
@@ -49,7 +63,7 @@ public class WeiboHandler {
 
 extension WeiboHandler: ShareHandlerType {
 
-    // swiftlint:disable function_body_length
+    // swiftlint:disable cyclomatic_complexity function_body_length
 
     public func share(
         message: MessageType,
@@ -59,6 +73,11 @@ extension WeiboHandler: ShareHandlerType {
     ) {
         guard isInstalled else {
             completionHandler(.failure(.missingApplication))
+            return
+        }
+
+        guard isSupported else {
+            completionHandler(.failure(.unsupportedApplication))
             return
         }
 
@@ -84,11 +103,9 @@ extension WeiboHandler: ShareHandlerType {
             messageItems["text"] = message.text
 
         case let message as ImageMessage:
-            var imageItems: [String: Any] = [:]
-
-            imageItems["imageData"] = message.data
-
-            messageItems["imageObject"] = imageItems
+            messageItems["imageObject"] = imageItems(
+                data: message.data
+            )
 
         case let message as AudioMessage:
             messageItems["mediaObject"] = webPageItems(
@@ -122,12 +139,9 @@ extension WeiboHandler: ShareHandlerType {
 
         transferObjectItems["message"] = messageItems
 
-        setPasteboard(
-            with: transferObjectItems,
-            in: .general
-        )
+        setPasteboard(with: transferObjectItems, in: .general)
 
-        guard let url = getRequestUniversalLink(uuidString: uuidString) else {
+        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
@@ -140,19 +154,32 @@ extension WeiboHandler: ShareHandlerType {
         }
     }
 
-    // swiftlint:enable function_body_length
+    // swiftlint:enable cyclomatic_complexity function_body_length
 
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
         case Endpoints.Weibo.timeline:
-            return ![
-                Messages.file,
-                Messages.miniProgram,
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
             ].contains(message)
         default:
             assertionFailure()
             return false
         }
+    }
+
+    private func imageItems(
+        data: Data
+    ) -> [String: Any] {
+        var imageItems: [String: Any] = [:]
+
+        imageItems["imageData"] = data
+
+        return imageItems
     }
 
     private func webPageItems(
@@ -185,6 +212,11 @@ extension WeiboHandler: OauthHandlerType {
             return
         }
 
+        guard isSupported else {
+            completionHandler(.failure(.unsupportedApplication))
+            return
+        }
+
         oauthCompletionHandler = completionHandler
 
         let uuidString = UUID().uuidString
@@ -195,12 +227,9 @@ extension WeiboHandler: OauthHandlerType {
         transferObjectItems["redirectURI"] = redirectLink.absoluteString
         transferObjectItems["requestID"] = uuidString
 
-        setPasteboard(
-            with: transferObjectItems,
-            in: .general
-        )
+        setPasteboard(with: transferObjectItems, in: .general)
 
-        guard let url = getRequestUniversalLink(uuidString: uuidString) else {
+        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
             assertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
@@ -220,7 +249,7 @@ extension WeiboHandler {
         appID.trimmingCharacters(in: .letters)
     }
 
-    private var identifier: String? {
+    private var bundleID: String? {
         Bundle.main.bus.identifier
     }
 
@@ -240,7 +269,7 @@ extension WeiboHandler {
         in pasteboard: UIPasteboard
     ) {
         guard
-            let identifier = identifier
+            let bundleID = bundleID
         else {
             assertionFailure()
             return
@@ -252,7 +281,7 @@ extension WeiboHandler {
         userInfoItems["startTime"] = dateFormatter.string(from: Date())
 
         appItems["appKey"] = appNumber
-        appItems["bundleID"] = identifier
+        appItems["bundleID"] = bundleID
         appItems["universalLink"] = universalLink.absoluteString
 
         setPasteboard(
@@ -272,20 +301,24 @@ extension WeiboHandler {
         let transferObjectData = NSKeyedArchiver.archivedData(withRootObject: transferObjectItems)
         let userInfoData = NSKeyedArchiver.archivedData(withRootObject: userInfoItems)
         let appData = NSKeyedArchiver.archivedData(withRootObject: appItems)
+        let sdkVersionData = Data(sdkVersion.utf8)
 
         var pbItems: [[String: Any]] = []
 
         pbItems.append(["transferObject": transferObjectData])
         pbItems.append(["userInfo": userInfoData])
         pbItems.append(["app": appData])
-        pbItems.append(["sdkVersion": sdkVersion])
+        pbItems.append(["sdkVersion": sdkVersionData])
 
         pasteboard.items = pbItems
     }
+}
 
-    private func getRequestUniversalLink(uuidString: String) -> URL? {
+extension WeiboHandler {
+
+    private func generateGeneralUniversalLink(uuidString: String) -> URL? {
         guard
-            let identifier = identifier
+            let bundleID = bundleID
         else {
             return nil
         }
@@ -298,7 +331,7 @@ extension WeiboHandler {
 
         var urlItems: [String: String] = [:]
 
-        urlItems["lfid"] = identifier
+        urlItems["lfid"] = bundleID
         urlItems["luicode"] = "10000360"
         urlItems["newVersion"] = sdkShortVersion
         urlItems["objId"] = uuidString
@@ -354,17 +387,6 @@ extension WeiboHandler: OpenUserActivityHandlerType {
 
 extension WeiboHandler {
 
-    private func getPlist(from pasteboard: UIPasteboard) -> [String: Any]? {
-        guard
-            let itemData = pasteboard.data(forPasteboardType: "transferObject"),
-            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
-        else {
-            return nil
-        }
-
-        return infos
-    }
-
     private func handleGeneral() {
         guard
             let infos = getPlist(from: .general)
@@ -408,9 +430,17 @@ extension WeiboHandler {
         switch statusCode {
         case 0:
             let accessToken = infos["accessToken"] as? String
+            let expirationDate = (infos["expirationDate"] as? Date).map {
+                iso8601DateFormatter.string(from: $0)
+            }
+            let refreshToken = infos["refreshToken"] as? String
+            let userID = infos["userID"] as? String
 
             let parameters = [
                 OauthInfoKeys.accessToken: accessToken,
+                OauthInfoKeys.expirationDate: expirationDate,
+                OauthInfoKeys.refreshToken: refreshToken,
+                OauthInfoKeys.userID: userID,
             ]
             .bus
             .compactMapContent()
@@ -418,6 +448,7 @@ extension WeiboHandler {
             if !parameters.isEmpty {
                 oauthCompletionHandler?(.success(parameters))
             } else {
+                assertionFailure()
                 oauthCompletionHandler?(.failure(.unknown))
             }
         case -1:
@@ -431,8 +462,28 @@ extension WeiboHandler {
 
 extension WeiboHandler {
 
+    private func getPlist(from pasteboard: UIPasteboard) -> [String: Any]? {
+        guard
+            let itemData = pasteboard.data(forPasteboardType: "transferObject"),
+            let infos = NSKeyedUnarchiver.unarchiveObject(with: itemData) as? [String: Any]
+        else {
+            return nil
+        }
+
+        return infos
+    }
+}
+
+extension WeiboHandler {
+
     public enum OauthInfoKeys {
 
         public static let accessToken = Bus.OauthInfoKeys.Weibo.accessToken
+
+        public static let expirationDate = Bus.OauthInfoKeys.Weibo.expirationDate
+
+        public static let refreshToken = Bus.OauthInfoKeys.Weibo.refreshToken
+
+        public static let userID = Bus.OauthInfoKeys.Weibo.userID
     }
 }

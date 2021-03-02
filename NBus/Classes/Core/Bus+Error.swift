@@ -16,6 +16,8 @@ extension Bus {
 
         case missingApplication
 
+        case unsupportedApplication
+
         case unsupportedMessage
 
         case invalidParameter

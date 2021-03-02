@@ -27,27 +27,19 @@ public class QQSDKHandler {
     public let appID: String
     public let universalLink: URL
 
-    public var logHandler: Bus.LogHandler = { message, _, _, _ in
-        #if DEBUG
-            print(message)
-        #endif
-    }
-
     private var coordinator: Coordinator!
     private var oauthCoordinator: TencentOAuth!
+
+    private lazy var iso8601DateFormatter: ISO8601DateFormatter = {
+        let dateFormatter = ISO8601DateFormatter()
+        return dateFormatter
+    }()
 
     public init(appID: String, universalLink: URL) {
         self.appID = appID
         self.universalLink = universalLink
 
         coordinator = Coordinator(owner: self)
-
-        #if DEBUG
-            QQApiInterface.startLog { [weak self] message in
-                guard let message = message else { return }
-                self?.log("\(message)")
-            }
-        #endif
 
         oauthCoordinator = TencentOAuth(
             appId: appID.trimmingCharacters(in: .letters),
@@ -57,8 +49,6 @@ public class QQSDKHandler {
         )
     }
 }
-
-extension QQSDKHandler: LogHandlerProxyType {}
 
 extension QQSDKHandler: ShareHandlerType {
 
@@ -152,8 +142,8 @@ extension QQSDKHandler: ShareHandlerType {
         case let message as MiniProgramMessage:
             let webPageObject = QQApiNewsObject(
                 url: message.link,
-                title: message.link.absoluteString,
-                description: "",
+                title: message.title,
+                description: message.description,
                 previewImageData: message.thumbnail,
                 targetContentType: .news
             )
@@ -193,7 +183,10 @@ extension QQSDKHandler: ShareHandlerType {
             break
         case .EQQAPIMESSAGECONTENTINVALID:
             completionHandler(.failure(.invalidParameter))
+        case .EQQAPIVERSIONNEEDUPDATE:
+            completionHandler(.failure(.unknown))
         default:
+            assertionFailure()
             completionHandler(.failure(.unknown))
         }
     }
@@ -203,15 +196,37 @@ extension QQSDKHandler: ShareHandlerType {
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
         case Endpoints.QQ.friend:
-            return true
-        case Endpoints.QQ.timeline:
-            return ![
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
                 Messages.file,
                 Messages.miniProgram,
+            ].contains(message)
+        case Endpoints.QQ.timeline:
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
             ].contains(message)
         default:
             assertionFailure()
             return false
+        }
+    }
+
+    private func miniProgramType(_ miniProgramType: MiniProgramMessage.MiniProgramType) -> MiniProgramType {
+        switch miniProgramType {
+        case .release:
+            return .online
+        case .test:
+            return .test
+        case .preview:
+            return .preview
         }
     }
 
@@ -230,17 +245,6 @@ extension QQSDKHandler: ShareHandlerType {
         }
 
         return result
-    }
-
-    private func miniProgramType(_ miniProgramType: MiniProgramMessage.MiniProgramType) -> MiniProgramType {
-        switch miniProgramType {
-        case .release:
-            return .online
-        case .test:
-            return .test
-        case .preview:
-            return .preview
-        }
     }
 }
 
@@ -287,6 +291,8 @@ extension QQSDKHandler {
 
         public static let accessToken = Bus.OauthInfoKeys.QQ.accessToken
 
+        public static let expirationDate = Bus.OauthInfoKeys.QQ.expirationDate
+
         public static let openID = Bus.OauthInfoKeys.QQ.openID
     }
 }
@@ -313,7 +319,10 @@ extension QQSDKHandler {
                     owner?.shareCompletionHandler?(.success(()))
                 case "-4":
                     owner?.shareCompletionHandler?(.failure(.userCancelled))
+                case "--100070005":
+                    owner?.shareCompletionHandler?(.failure(.invalidParameter))
                 default:
+                    assertionFailure()
                     owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             default:
@@ -326,8 +335,13 @@ extension QQSDKHandler {
         }
 
         func tencentDidLogin() {
+            let expirationDate = (owner?.oauthCoordinator.expirationDate).flatMap {
+                owner?.iso8601DateFormatter.string(from: $0)
+            }
+
             let parameters = [
                 OauthInfoKeys.accessToken: owner?.oauthCoordinator.accessToken,
+                OauthInfoKeys.expirationDate: expirationDate,
                 OauthInfoKeys.openID: owner?.oauthCoordinator.openId,
             ]
             .bus
@@ -336,6 +350,7 @@ extension QQSDKHandler {
             if !parameters.isEmpty {
                 owner?.oauthCompletionHandler?(.success(parameters))
             } else {
+                assertionFailure()
                 owner?.oauthCompletionHandler?(.failure(.unknown))
             }
         }
@@ -344,6 +359,7 @@ extension QQSDKHandler {
             if cancelled {
                 owner?.oauthCompletionHandler?(.failure(.userCancelled))
             } else {
+                assertionFailure()
                 owner?.oauthCompletionHandler?(.failure(.unknown))
             }
         }

@@ -23,12 +23,6 @@ public class SystemHandler {
 
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
-    public var logHandler: Bus.LogHandler = { message, _, _, _ in
-        #if DEBUG
-            print(message)
-        #endif
-    }
-
     private var boxedCoordinator: Any!
 
     @available(iOS 13.0, *)
@@ -45,8 +39,6 @@ public class SystemHandler {
     }
 }
 
-extension SystemHandler: LogHandlerProxyType {}
-
 extension SystemHandler: ShareHandlerType {
 
     // swiftlint:disable cyclomatic_complexity function_body_length
@@ -62,7 +54,7 @@ extension SystemHandler: ShareHandlerType {
             ?? UIApplication.shared.keyWindow?.rootViewController
         else {
             assertionFailure()
-            completionHandler(.failure(.unknown))
+            completionHandler(.failure(.invalidParameter))
             return
         }
 
@@ -124,7 +116,7 @@ extension SystemHandler: ShareHandlerType {
                 let sourceView = options[ShareOptionKeys.sourceView] as? UIView
             else {
                 assertionFailure()
-                completionHandler(.failure(.unknown))
+                completionHandler(.failure(.invalidParameter))
                 return
             }
 
@@ -146,8 +138,13 @@ extension SystemHandler: ShareHandlerType {
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
         case Endpoints.System.activity:
-            return ![
-                Messages.miniProgram,
+            return [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+                Messages.file,
             ].contains(message)
         default:
             assertionFailure()
@@ -163,6 +160,7 @@ extension SystemHandler: OauthHandlerType {
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
         guard #available(iOS 13.0, *) else {
+            assertionFailure()
             completionHandler(.failure(.unknown))
             return
         }
@@ -258,6 +256,7 @@ extension SystemHandler {
                 if !parameters.isEmpty {
                     owner?.oauthCompletionHandler?(.success(parameters))
                 } else {
+                    assertionFailure()
                     owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
             default:
@@ -270,6 +269,7 @@ extension SystemHandler {
             case ASAuthorizationError.canceled:
                 owner?.oauthCompletionHandler?(.failure(.userCancelled))
             default:
+                assertionFailure()
                 owner?.oauthCompletionHandler?(.failure(.unknown))
             }
         }
