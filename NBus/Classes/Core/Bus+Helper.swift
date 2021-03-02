@@ -30,8 +30,10 @@ extension String: BusCompatible {}
 
 extension BusWrapper where Base == String {
 
-    var base64EncodedString: String? {
-        base.data(using: .utf8)?.base64EncodedString()
+    var base64EncodedString: String {
+        let data = Data(base.utf8)
+
+        return data.base64EncodedString()
     }
 
     var sha1: String? {
