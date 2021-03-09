@@ -110,6 +110,22 @@ extension Bus {
 
 extension Bus {
 
+    public struct LaunchOptionKey: RawRepresentable, Hashable {
+
+        public typealias RawValue = String
+
+        public let rawValue: Self.RawValue
+
+        public init(rawValue: Self.RawValue) {
+            self.rawValue = rawValue
+        }
+    }
+
+    public typealias LaunchCompletionHandler = (Result<Void, Bus.Error>) -> Void
+}
+
+extension Bus {
+
     public func openURL(_ url: URL) -> Bool {
         let handlers = self.handlers.compactMap { $0 as? OpenURLHandlerType }
 
