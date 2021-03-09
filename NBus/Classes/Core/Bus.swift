@@ -122,6 +122,29 @@ extension Bus {
     }
 
     public typealias LaunchCompletionHandler = (Result<Void, Bus.Error>) -> Void
+
+    public func launch(
+        program: MiniProgramMessage,
+        with platform: Platform,
+        options: [Bus.LaunchOptionKey: Any] = [:],
+        completionHandler: @escaping LaunchCompletionHandler
+    ) {
+        let handlers = self.handlers.compactMap { $0 as? LaunchHandlerType }
+
+        guard
+            let handler = handlers.first(where: { $0.canLaunch(with: platform) })
+        else {
+            assertionFailure()
+            completionHandler(.failure(.missingHandler))
+            return
+        }
+
+        handler.launch(
+            program: program,
+            options: options,
+            completionHandler: completionHandler
+        )
+    }
 }
 
 extension Bus {
