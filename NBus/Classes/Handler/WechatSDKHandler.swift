@@ -317,6 +317,8 @@ extension WechatSDKHandler {
                         assertionFailure()
                         owner?.oauthCompletionHandler?(.failure(.unknown))
                     }
+                case WXErrCodeCommon.rawValue:
+                    owner?.oauthCompletionHandler?(.failure(.invalidParameter))
                 case WXErrCodeAuthDeny.rawValue,
                      WXErrCodeUserCancel.rawValue:
                     owner?.oauthCompletionHandler?(.failure(.userCancelled))
