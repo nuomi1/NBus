@@ -13,6 +13,18 @@ public final class Bus {
     public static let shared = Bus()
 
     public var handlers: [HandlerType] = []
+
+    public var isDebugEnabled: Bool = {
+        var isDebugEnabled = false
+
+        assert({
+            isDebugEnabled = true
+            return true
+        }()
+        )
+
+        return isDebugEnabled
+    }()
 }
 
 extension Bus {
