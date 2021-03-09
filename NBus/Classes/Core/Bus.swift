@@ -110,6 +110,45 @@ extension Bus {
 
 extension Bus {
 
+    public struct LaunchOptionKey: RawRepresentable, Hashable {
+
+        public typealias RawValue = String
+
+        public let rawValue: Self.RawValue
+
+        public init(rawValue: Self.RawValue) {
+            self.rawValue = rawValue
+        }
+    }
+
+    public typealias LaunchCompletionHandler = (Result<Void, Bus.Error>) -> Void
+
+    public func launch(
+        program: MiniProgramMessage,
+        with platform: Platform,
+        options: [Bus.LaunchOptionKey: Any] = [:],
+        completionHandler: @escaping LaunchCompletionHandler
+    ) {
+        let handlers = self.handlers.compactMap { $0 as? LaunchHandlerType }
+
+        guard
+            let handler = handlers.first(where: { $0.canLaunch(with: platform) })
+        else {
+            assertionFailure()
+            completionHandler(.failure(.missingHandler))
+            return
+        }
+
+        handler.launch(
+            program: program,
+            options: options,
+            completionHandler: completionHandler
+        )
+    }
+}
+
+extension Bus {
+
     public func openURL(_ url: URL) -> Bool {
         let handlers = self.handlers.compactMap { $0 as? OpenURLHandlerType }
 

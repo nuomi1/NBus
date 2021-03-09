@@ -102,6 +102,7 @@
 	<array>
 		<string>mqq</string>
 		<string>mqqopensdkapiV2</string>
+		<string>mqqopensdklaunchminiapp</string>
 		<string>mqqopensdkminiapp</string>
 		<string>mqqopensdknopasteboard</string>
 		<string>weixin</string>

@@ -24,6 +24,7 @@ public class WechatSDKHandler {
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
+    private var launchCompletionHandler: Bus.LaunchCompletionHandler?
 
     public let appID: String
     public let universalLink: URL
@@ -225,6 +226,34 @@ extension WechatSDKHandler: OauthHandlerType {
     }
 }
 
+extension WechatSDKHandler: LaunchHandlerType {
+
+    public func launch(
+        program: MiniProgramMessage,
+        options: [Bus.LaunchOptionKey: Any],
+        completionHandler: @escaping Bus.LaunchCompletionHandler
+    ) {
+        guard isInstalled else {
+            completionHandler(.failure(.missingApplication))
+            return
+        }
+
+        launchCompletionHandler = completionHandler
+
+        let request = WXLaunchMiniProgramReq()
+
+        request.userName = program.miniProgramID
+        request.path = program.path
+        request.miniProgramType = miniProgramType(program.miniProgramType)
+
+        WXApi.send(request) { result in
+            if !result {
+                completionHandler(.failure(.unknown))
+            }
+        }
+    }
+}
+
 extension WechatSDKHandler: OpenURLHandlerType {
 
     public func openURL(_ url: URL) {
@@ -294,6 +323,18 @@ extension WechatSDKHandler {
                 default:
                     assertionFailure()
                     owner?.oauthCompletionHandler?(.failure(.unknown))
+                }
+            case let response as WXLaunchMiniProgramResp:
+                switch response.errCode {
+                case WXSuccess.rawValue:
+                    owner?.launchCompletionHandler?(.success(()))
+                case WXErrCodeSentFail.rawValue:
+                    owner?.launchCompletionHandler?(.failure(.invalidParameter))
+                case WXErrCodeUserCancel.rawValue:
+                    owner?.launchCompletionHandler?(.failure(.userCancelled))
+                default:
+                    assertionFailure()
+                    owner?.launchCompletionHandler?(.failure(.unknown))
                 }
             default:
                 assertionFailure("\(resp)")

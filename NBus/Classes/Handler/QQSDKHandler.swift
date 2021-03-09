@@ -23,6 +23,7 @@ public class QQSDKHandler {
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
+    private var launchCompletionHandler: Bus.LaunchCompletionHandler?
 
     public let appID: String
     public let universalLink: URL
@@ -264,6 +265,44 @@ extension QQSDKHandler: OauthHandlerType {
         let result = oauthCoordinator.authorize([kOPEN_PERMISSION_GET_USER_INFO])
 
         if !result {
+            completionHandler(.failure(.unknown))
+        }
+    }
+}
+
+extension QQSDKHandler: LaunchHandlerType {
+
+    public func launch(
+        program: MiniProgramMessage,
+        options: [Bus.LaunchOptionKey: Any],
+        completionHandler: @escaping Bus.LaunchCompletionHandler
+    ) {
+        guard isInstalled else {
+            completionHandler(.failure(.missingApplication))
+            return
+        }
+
+        launchCompletionHandler = completionHandler
+
+        let miniProgramObject = QQApiLaunchMiniProgramObject()
+
+        miniProgramObject.miniAppID = program.miniProgramID
+        miniProgramObject.miniPath = program.path
+        miniProgramObject.miniprogramType = miniProgramType(program.miniProgramType)
+
+        let request = SendMessageToQQReq(content: miniProgramObject)
+
+        let code = QQApiInterface.send(request)
+
+        switch code {
+        case .EQQAPISENDSUCESS:
+            break
+        case .EQQAPIMESSAGECONTENTINVALID:
+            completionHandler(.failure(.invalidParameter))
+        case .EQQAPIVERSIONNEEDUPDATE:
+            completionHandler(.failure(.unsupportedApplication))
+        default:
+            assertionFailure()
             completionHandler(.failure(.unknown))
         }
     }

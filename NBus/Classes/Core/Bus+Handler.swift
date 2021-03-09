@@ -69,6 +69,26 @@ extension OpenURLHandlerType {
     }
 }
 
+public protocol LaunchHandlerType {
+
+    var platform: Platform { get }
+
+    func launch(
+        program: MiniProgramMessage,
+        options: [Bus.LaunchOptionKey: Any],
+        completionHandler: @escaping Bus.LaunchCompletionHandler
+    )
+
+    func canLaunch(with platform: Platform) -> Bool
+}
+
+extension LaunchHandlerType {
+
+    public func canLaunch(with platform: Platform) -> Bool {
+        self.platform == platform
+    }
+}
+
 public protocol OpenUserActivityHandlerType: HandlerType {
 
     var universalLink: URL { get }
