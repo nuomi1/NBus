@@ -58,7 +58,7 @@ extension Bus {
         guard
             let handler = handlers.first(where: { $0.canShare(to: endpoint) })
         else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.missingHandler))
             return
         }
@@ -108,7 +108,7 @@ extension Bus {
         guard
             let handler = handlers.first(where: { $0.canOauth(with: platform) })
         else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.missingHandler))
             return
         }
@@ -146,7 +146,7 @@ extension Bus {
         guard
             let handler = handlers.first(where: { $0.canLaunch(with: platform) })
         else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.missingHandler))
             return
         }

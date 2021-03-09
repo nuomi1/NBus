@@ -22,7 +22,7 @@ public class WechatHandler {
 
     public var isInstalled: Bool {
         guard let url = URL(string: "weixin://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -31,7 +31,7 @@ public class WechatHandler {
 
     private var isSupported: Bool {
         guard let url = URL(string: "weixinULAPI://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -83,7 +83,7 @@ extension WechatHandler: ShareHandlerType {
         guard
             let scene = scene(endpoint)
         else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -146,7 +146,7 @@ extension WechatHandler: ShareHandlerType {
             pasteBoardItems["withShareTicket"] = false
 
         default:
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.unsupportedMessage))
             return
         }
@@ -154,7 +154,7 @@ extension WechatHandler: ShareHandlerType {
         setPasteboard(with: pasteBoardItems, in: .general, saveData: true)
 
         guard let url = generateShareUniversalLink() else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -198,7 +198,7 @@ extension WechatHandler: ShareHandlerType {
                 Messages.file,
             ].contains(message)
         default:
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
     }
@@ -261,7 +261,7 @@ extension WechatHandler: OauthHandlerType {
         setPasteboard(with: pasteBoardItems, in: .general)
 
         guard let url = generateOauthUniversalLink() else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -317,7 +317,7 @@ extension WechatHandler {
         guard
             let pbData = generatePasteboardData(with: pbItems)
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -444,7 +444,7 @@ extension WechatHandler: OpenURLHandlerType {
         guard
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -458,7 +458,7 @@ extension WechatHandler: OpenURLHandlerType {
         case "" where components.path == "":
             handleGeneral()
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -470,7 +470,7 @@ extension WechatHandler: OpenUserActivityHandlerType {
             let url = userActivity.webpageURL,
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -482,7 +482,7 @@ extension WechatHandler: OpenUserActivityHandlerType {
         case universalLink.appendingPathComponent("\(appID)/oauth").path:
             handleOauth(with: components)
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -496,7 +496,7 @@ extension WechatHandler {
             let signToken = signTokenItem.value,
             let pbData = lastMessageData
         else {
-            assertionFailure()
+            busAssertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
@@ -507,7 +507,7 @@ extension WechatHandler {
         lastMessageData = nil
 
         guard let url = generateShareUniversalLink() else {
-            assertionFailure()
+            busAssertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
@@ -523,7 +523,7 @@ extension WechatHandler {
         guard
             let pbData = lastMessageData
         else {
-            assertionFailure()
+            busAssertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
@@ -532,7 +532,7 @@ extension WechatHandler {
         lastMessageData = nil
 
         guard let url = generateShareURLScheme() else {
-            assertionFailure()
+            busAssertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
@@ -546,7 +546,7 @@ extension WechatHandler {
 
     private func handleGeneral() {
         guard let infos = getPlist(from: .general) else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -558,7 +558,7 @@ extension WechatHandler {
         case "2030":
             handleOauth(with: infos)
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -574,7 +574,7 @@ extension WechatHandler {
         case "-2":
             shareCompletionHandler?(.failure(.userCancelled))
         default:
-            assertionFailure()
+            busAssertionFailure()
             shareCompletionHandler?(.failure(.unknown))
         }
     }
@@ -586,7 +586,7 @@ extension WechatHandler {
         case "-4", "-2":
             oauthCompletionHandler?(.failure(.userCancelled))
         default:
-            assertionFailure()
+            busAssertionFailure()
             oauthCompletionHandler?(.failure(.unknown))
         }
     }
@@ -597,7 +597,7 @@ extension WechatHandler {
             let codeItem = items.first(where: { $0.name == "code" }),
             let code = codeItem.value
         else {
-            assertionFailure()
+            busAssertionFailure()
             oauthCompletionHandler?(.failure(.invalidParameter))
             return
         }
@@ -611,7 +611,7 @@ extension WechatHandler {
         if !parameters.isEmpty {
             oauthCompletionHandler?(.success(parameters))
         } else {
-            assertionFailure()
+            busAssertionFailure()
             oauthCompletionHandler?(.failure(.unknown))
         }
     }

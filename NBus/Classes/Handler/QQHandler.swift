@@ -21,7 +21,7 @@ public class QQHandler {
 
     public var isInstalled: Bool {
         guard let url = URL(string: "mqq://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -30,7 +30,7 @@ public class QQHandler {
 
     private var isSupported: Bool {
         guard let url = URL(string: "mqqopensdkapiV2://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -39,7 +39,7 @@ public class QQHandler {
 
     private var isMiniProgramSupported: Bool {
         guard let url = URL(string: "mqqopensdkminiapp://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -48,7 +48,7 @@ public class QQHandler {
 
     private var isNoPasteboardSupported: Bool {
         guard let url = URL(string: "mqqopensdknopasteboard://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -104,7 +104,7 @@ extension QQHandler: ShareHandlerType {
             let cflag = cflag(endpoint, message.identifier),
             let shareType = shareType(endpoint, message.identifier)
         else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -191,7 +191,7 @@ extension QQHandler: ShareHandlerType {
             urlItems["mini_code64"] = "1"
 
         default:
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.unsupportedMessage))
             return
         }
@@ -205,7 +205,7 @@ extension QQHandler: ShareHandlerType {
         }
 
         guard let url = generateShareUniversalLink(with: urlItems) else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -240,7 +240,7 @@ extension QQHandler: ShareHandlerType {
                 Messages.webPage,
             ].contains(message)
         default:
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
     }
@@ -343,7 +343,7 @@ extension QQHandler: OauthHandlerType {
             let displayName = displayName,
             let bundleID = bundleID
         else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -378,7 +378,7 @@ extension QQHandler: OauthHandlerType {
         }
 
         guard let url = generateOauthUniversalLink(with: urlItems) else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -532,7 +532,7 @@ extension QQHandler: OpenURLHandlerType {
         guard
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -548,7 +548,7 @@ extension QQHandler: OpenUserActivityHandlerType {
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let identifier = Bundle.main.bus.identifier
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -558,7 +558,7 @@ extension QQHandler: OpenUserActivityHandlerType {
         case universalLink.appendingPathComponent("\(identifier)").path:
             handleActionInfo(with: components)
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -572,7 +572,7 @@ extension QQHandler {
             let appSignToken = infos["appsign_token"],
             let components = URLComponents(string: appSignRedirect)
         else {
-            assertionFailure()
+            busAssertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
@@ -586,7 +586,7 @@ extension QQHandler {
         } ?? [:]
 
         guard let url = generateShareUniversalLink(with: items) else {
-            assertionFailure()
+            busAssertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
@@ -602,7 +602,7 @@ extension QQHandler {
         guard
             let infos = getJSON(from: components, with: "sdkactioninfo")
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -623,7 +623,7 @@ extension QQHandler {
         case "qzapp" where components.path == "/mqzone/0":
             handleOauth(with: components)
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -634,7 +634,7 @@ extension QQHandler {
         guard
             let item = components.queryItems?.first(where: { $0.name == "error" })
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -646,7 +646,7 @@ extension QQHandler {
         case "--100070005":
             shareCompletionHandler?(.failure(.invalidParameter))
         default:
-            assertionFailure()
+            busAssertionFailure()
             shareCompletionHandler?(.failure(.unknown))
         }
     }
@@ -655,7 +655,7 @@ extension QQHandler {
         guard
             let infos = getOauthInfos(from: components) ?? getOauthInfos(from: .general)
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -684,11 +684,11 @@ extension QQHandler {
             if !parameters.isEmpty {
                 oauthCompletionHandler?(.success(parameters))
             } else {
-                assertionFailure()
+                busAssertionFailure()
                 oauthCompletionHandler?(.failure(.unknown))
             }
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }

@@ -104,7 +104,7 @@ extension BusWrapper where Base: UIPasteboard {
         guard
             let typeListString = UIPasteboard.typeListString as? [String]
         else {
-            assertionFailure()
+            busAssertionFailure()
             return nil
         }
 
