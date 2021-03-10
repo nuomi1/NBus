@@ -47,7 +47,7 @@ public class WechatHandler {
     @BusUserDefaults(key: ShareOptionKeys.signToken)
     private var signToken: String?
 
-    private var lastMessageData: Data?
+    private var lastSignTokenData: LastSignTokenData?
 
     public init(appID: String, universalLink: URL) {
         self.appID = appID
@@ -151,7 +151,11 @@ extension WechatHandler: ShareHandlerType {
             return
         }
 
-        setPasteboard(with: pasteBoardItems, in: .general, saveData: true)
+        setPasteboard(with: pasteBoardItems, in: .general)
+
+        if signToken == nil {
+            lastSignTokenData = .share(pasteBoardItems: pasteBoardItems)
+        }
 
         guard let url = generateShareUniversalLink() else {
             busAssertionFailure()
@@ -298,8 +302,7 @@ extension WechatHandler {
 
     private func setPasteboard(
         with pasteBoardItems: [String: Any],
-        in pasteboard: UIPasteboard,
-        saveData: Bool = false
+        in pasteboard: UIPasteboard
     ) {
         var pasteBoardItems = pasteBoardItems
 
@@ -322,10 +325,6 @@ extension WechatHandler {
         }
 
         setPasteboard(with: pbData, in: .general)
-
-        if saveData, signToken == nil {
-            lastMessageData = pbData
-        }
     }
 
     private func setPasteboard(with data: Data, in pasteboard: UIPasteboard) {
@@ -494,7 +493,7 @@ extension WechatHandler {
             let infos = components.queryItems,
             let signTokenItem = infos.first(where: { $0.name == "wechat_auth_token" }),
             let signToken = signTokenItem.value,
-            let pbData = lastMessageData
+            case let .share(pasteBoardItems) = lastSignTokenData
         else {
             busAssertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
@@ -503,8 +502,8 @@ extension WechatHandler {
 
         self.signToken = signToken
 
-        setPasteboard(with: pbData, in: .general)
-        lastMessageData = nil
+        setPasteboard(with: pasteBoardItems, in: .general)
+        lastSignTokenData = nil
 
         guard let url = generateShareUniversalLink() else {
             busAssertionFailure()
@@ -521,15 +520,15 @@ extension WechatHandler {
 
     private func handleSignTokenFailure() {
         guard
-            let pbData = lastMessageData
+            case let .share(pasteBoardItems) = lastSignTokenData
         else {
             busAssertionFailure()
             shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
 
-        setPasteboard(with: pbData, in: .general)
-        lastMessageData = nil
+        setPasteboard(with: pasteBoardItems, in: .general)
+        lastSignTokenData = nil
 
         guard let url = generateShareURLScheme() else {
             busAssertionFailure()
@@ -644,5 +643,13 @@ extension WechatHandler {
     public enum OauthInfoKeys {
 
         public static let code = Bus.OauthInfoKeys.Wechat.code
+    }
+}
+
+extension WechatHandler {
+
+    private enum LastSignTokenData {
+
+        case share(pasteBoardItems: [String: Any])
     }
 }
