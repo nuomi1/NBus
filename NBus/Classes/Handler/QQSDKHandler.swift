@@ -8,6 +8,8 @@
 
 import Foundation
 
+// swiftlint:disable file_length
+
 public class QQSDKHandler {
 
     public let endpoints: [Endpoint] = [

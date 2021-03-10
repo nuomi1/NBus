@@ -290,6 +290,8 @@ extension WechatSDKHandler {
             busAssertionFailure("\(req)")
         }
 
+        // swiftlint:disable cyclomatic_complexity function_body_length
+
         func onResp(_ resp: BaseResp) {
             switch resp {
             case let response as SendMessageToWXResp:
@@ -342,5 +344,7 @@ extension WechatSDKHandler {
                 busAssertionFailure("\(resp)")
             }
         }
+
+        // swiftlint:enable cyclomatic_complexity function_body_length
     }
 }
