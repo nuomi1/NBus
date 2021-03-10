@@ -20,7 +20,7 @@ public class WeiboHandler {
 
     public var isInstalled: Bool {
         guard let url = URL(string: "sinaweibo://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -29,7 +29,7 @@ public class WeiboHandler {
 
     private var isSupported: Bool {
         guard let url = URL(string: "weibosdk3.3://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -132,7 +132,7 @@ extension WeiboHandler: ShareHandlerType {
             )
 
         default:
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.unsupportedMessage))
             return
         }
@@ -142,7 +142,7 @@ extension WeiboHandler: ShareHandlerType {
         setPasteboard(with: transferObjectItems, in: .general)
 
         guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -167,7 +167,7 @@ extension WeiboHandler: ShareHandlerType {
                 Messages.webPage,
             ].contains(message)
         default:
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
     }
@@ -230,7 +230,7 @@ extension WeiboHandler: OauthHandlerType {
         setPasteboard(with: transferObjectItems, in: .general)
 
         guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -271,7 +271,7 @@ extension WeiboHandler {
         guard
             let bundleID = bundleID
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -352,7 +352,7 @@ extension WeiboHandler: OpenURLHandlerType {
         guard
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -360,7 +360,7 @@ extension WeiboHandler: OpenURLHandlerType {
         case "response" where components.path == "":
             handleGeneral()
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -372,7 +372,7 @@ extension WeiboHandler: OpenUserActivityHandlerType {
             let url = userActivity.webpageURL,
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -380,7 +380,7 @@ extension WeiboHandler: OpenUserActivityHandlerType {
         case universalLink.appendingPathComponent("weibosdk/response").path:
             handleGeneral()
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -391,7 +391,7 @@ extension WeiboHandler {
         guard
             let infos = getPlist(from: .general)
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -403,7 +403,7 @@ extension WeiboHandler {
         case "WBAuthorizeResponse":
             handleOauth(with: infos)
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -419,7 +419,7 @@ extension WeiboHandler {
         case -1:
             shareCompletionHandler?(.failure(.userCancelled))
         default:
-            assertionFailure()
+            busAssertionFailure()
             shareCompletionHandler?(.failure(.unknown))
         }
     }
@@ -448,13 +448,13 @@ extension WeiboHandler {
             if !parameters.isEmpty {
                 oauthCompletionHandler?(.success(parameters))
             } else {
-                assertionFailure()
+                busAssertionFailure()
                 oauthCompletionHandler?(.failure(.unknown))
             }
         case -1:
             oauthCompletionHandler?(.failure(.userCancelled))
         default:
-            assertionFailure()
+            busAssertionFailure()
             oauthCompletionHandler?(.failure(.unknown))
         }
     }

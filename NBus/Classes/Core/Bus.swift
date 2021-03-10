@@ -13,6 +13,18 @@ public final class Bus {
     public static let shared = Bus()
 
     public var handlers: [HandlerType] = []
+
+    public var isDebugEnabled: Bool = {
+        var isDebugEnabled = false
+
+        assert({
+            isDebugEnabled = true
+            return true
+        }()
+        )
+
+        return isDebugEnabled
+    }()
 }
 
 extension Bus {
@@ -46,7 +58,7 @@ extension Bus {
         guard
             let handler = handlers.first(where: { $0.canShare(to: endpoint) })
         else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.missingHandler))
             return
         }
@@ -96,7 +108,7 @@ extension Bus {
         guard
             let handler = handlers.first(where: { $0.canOauth(with: platform) })
         else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.missingHandler))
             return
         }
@@ -134,7 +146,7 @@ extension Bus {
         guard
             let handler = handlers.first(where: { $0.canLaunch(with: platform) })
         else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.missingHandler))
             return
         }

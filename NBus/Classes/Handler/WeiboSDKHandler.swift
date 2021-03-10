@@ -106,7 +106,7 @@ extension WeiboSDKHandler: ShareHandlerType {
             )
 
         default:
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.unsupportedMessage))
             return
         }
@@ -129,7 +129,7 @@ extension WeiboSDKHandler: ShareHandlerType {
                 Messages.webPage,
             ].contains(message)
         default:
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
     }
@@ -215,7 +215,7 @@ extension WeiboSDKHandler {
         }
 
         func didReceiveWeiboRequest(_ request: WBBaseRequest!) {
-            assertionFailure("\(String(describing: request))")
+            busAssertionFailure("\(String(describing: request))")
         }
 
         func didReceiveWeiboResponse(_ response: WBBaseResponse!) {
@@ -227,7 +227,7 @@ extension WeiboSDKHandler {
                 case .userCancel:
                     owner?.shareCompletionHandler?(.failure(.userCancelled))
                 default:
-                    assertionFailure()
+                    busAssertionFailure()
                     owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             case let response as WBAuthorizeResponse:
@@ -249,17 +249,17 @@ extension WeiboSDKHandler {
                     if !parameters.isEmpty {
                         owner?.oauthCompletionHandler?(.success(parameters))
                     } else {
-                        assertionFailure()
+                        busAssertionFailure()
                         owner?.oauthCompletionHandler?(.failure(.unknown))
                     }
                 case .userCancel:
                     owner?.oauthCompletionHandler?(.failure(.userCancelled))
                 default:
-                    assertionFailure()
+                    busAssertionFailure()
                     owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
             default:
-                assertionFailure("\(String(describing: response))")
+                busAssertionFailure("\(String(describing: response))")
             }
         }
     }

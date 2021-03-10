@@ -125,7 +125,7 @@ extension WechatSDKHandler: ShareHandlerType {
             mediaMessage.mediaObject = miniProgramObject
 
         default:
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.unsupportedMessage))
             return
         }
@@ -171,7 +171,7 @@ extension WechatSDKHandler: ShareHandlerType {
                 Messages.file,
             ].contains(message)
         default:
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
     }
@@ -185,7 +185,7 @@ extension WechatSDKHandler: ShareHandlerType {
         case Endpoints.Wechat.favorite:
             return WXSceneFavorite
         default:
-            assertionFailure()
+            busAssertionFailure()
             return WXSceneSession
         }
     }
@@ -287,8 +287,10 @@ extension WechatSDKHandler {
         }
 
         func onReq(_ req: BaseReq) {
-            assertionFailure("\(req)")
+            busAssertionFailure("\(req)")
         }
+
+        // swiftlint:disable cyclomatic_complexity function_body_length
 
         func onResp(_ resp: BaseResp) {
             switch resp {
@@ -299,7 +301,7 @@ extension WechatSDKHandler {
                 case WXErrCodeUserCancel.rawValue:
                     owner?.shareCompletionHandler?(.failure(.userCancelled))
                 default:
-                    assertionFailure()
+                    busAssertionFailure()
                     owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             case let response as SendAuthResp:
@@ -314,7 +316,7 @@ extension WechatSDKHandler {
                     if !parameters.isEmpty {
                         owner?.oauthCompletionHandler?(.success(parameters))
                     } else {
-                        assertionFailure()
+                        busAssertionFailure()
                         owner?.oauthCompletionHandler?(.failure(.unknown))
                     }
                 case WXErrCodeCommon.rawValue:
@@ -323,7 +325,7 @@ extension WechatSDKHandler {
                      WXErrCodeUserCancel.rawValue:
                     owner?.oauthCompletionHandler?(.failure(.userCancelled))
                 default:
-                    assertionFailure()
+                    busAssertionFailure()
                     owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
             case let response as WXLaunchMiniProgramResp:
@@ -335,12 +337,14 @@ extension WechatSDKHandler {
                 case WXErrCodeUserCancel.rawValue:
                     owner?.launchCompletionHandler?(.failure(.userCancelled))
                 default:
-                    assertionFailure()
+                    busAssertionFailure()
                     owner?.launchCompletionHandler?(.failure(.unknown))
                 }
             default:
-                assertionFailure("\(resp)")
+                busAssertionFailure("\(resp)")
             }
         }
+
+        // swiftlint:enable cyclomatic_complexity function_body_length
     }
 }

@@ -158,7 +158,9 @@ extension PlatformViewController.LaunchView {
             message = MediaSource.wechatMiniProgram
         }
 
-        let program = message as! MiniProgramMessage
+        guard
+            let program = message as? MiniProgramMessage
+        else { assertionFailure(); return }
 
         launch(program: program, with: platform)
     }

@@ -53,7 +53,7 @@ extension SystemHandler: ShareHandlerType {
             let presentingViewController = options[ShareOptionKeys.presentingViewController] as? UIViewController
             ?? UIApplication.shared.keyWindow?.rootViewController
         else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -90,7 +90,7 @@ extension SystemHandler: ShareHandlerType {
             activityItems.append(message.data)
 
         default:
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.unsupportedMessage))
             return
         }
@@ -115,7 +115,7 @@ extension SystemHandler: ShareHandlerType {
             guard
                 let sourceView = options[ShareOptionKeys.sourceView] as? UIView
             else {
-                assertionFailure()
+                busAssertionFailure()
                 completionHandler(.failure(.invalidParameter))
                 return
             }
@@ -147,7 +147,7 @@ extension SystemHandler: ShareHandlerType {
                 Messages.file,
             ].contains(message)
         default:
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
     }
@@ -160,7 +160,7 @@ extension SystemHandler: OauthHandlerType {
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
         guard #available(iOS 13.0, *) else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.unknown))
             return
         }
@@ -256,11 +256,11 @@ extension SystemHandler {
                 if !parameters.isEmpty {
                     owner?.oauthCompletionHandler?(.success(parameters))
                 } else {
-                    assertionFailure()
+                    busAssertionFailure()
                     owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
             default:
-                assertionFailure("\(authorization.credential)")
+                busAssertionFailure("\(authorization.credential)")
             }
         }
 
@@ -269,7 +269,7 @@ extension SystemHandler {
             case ASAuthorizationError.canceled:
                 owner?.oauthCompletionHandler?(.failure(.userCancelled))
             default:
-                assertionFailure()
+                busAssertionFailure()
                 owner?.oauthCompletionHandler?(.failure(.unknown))
             }
         }
