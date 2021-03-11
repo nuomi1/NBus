@@ -683,23 +683,13 @@ extension QQHandler {
 
         switch lastSignTokenData {
         case let .share(pasteBoardItems, urlItems):
-            handleSignTokenShare(with: pasteBoardItems, and: urlItems)
+            setPasteboard(with: pasteBoardItems, in: .general)
+            openShareUniversalLink(with: urlItems)
         case let .launch(urlItems):
-            handleSignTokenLaunch(with: urlItems)
+            openLaunchUniversalLink(with: urlItems)
         }
-    }
 
-    private func handleSignTokenShare(with pasteBoardItems: [String: Any], and urlItems: [String: String]) {
-        setPasteboard(with: pasteBoardItems, in: .general)
-        lastSignTokenData = nil
-
-        openShareUniversalLink(with: urlItems)
-    }
-
-    private func handleSignTokenLaunch(with urlItems: [String: String]) {
-        lastSignTokenData = nil
-
-        openLaunchUniversalLink(with: urlItems)
+        self.lastSignTokenData = nil
     }
 
     private func handleActionInfo(with components: URLComponents) {
