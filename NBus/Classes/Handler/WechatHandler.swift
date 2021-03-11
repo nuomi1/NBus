@@ -551,6 +551,20 @@ extension WechatHandler {
             }
         }
     }
+
+    private func openLaunchURLScheme(with urlItems: [String: String]) {
+        guard let url = generateLaunchURLScheme(with: urlItems) else {
+            busAssertionFailure()
+            launchCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url) { [weak self] result in
+            if !result {
+                self?.launchCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
 }
 
 extension WechatHandler: OpenURLHandlerType {
@@ -666,17 +680,7 @@ extension WechatHandler {
         setPasteboard(with: pasteBoardItems, in: .general)
         lastSignTokenData = nil
 
-        guard let url = generateLaunchURLScheme(with: urlItems) else {
-            busAssertionFailure()
-            launchCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url) { [weak self] result in
-            if !result {
-                self?.launchCompletionHandler?(.failure(.unknown))
-            }
-        }
+        openLaunchURLScheme(with: urlItems)
     }
 
     private func handleGeneral() {
