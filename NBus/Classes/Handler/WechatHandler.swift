@@ -633,24 +633,14 @@ extension WechatHandler {
 
         switch lastSignTokenData {
         case let .share(pasteBoardItems):
-            handleSignTokenShareSuccess(with: pasteBoardItems)
+            setPasteboard(with: pasteBoardItems, in: .general)
+            openShareUniversalLink()
         case let .launch(pasteBoardItems, urlItems):
-            handleSignTokenLaunchSuccess(with: pasteBoardItems, and: urlItems)
+            setPasteboard(with: pasteBoardItems, in: .general)
+            openLaunchUniversalLink(with: urlItems)
         }
-    }
 
-    private func handleSignTokenShareSuccess(with pasteBoardItems: [String: Any]) {
-        setPasteboard(with: pasteBoardItems, in: .general)
-        lastSignTokenData = nil
-
-        openShareUniversalLink()
-    }
-
-    private func handleSignTokenLaunchSuccess(with pasteBoardItems: [String: Any], and urlItems: [String: String]) {
-        setPasteboard(with: pasteBoardItems, in: .general)
-        lastSignTokenData = nil
-
-        openLaunchUniversalLink(with: urlItems)
+        self.lastSignTokenData = nil
     }
 
     private func handleSignTokenFailure() {
@@ -663,24 +653,14 @@ extension WechatHandler {
 
         switch lastSignTokenData {
         case let .share(pasteBoardItems):
-            handleSignTokenShareFailure(with: pasteBoardItems)
+            setPasteboard(with: pasteBoardItems, in: .general)
+            openShareURLScheme()
         case let .launch(pasteBoardItems, urlItems):
-            handleSignTokenLaunchFailure(with: pasteBoardItems, and: urlItems)
+            setPasteboard(with: pasteBoardItems, in: .general)
+            openLaunchURLScheme(with: urlItems)
         }
-    }
 
-    private func handleSignTokenShareFailure(with pasteBoardItems: [String: Any]) {
-        setPasteboard(with: pasteBoardItems, in: .general)
-        lastSignTokenData = nil
-
-        openShareURLScheme()
-    }
-
-    private func handleSignTokenLaunchFailure(with pasteBoardItems: [String: Any], and urlItems: [String: String]) {
-        setPasteboard(with: pasteBoardItems, in: .general)
-        lastSignTokenData = nil
-
-        openLaunchURLScheme(with: urlItems)
+        self.lastSignTokenData = nil
     }
 
     private func handleGeneral() {
