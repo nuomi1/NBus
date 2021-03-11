@@ -158,17 +158,7 @@ extension WechatHandler: ShareHandlerType {
             lastSignTokenData = .share(pasteBoardItems: pasteBoardItems)
         }
 
-        guard let url = generateShareUniversalLink() else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openShareUniversalLink()
     }
 
     // swiftlint:enable cyclomatic_complexity function_body_length
@@ -265,17 +255,7 @@ extension WechatHandler: OauthHandlerType {
 
         setPasteboard(with: pasteBoardItems, in: .general)
 
-        guard let url = generateOauthUniversalLink() else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openOauthUniversalLink()
     }
 }
 
@@ -313,17 +293,7 @@ extension WechatHandler: LaunchHandlerType {
             lastSignTokenData = .launch(pasteBoardItems: pasteBoardItems, urlItems: urlItems)
         }
 
-        guard let url = generateLaunchUniversalLink(with: urlItems) else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openLaunchUniversalLink(with: urlItems)
     }
 }
 
@@ -524,6 +494,79 @@ extension WechatHandler {
     }
 }
 
+extension WechatHandler {
+
+    private func openShareUniversalLink() {
+        guard let url = generateShareUniversalLink() else {
+            busAssertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.shareCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+
+    private func openOauthUniversalLink() {
+        guard let url = generateOauthUniversalLink() else {
+            busAssertionFailure()
+            oauthCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.oauthCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+
+    private func openLaunchUniversalLink(with urlItems: [String: String]) {
+        guard let url = generateLaunchUniversalLink(with: urlItems) else {
+            busAssertionFailure()
+            launchCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.launchCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+
+    private func openShareURLScheme() {
+        guard let url = generateShareURLScheme() else {
+            busAssertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url) { [weak self] result in
+            if !result {
+                self?.shareCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+
+    private func openLaunchURLScheme(with urlItems: [String: String]) {
+        guard let url = generateLaunchURLScheme(with: urlItems) else {
+            busAssertionFailure()
+            launchCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url) { [weak self] result in
+            if !result {
+                self?.launchCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+}
+
 extension WechatHandler: OpenURLHandlerType {
 
     public func openURL(_ url: URL) {
@@ -590,44 +633,14 @@ extension WechatHandler {
 
         switch lastSignTokenData {
         case let .share(pasteBoardItems):
-            handleSignTokenShareSuccess(with: pasteBoardItems)
+            setPasteboard(with: pasteBoardItems, in: .general)
+            openShareUniversalLink()
         case let .launch(pasteBoardItems, urlItems):
-            handleSignTokenLaunchSuccess(with: pasteBoardItems, and: urlItems)
-        }
-    }
-
-    private func handleSignTokenShareSuccess(with pasteBoardItems: [String: Any]) {
-        setPasteboard(with: pasteBoardItems, in: .general)
-        lastSignTokenData = nil
-
-        guard let url = generateShareUniversalLink() else {
-            busAssertionFailure()
-            shareCompletionHandler?(.failure(.invalidParameter))
-            return
+            setPasteboard(with: pasteBoardItems, in: .general)
+            openLaunchUniversalLink(with: urlItems)
         }
 
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
-            if !result {
-                self?.shareCompletionHandler?(.failure(.unknown))
-            }
-        }
-    }
-
-    private func handleSignTokenLaunchSuccess(with pasteBoardItems: [String: Any], and urlItems: [String: String]) {
-        setPasteboard(with: pasteBoardItems, in: .general)
-        lastSignTokenData = nil
-
-        guard let url = generateLaunchUniversalLink(with: urlItems) else {
-            busAssertionFailure()
-            launchCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
-            if !result {
-                self?.launchCompletionHandler?(.failure(.unknown))
-            }
-        }
+        self.lastSignTokenData = nil
     }
 
     private func handleSignTokenFailure() {
@@ -640,44 +653,14 @@ extension WechatHandler {
 
         switch lastSignTokenData {
         case let .share(pasteBoardItems):
-            handleSignTokenShareFailure(with: pasteBoardItems)
+            setPasteboard(with: pasteBoardItems, in: .general)
+            openShareURLScheme()
         case let .launch(pasteBoardItems, urlItems):
-            handleSignTokenLaunchFailure(with: pasteBoardItems, and: urlItems)
-        }
-    }
-
-    private func handleSignTokenShareFailure(with pasteBoardItems: [String: Any]) {
-        setPasteboard(with: pasteBoardItems, in: .general)
-        lastSignTokenData = nil
-
-        guard let url = generateShareURLScheme() else {
-            busAssertionFailure()
-            shareCompletionHandler?(.failure(.invalidParameter))
-            return
+            setPasteboard(with: pasteBoardItems, in: .general)
+            openLaunchURLScheme(with: urlItems)
         }
 
-        UIApplication.shared.open(url) { [weak self] result in
-            if !result {
-                self?.shareCompletionHandler?(.failure(.unknown))
-            }
-        }
-    }
-
-    private func handleSignTokenLaunchFailure(with pasteBoardItems: [String: Any], and urlItems: [String: String]) {
-        setPasteboard(with: pasteBoardItems, in: .general)
-        lastSignTokenData = nil
-
-        guard let url = generateLaunchURLScheme(with: urlItems) else {
-            busAssertionFailure()
-            launchCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url) { [weak self] result in
-            if !result {
-                self?.launchCompletionHandler?(.failure(.unknown))
-            }
-        }
+        self.lastSignTokenData = nil
     }
 
     private func handleGeneral() {
