@@ -329,8 +329,6 @@ extension QQHandler: ShareHandlerType {
 
 extension QQHandler: OauthHandlerType {
 
-    // swiftlint:disable function_body_length
-
     public func oauth(
         options: [Bus.OauthOptionKey: Any],
         completionHandler: @escaping Bus.OauthCompletionHandler
@@ -385,8 +383,6 @@ extension QQHandler: OauthHandlerType {
 
         openOauthUniversalLink(with: urlItems)
     }
-
-    // swiftlint:enable function_body_length
 }
 
 extension QQHandler: LaunchHandlerType {

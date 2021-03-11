@@ -63,7 +63,7 @@ public class WeiboHandler {
 
 extension WeiboHandler: ShareHandlerType {
 
-    // swiftlint:disable cyclomatic_complexity function_body_length
+    // swiftlint:disable function_body_length
 
     public func share(
         message: MessageType,
@@ -144,7 +144,7 @@ extension WeiboHandler: ShareHandlerType {
         openShareUniversalLink(uuidString: uuidString)
     }
 
-    // swiftlint:enable cyclomatic_complexity function_body_length
+    // swiftlint:enable function_body_length
 
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
