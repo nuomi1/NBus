@@ -418,17 +418,7 @@ extension QQHandler: LaunchHandlerType {
             lastSignTokenData = .launch(urlItems: urlItems)
         }
 
-        guard let url = generateLaunchUniversalLink(with: urlItems) else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openLaunchUniversalLink(with: urlItems)
     }
 }
 
@@ -624,6 +614,20 @@ extension QQHandler {
             }
         }
     }
+
+    private func openLaunchUniversalLink(with urlItems: [String: String]) {
+        guard let url = generateLaunchUniversalLink(with: urlItems) else {
+            busAssertionFailure()
+            launchCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.launchCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
 }
 
 extension QQHandler: OpenURLHandlerType {
@@ -695,17 +699,7 @@ extension QQHandler {
     private func handleSignTokenLaunch(with urlItems: [String: String]) {
         lastSignTokenData = nil
 
-        guard let url = generateLaunchUniversalLink(with: urlItems) else {
-            busAssertionFailure()
-            launchCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
-            if !result {
-                self?.launchCompletionHandler?(.failure(.unknown))
-            }
-        }
+        openLaunchUniversalLink(with: urlItems)
     }
 
     private func handleActionInfo(with components: URLComponents) {
