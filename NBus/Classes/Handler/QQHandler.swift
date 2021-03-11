@@ -220,17 +220,7 @@ extension QQHandler: ShareHandlerType {
             lastSignTokenData = .share(pasteBoardItems: pasteBoardItems, urlItems: urlItems)
         }
 
-        guard let url = generateShareUniversalLink(with: urlItems) else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openShareUniversalLink(with: urlItems)
     }
 
     // swiftlint:enable cyclomatic_complexity function_body_length
@@ -615,6 +605,23 @@ extension QQHandler {
     }
 }
 
+extension QQHandler {
+
+    private func openShareUniversalLink(with urlItems: [String: String]) {
+        guard let url = generateShareUniversalLink(with: urlItems) else {
+            busAssertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.shareCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+}
+
 extension QQHandler: OpenURLHandlerType {
 
     public func openURL(_ url: URL) {
@@ -678,17 +685,7 @@ extension QQHandler {
         setPasteboard(with: pasteBoardItems, in: .general)
         lastSignTokenData = nil
 
-        guard let url = generateShareUniversalLink(with: urlItems) else {
-            busAssertionFailure()
-            shareCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
-            if !result {
-                self?.shareCompletionHandler?(.failure(.unknown))
-            }
-        }
+        openShareUniversalLink(with: urlItems)
     }
 
     private func handleSignTokenLaunch(with urlItems: [String: String]) {
