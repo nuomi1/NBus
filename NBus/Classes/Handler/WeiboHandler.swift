@@ -141,17 +141,7 @@ extension WeiboHandler: ShareHandlerType {
 
         setPasteboard(with: transferObjectItems, in: .general)
 
-        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openShareUniversalLink(uuidString: uuidString)
     }
 
     // swiftlint:enable cyclomatic_complexity function_body_length
@@ -343,6 +333,23 @@ extension WeiboHandler {
         }
 
         return components.url
+    }
+}
+
+extension WeiboHandler {
+
+    private func openShareUniversalLink(uuidString: String) {
+        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
+            busAssertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.shareCompletionHandler?(.failure(.unknown))
+            }
+        }
     }
 }
 
