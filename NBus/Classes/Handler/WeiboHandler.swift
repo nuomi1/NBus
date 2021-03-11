@@ -219,17 +219,7 @@ extension WeiboHandler: OauthHandlerType {
 
         setPasteboard(with: transferObjectItems, in: .general)
 
-        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openOauthUniversalLink(uuidString: uuidString)
     }
 }
 
@@ -348,6 +338,20 @@ extension WeiboHandler {
         UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
             if !result {
                 self?.shareCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+
+    private func openOauthUniversalLink(uuidString: String) {
+        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
+            busAssertionFailure()
+            oauthCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.oauthCompletionHandler?(.failure(.unknown))
             }
         }
     }
