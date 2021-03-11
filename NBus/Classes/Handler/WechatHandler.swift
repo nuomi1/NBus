@@ -293,17 +293,7 @@ extension WechatHandler: LaunchHandlerType {
             lastSignTokenData = .launch(pasteBoardItems: pasteBoardItems, urlItems: urlItems)
         }
 
-        guard let url = generateLaunchUniversalLink(with: urlItems) else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openLaunchUniversalLink(with: urlItems)
     }
 }
 
@@ -533,6 +523,20 @@ extension WechatHandler {
             }
         }
     }
+
+    private func openLaunchUniversalLink(with urlItems: [String: String]) {
+        guard let url = generateLaunchUniversalLink(with: urlItems) else {
+            busAssertionFailure()
+            launchCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.launchCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
 }
 
 extension WechatHandler: OpenURLHandlerType {
@@ -618,17 +622,7 @@ extension WechatHandler {
         setPasteboard(with: pasteBoardItems, in: .general)
         lastSignTokenData = nil
 
-        guard let url = generateLaunchUniversalLink(with: urlItems) else {
-            busAssertionFailure()
-            launchCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
-            if !result {
-                self?.launchCompletionHandler?(.failure(.unknown))
-            }
-        }
+        openLaunchUniversalLink(with: urlItems)
     }
 
     private func handleSignTokenFailure() {
