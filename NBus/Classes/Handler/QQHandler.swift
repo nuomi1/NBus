@@ -383,17 +383,7 @@ extension QQHandler: OauthHandlerType {
             urlItems["generalpastboard"] = "1"
         }
 
-        guard let url = generateOauthUniversalLink(with: urlItems) else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openOauthUniversalLink(with: urlItems)
     }
 
     // swiftlint:enable function_body_length
@@ -617,6 +607,20 @@ extension QQHandler {
         UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
             if !result {
                 self?.shareCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+
+    private func openOauthUniversalLink(with urlItems: [String: String]) {
+        guard let url = generateOauthUniversalLink(with: urlItems) else {
+            busAssertionFailure()
+            oauthCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.oauthCompletionHandler?(.failure(.unknown))
             }
         }
     }
