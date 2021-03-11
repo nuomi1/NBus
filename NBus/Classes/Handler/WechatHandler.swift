@@ -255,17 +255,7 @@ extension WechatHandler: OauthHandlerType {
 
         setPasteboard(with: pasteBoardItems, in: .general)
 
-        guard let url = generateOauthUniversalLink() else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openOauthUniversalLink()
     }
 }
 
@@ -526,6 +516,20 @@ extension WechatHandler {
         UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
             if !result {
                 self?.shareCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+
+    private func openOauthUniversalLink() {
+        guard let url = generateOauthUniversalLink() else {
+            busAssertionFailure()
+            oauthCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.oauthCompletionHandler?(.failure(.unknown))
             }
         }
     }
