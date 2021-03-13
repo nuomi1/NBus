@@ -28,7 +28,7 @@ To run the example project, clone the repo, edit the `Example/NBus/Config.xcconf
 
 ## Author
 
-nuomi1, nuomi1@qq.com
+nuomi1, [nuomi1@qq.com](mailto:nuomi1@qq.com)
 
 ## Related articles
 
