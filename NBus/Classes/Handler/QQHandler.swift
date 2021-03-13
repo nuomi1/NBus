@@ -725,6 +725,7 @@ extension QQHandler {
             let item = components.queryItems?.first(where: { $0.name == "error" })
         else {
             busAssertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
 
@@ -746,6 +747,7 @@ extension QQHandler {
             let infos = getOauthInfos(from: components) ?? getOauthInfos(from: .general)
         else {
             busAssertionFailure()
+            oauthCompletionHandler?(.failure(.invalidParameter))
             return
         }
 
