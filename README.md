@@ -14,6 +14,9 @@ NBus also supports system's sharing and Sign in with Apple.
 
 - Swift 5.0
 - iOS 10.0
+- [QQ 8.1.3 - 20190830](https://wiki.connect.qq.com/universal-links%E9%80%82%E9%85%8Dfaq)
+- [Wechat 7.0.7 - 20190917](https://developers.weixin.qq.com/doc/oplatform/Mobile_App/Access_Guide/iOS.html)
+- [Weibo ~ 20201017](https://github.com/sinaweibosdk/weibo_ios_sdk)
 
 ## Example
 
