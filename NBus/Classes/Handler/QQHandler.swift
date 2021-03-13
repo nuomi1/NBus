@@ -733,8 +733,12 @@ extension QQHandler {
         case "0":
             shareCompletionHandler?(.success(()))
         case "-4":
+            // the user give up the current operation
             shareCompletionHandler?(.failure(.userCancelled))
         case "--100070005":
+            shareCompletionHandler?(.failure(.invalidParameter))
+        case "--1000710008":
+            // 主体信息不一致，无法打开
             shareCompletionHandler?(.failure(.invalidParameter))
         default:
             busAssertionFailure()

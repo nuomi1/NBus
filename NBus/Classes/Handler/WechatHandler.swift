@@ -688,9 +688,9 @@ extension WechatHandler {
         let result = infos["result"] as? String
 
         switch result {
-        case "0":
+        case "0": // WXSuccess
             shareCompletionHandler?(.success(()))
-        case "-2":
+        case "-2": // WXErrCodeUserCancel
             shareCompletionHandler?(.failure(.userCancelled))
         default:
             busAssertionFailure()
@@ -702,7 +702,11 @@ extension WechatHandler {
         let result = infos["result"] as? String
 
         switch result {
-        case "-4", "-2":
+        case "-1": // WXErrCodeCommon
+            oauthCompletionHandler?(.failure(.invalidParameter))
+        case "-2": // WXErrCodeUserCancel
+            oauthCompletionHandler?(.failure(.userCancelled))
+        case "-4": // WXErrCodeAuthDeny
             oauthCompletionHandler?(.failure(.userCancelled))
         default:
             busAssertionFailure()

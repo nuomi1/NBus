@@ -321,8 +321,9 @@ extension WechatSDKHandler {
                     }
                 case WXErrCodeCommon.rawValue:
                     owner?.oauthCompletionHandler?(.failure(.invalidParameter))
-                case WXErrCodeAuthDeny.rawValue,
-                     WXErrCodeUserCancel.rawValue:
+                case WXErrCodeUserCancel.rawValue:
+                    owner?.oauthCompletionHandler?(.failure(.userCancelled))
+                case WXErrCodeAuthDeny.rawValue:
                     owner?.oauthCompletionHandler?(.failure(.userCancelled))
                 default:
                     busAssertionFailure()
@@ -330,12 +331,10 @@ extension WechatSDKHandler {
                 }
             case let response as WXLaunchMiniProgramResp:
                 switch response.errCode {
-                case WXSuccess.rawValue:
-                    owner?.launchCompletionHandler?(.success(()))
-                case WXErrCodeSentFail.rawValue:
-                    owner?.launchCompletionHandler?(.failure(.invalidParameter))
                 case WXErrCodeUserCancel.rawValue:
                     owner?.launchCompletionHandler?(.failure(.userCancelled))
+                case WXErrCodeSentFail.rawValue:
+                    owner?.launchCompletionHandler?(.failure(.invalidParameter))
                 default:
                     busAssertionFailure()
                     owner?.launchCompletionHandler?(.failure(.unknown))

@@ -359,8 +359,12 @@ extension QQSDKHandler {
                 case "0":
                     owner?.shareCompletionHandler?(.success(()))
                 case "-4":
+                    // the user give up the current operation
                     owner?.shareCompletionHandler?(.failure(.userCancelled))
                 case "--100070005":
+                    owner?.shareCompletionHandler?(.failure(.invalidParameter))
+                case "--1000710008":
+                    // 主体信息不一致，无法打开
                     owner?.shareCompletionHandler?(.failure(.invalidParameter))
                 default:
                     busAssertionFailure()
