@@ -10,6 +10,48 @@
 NBus is a sharing and signin library for Chinese Social Application, such as WeChat, QQ and Weibo.
 NBus also supports system's sharing and Sign in with Apple.
 
+## Feature
+
+### Share
+
+| Handler    | Text | Image | Audio | Video | WebPage | File | MiniProgram |
+| ---------- | :--: | :---: | :---: | :---: | :-----: | :--: | :---------: |
+| QQ         |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ✔️      |
+| QQ SDK     |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ✔️      |
+| Wechat     |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ✔️      |
+| Wechat SDK |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ✔️      |
+| Weibo      |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ❌  |     ❌      |
+| Weibo SDK  |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ❌  |     ❌      |
+| System     |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ❌      |
+
+### Oauth
+
+| Handler    | Oauth |
+| ---------- | :---: |
+| QQ         |  ✔️   |
+| QQ SDK     |  ✔️   |
+| Wechat     |  ✔️   |
+| Wechat SDK |  ✔️   |
+| Weibo      |  ✔️   |
+| Weibo SDK  |  ✔️   |
+| System     |  ✔️   |
+
+### Launch
+
+| Handler    | MiniProgram |
+| ---------- | :---------: |
+| QQ         |     ✔️      |
+| QQ SDK     |     ✔️      |
+| Wechat     |     ✔️      |
+| Wechat SDK |     ✔️      |
+| Weibo      |     ❌      |
+| Weibo SDK  |     ❌      |
+| System     |     ❌      |
+
+> - ✔️ - Support
+> - ⭕ - Experimental support
+> - ❌ - NOT support
+
 ## Requirements
 
 - Swift 5.0
