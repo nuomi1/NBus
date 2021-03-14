@@ -676,6 +676,8 @@ extension WechatHandler {
             handleShare(with: infos)
         case "2030":
             handleOauth(with: infos)
+        case "2070":
+            handleLaunch(with: infos)
         default:
             busAssertionFailure()
         }
@@ -688,9 +690,9 @@ extension WechatHandler {
         let result = infos["result"] as? String
 
         switch result {
-        case "0":
+        case "0": // WXSuccess
             shareCompletionHandler?(.success(()))
-        case "-2":
+        case "-2": // WXErrCodeUserCancel
             shareCompletionHandler?(.failure(.userCancelled))
         default:
             busAssertionFailure()
@@ -702,7 +704,11 @@ extension WechatHandler {
         let result = infos["result"] as? String
 
         switch result {
-        case "-4", "-2":
+        case "-1": // WXErrCodeCommon
+            oauthCompletionHandler?(.failure(.invalidParameter))
+        case "-2": // WXErrCodeUserCancel
+            oauthCompletionHandler?(.failure(.userCancelled))
+        case "-4": // WXErrCodeAuthDeny
             oauthCompletionHandler?(.failure(.userCancelled))
         default:
             busAssertionFailure()
@@ -732,6 +738,19 @@ extension WechatHandler {
         } else {
             busAssertionFailure()
             oauthCompletionHandler?(.failure(.unknown))
+        }
+    }
+
+    private func handleLaunch(with infos: [String: Any]) {
+        let result = infos["result"] as? String
+
+        switch result {
+        case "-2": // WXErrCodeUserCancel
+            launchCompletionHandler?(.failure(.userCancelled))
+        case "-3": // WXErrCodeSentFail
+            launchCompletionHandler?(.failure(.invalidParameter))
+        default:
+            busAssertionFailure()
         }
     }
 }

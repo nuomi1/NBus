@@ -725,6 +725,7 @@ extension QQHandler {
             let item = components.queryItems?.first(where: { $0.name == "error" })
         else {
             busAssertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
 
@@ -732,8 +733,12 @@ extension QQHandler {
         case "0":
             shareCompletionHandler?(.success(()))
         case "-4":
+            // the user give up the current operation
             shareCompletionHandler?(.failure(.userCancelled))
         case "--100070005":
+            shareCompletionHandler?(.failure(.invalidParameter))
+        case "--1000710008":
+            // 主体信息不一致，无法打开
             shareCompletionHandler?(.failure(.invalidParameter))
         default:
             busAssertionFailure()
@@ -746,6 +751,7 @@ extension QQHandler {
             let infos = getOauthInfos(from: components) ?? getOauthInfos(from: .general)
         else {
             busAssertionFailure()
+            oauthCompletionHandler?(.failure(.invalidParameter))
             return
         }
 

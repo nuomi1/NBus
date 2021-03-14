@@ -425,9 +425,9 @@ extension WeiboHandler {
         let statusCode = infos["statusCode"] as? Int
 
         switch statusCode {
-        case 0:
+        case 0: // WeiboSDKResponseStatusCodeSuccess
             shareCompletionHandler?(.success(()))
-        case -1:
+        case -1: // WeiboSDKResponseStatusCodeUserCancel
             shareCompletionHandler?(.failure(.userCancelled))
         default:
             busAssertionFailure()
@@ -439,7 +439,7 @@ extension WeiboHandler {
         let statusCode = infos["statusCode"] as? Int
 
         switch statusCode {
-        case 0:
+        case 0: // WeiboSDKResponseStatusCodeSuccess
             let accessToken = infos["accessToken"] as? String
             let expirationDate = (infos["expirationDate"] as? Date).map {
                 iso8601DateFormatter.string(from: $0)
@@ -462,7 +462,7 @@ extension WeiboHandler {
                 busAssertionFailure()
                 oauthCompletionHandler?(.failure(.unknown))
             }
-        case -1:
+        case -1: // WeiboSDKResponseStatusCodeUserCancel
             oauthCompletionHandler?(.failure(.userCancelled))
         default:
             busAssertionFailure()
