@@ -224,6 +224,37 @@ Bus.shared.launch(program: program, with: platform) { result in
 
 To run the example project, clone the repo, edit the `Example/NBus/Config.xcconfig` file, and run `bundle install && bundle exec fastlane setup && open Example/NBus.xcworkspace` from the Example directory first.
 
+## Installation
+
+### CocoaPods
+
+You can use `NBus` directly which is including all SDK bridging handlers.
+
+```ruby
+pod "NBus" # default subspecs "SDKHandlers"
+```
+
+or all open source handlers.
+
+```ruby
+pod "NBus/BusHandlers"
+```
+
+or what you like.
+
+```ruby
+pod "NBus/QQSDKHandler"
+pod "NBus/QQHandler"
+
+pod "NBus/WechatSDKHandler"
+pod "NBus/WechatHandler"
+
+pod "NBus/WeiboSDKHandler"
+pod "NBus/WeiboHandler"
+
+pod "NBus/SystemHandler"
+```
+
 ## WARNING
 
 1. `WeiboSDK.bundle` must saved in App's root path.
