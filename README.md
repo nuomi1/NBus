@@ -14,39 +14,39 @@ NBus also supports system's sharing and Sign in with Apple.
 
 ### Share
 
-| Handler    | Text | Image | Audio | Video | WebPage | File | MiniProgram |
-| ---------- | :--: | :---: | :---: | :---: | :-----: | :--: | :---------: |
-| QQ         |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ✔️      |
-| QQ SDK     |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ✔️      |
-| Wechat     |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ✔️      |
-| Wechat SDK |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ✔️      |
-| Weibo      |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ❌  |     ❌      |
-| Weibo SDK  |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ❌  |     ❌      |
-| System     |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ❌      |
+| Handler          | Text | Image | Audio | Video | WebPage | File | MiniProgram |
+| ---------------- | :--: | :---: | :---: | :---: | :-----: | :--: | :---------: |
+| QQHandler        |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ✔️      |
+| QQSDKHandler     |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ✔️      |
+| WechatHandler    |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ✔️      |
+| WechatSDKHandler |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ✔️      |
+| WeiboHandler     |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ❌  |     ❌      |
+| WeiboSDKHandler  |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ❌  |     ❌      |
+| SystemHandler    |  ✔️  |  ✔️   |  ✔️   |  ✔️   |   ✔️    |  ✔️  |     ❌      |
 
 ### Oauth
 
-| Handler    | Oauth |
-| ---------- | :---: |
-| QQ         |  ✔️   |
-| QQ SDK     |  ✔️   |
-| Wechat     |  ✔️   |
-| Wechat SDK |  ✔️   |
-| Weibo      |  ✔️   |
-| Weibo SDK  |  ✔️   |
-| System     |  ✔️   |
+| Handler          | Oauth |
+| ---------------- | :---: |
+| QQHandler        |  ✔️   |
+| QQSDKHandler     |  ✔️   |
+| WechatHandler    |  ✔️   |
+| WechatSDKHandler |  ✔️   |
+| WeiboHandler     |  ✔️   |
+| WeiboSDKHandler  |  ✔️   |
+| SystemHandler    |  ✔️   |
 
 ### Launch
 
-| Handler    | MiniProgram |
-| ---------- | :---------: |
-| QQ         |     ✔️      |
-| QQ SDK     |     ✔️      |
-| Wechat     |     ✔️      |
-| Wechat SDK |     ✔️      |
-| Weibo      |     ❌      |
-| Weibo SDK  |     ❌      |
-| System     |     ❌      |
+| Handler          | MiniProgram |
+| ---------------- | :---------: |
+| QQHandler        |     ✔️      |
+| QQSDKHandler     |     ✔️      |
+| WechatHandler    |     ✔️      |
+| WechatSDKHandler |     ✔️      |
+| WeiboHandler     |     ❌      |
+| WeiboSDKHandler  |     ❌      |
+| SystemHandler    |     ❌      |
 
 > - ✔️ - Support
 > - ⭕ - Experimental support
