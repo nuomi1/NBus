@@ -21,7 +21,7 @@ public class QQHandler {
 
     public var isInstalled: Bool {
         guard let url = URL(string: "mqq://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -30,7 +30,7 @@ public class QQHandler {
 
     private var isSupported: Bool {
         guard let url = URL(string: "mqqopensdkapiV2://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -39,7 +39,7 @@ public class QQHandler {
 
     private var isMiniProgramSupported: Bool {
         guard let url = URL(string: "mqqopensdkminiapp://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -48,7 +48,16 @@ public class QQHandler {
 
     private var isNoPasteboardSupported: Bool {
         guard let url = URL(string: "mqqopensdknopasteboard://") else {
-            assertionFailure()
+            busAssertionFailure()
+            return false
+        }
+
+        return UIApplication.shared.canOpenURL(url)
+    }
+
+    private var isLaunchMiniProgramSupported: Bool {
+        guard let url = URL(string: "mqqopensdklaunchminiapp://") else {
+            busAssertionFailure()
             return false
         }
 
@@ -57,12 +66,15 @@ public class QQHandler {
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
+    private var launchCompletionHandler: Bus.LaunchCompletionHandler?
 
     public let appID: String
     public let universalLink: URL
 
     @BusUserDefaults(key: ShareOptionKeys.signToken)
     private var signToken: String?
+
+    private var lastSignTokenData: LastSignTokenData?
 
     private lazy var iso8601DateFormatter: ISO8601DateFormatter = {
         let dateFormatter = ISO8601DateFormatter()
@@ -104,7 +116,7 @@ extension QQHandler: ShareHandlerType {
             let cflag = cflag(endpoint, message.identifier),
             let shareType = shareType(endpoint, message.identifier)
         else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -191,7 +203,7 @@ extension QQHandler: ShareHandlerType {
             urlItems["mini_code64"] = "1"
 
         default:
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.unsupportedMessage))
             return
         }
@@ -204,17 +216,11 @@ extension QQHandler: ShareHandlerType {
             urlItems["objectlocation"] = "url"
         }
 
-        guard let url = generateShareUniversalLink(with: urlItems) else {
-            assertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
+        if signToken == nil {
+            lastSignTokenData = .share(pasteBoardItems: pasteBoardItems, urlItems: urlItems)
         }
 
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openShareUniversalLink(with: urlItems)
     }
 
     // swiftlint:enable cyclomatic_complexity function_body_length
@@ -240,7 +246,7 @@ extension QQHandler: ShareHandlerType {
                 Messages.webPage,
             ].contains(message)
         default:
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
     }
@@ -323,8 +329,6 @@ extension QQHandler: ShareHandlerType {
 
 extension QQHandler: OauthHandlerType {
 
-    // swiftlint:disable function_body_length
-
     public func oauth(
         options: [Bus.OauthOptionKey: Any],
         completionHandler: @escaping Bus.OauthCompletionHandler
@@ -343,7 +347,7 @@ extension QQHandler: OauthHandlerType {
             let displayName = displayName,
             let bundleID = bundleID
         else {
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
             return
         }
@@ -377,20 +381,41 @@ extension QQHandler: OauthHandlerType {
             urlItems["generalpastboard"] = "1"
         }
 
-        guard let url = generateOauthUniversalLink(with: urlItems) else {
-            assertionFailure()
-            completionHandler(.failure(.invalidParameter))
+        openOauthUniversalLink(with: urlItems)
+    }
+}
+
+extension QQHandler: LaunchHandlerType {
+
+    public func launch(
+        program: MiniProgramMessage,
+        options: [Bus.LaunchOptionKey: Any],
+        completionHandler: @escaping Bus.LaunchCompletionHandler
+    ) {
+        guard isInstalled else {
+            completionHandler(.failure(.missingApplication))
             return
         }
 
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
+        guard isSupported, isLaunchMiniProgramSupported else {
+            completionHandler(.failure(.unsupportedApplication))
+            return
         }
-    }
 
-    // swiftlint:enable function_body_length
+        launchCompletionHandler = completionHandler
+
+        var urlItems: [String: String] = [:]
+
+        urlItems["mini_appid"] = program.miniProgramID
+        urlItems["mini_path"] = program.path.bus.base64EncodedString
+        urlItems["mini_type"] = miniProgramType(program.miniProgramType)
+
+        if signToken == nil {
+            lastSignTokenData = .launch(urlItems: urlItems)
+        }
+
+        openLaunchUniversalLink(with: urlItems)
+    }
 }
 
 extension QQHandler {
@@ -500,6 +525,36 @@ extension QQHandler {
         return components.url
     }
 
+    private func generateLaunchUniversalLink(with urlItems: [String: String]) -> URL? {
+        guard
+            var components = generateGeneralUniversalLink(),
+            let displayNameEncoded = displayName?.bus.base64EncodedString
+        else {
+            return nil
+        }
+
+        components.path = "/opensdkul/mqqapi/profile/sdk_launch_mini_app"
+
+        var urlItems = urlItems
+
+        if let signToken = signToken {
+            urlItems["appsign_token"] = signToken
+        }
+
+        urlItems["appid"] = appNumber
+        urlItems["callback_name"] = txID
+        urlItems["callback_type"] = "scheme"
+        urlItems["src_type"] = "app"
+        urlItems["thirdAppDisplayName"] = displayNameEncoded
+        urlItems["version"] = "1"
+
+        components.queryItems?.append(contentsOf: urlItems.map { key, value in
+            URLQueryItem(name: key, value: value)
+        })
+
+        return components.url
+    }
+
     private func generateGeneralUniversalLink() -> URLComponents? {
         guard
             let bundleIDEncoded = bundleID?.bus.base64EncodedString
@@ -526,13 +581,58 @@ extension QQHandler {
     }
 }
 
+extension QQHandler {
+
+    private func openShareUniversalLink(with urlItems: [String: String]) {
+        guard let url = generateShareUniversalLink(with: urlItems) else {
+            busAssertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.shareCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+
+    private func openOauthUniversalLink(with urlItems: [String: String]) {
+        guard let url = generateOauthUniversalLink(with: urlItems) else {
+            busAssertionFailure()
+            oauthCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.oauthCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+
+    private func openLaunchUniversalLink(with urlItems: [String: String]) {
+        guard let url = generateLaunchUniversalLink(with: urlItems) else {
+            busAssertionFailure()
+            launchCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.launchCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+}
+
 extension QQHandler: OpenURLHandlerType {
 
     public func openURL(_ url: URL) {
         guard
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -548,7 +648,7 @@ extension QQHandler: OpenUserActivityHandlerType {
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let identifier = Bundle.main.bus.identifier
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -558,7 +658,7 @@ extension QQHandler: OpenUserActivityHandlerType {
         case universalLink.appendingPathComponent("\(identifier)").path:
             handleActionInfo(with: components)
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -568,41 +668,31 @@ extension QQHandler {
     private func handleSignToken(with components: URLComponents) {
         guard
             let infos = getSignTokenInfos(from: components) ?? getSignTokenInfos(from: .general),
-            let appSignRedirect = infos["appsign_redirect"],
             let appSignToken = infos["appsign_token"],
-            let components = URLComponents(string: appSignRedirect)
+            let lastSignTokenData = lastSignTokenData
         else {
-            assertionFailure()
-            shareCompletionHandler?(.failure(.invalidParameter))
+            busAssertionFailure()
             return
         }
 
         signToken = appSignToken
 
-        let items = components.queryItems?.reduce(into: [String: String]()) { result, item in
-            if let value = item.value {
-                result[item.name] = value
-            }
-        } ?? [:]
-
-        guard let url = generateShareUniversalLink(with: items) else {
-            assertionFailure()
-            shareCompletionHandler?(.failure(.invalidParameter))
-            return
+        switch lastSignTokenData {
+        case let .share(pasteBoardItems, urlItems):
+            setPasteboard(with: pasteBoardItems, in: .general)
+            openShareUniversalLink(with: urlItems)
+        case let .launch(urlItems):
+            openLaunchUniversalLink(with: urlItems)
         }
 
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
-            if !result {
-                self?.shareCompletionHandler?(.failure(.unknown))
-            }
-        }
+        self.lastSignTokenData = nil
     }
 
     private func handleActionInfo(with components: URLComponents) {
         guard
             let infos = getJSON(from: components, with: "sdkactioninfo")
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -623,7 +713,7 @@ extension QQHandler {
         case "qzapp" where components.path == "/mqzone/0":
             handleOauth(with: components)
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -634,7 +724,8 @@ extension QQHandler {
         guard
             let item = components.queryItems?.first(where: { $0.name == "error" })
         else {
-            assertionFailure()
+            busAssertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
             return
         }
 
@@ -642,11 +733,15 @@ extension QQHandler {
         case "0":
             shareCompletionHandler?(.success(()))
         case "-4":
+            // the user give up the current operation
             shareCompletionHandler?(.failure(.userCancelled))
         case "--100070005":
             shareCompletionHandler?(.failure(.invalidParameter))
+        case "--1000710008":
+            // 主体信息不一致，无法打开
+            shareCompletionHandler?(.failure(.invalidParameter))
         default:
-            assertionFailure()
+            busAssertionFailure()
             shareCompletionHandler?(.failure(.unknown))
         }
     }
@@ -655,7 +750,8 @@ extension QQHandler {
         guard
             let infos = getOauthInfos(from: components) ?? getOauthInfos(from: .general)
         else {
-            assertionFailure()
+            busAssertionFailure()
+            oauthCompletionHandler?(.failure(.invalidParameter))
             return
         }
 
@@ -684,11 +780,11 @@ extension QQHandler {
             if !parameters.isEmpty {
                 oauthCompletionHandler?(.success(parameters))
             } else {
-                assertionFailure()
+                busAssertionFailure()
                 oauthCompletionHandler?(.failure(.unknown))
             }
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -704,10 +800,6 @@ extension QQHandler {
             let infos = getPlist(from: pasteboard)
         else {
             return nil
-        }
-
-        if let pasteboardItems = infos["appsign_redirect_pasteboard"] as? [String: Any] {
-            setPasteboard(with: pasteboardItems, in: .general)
         }
 
         return infos.compactMapValues { $0 as? String }
@@ -777,5 +869,15 @@ extension QQHandler {
         public static let expirationDate = Bus.OauthInfoKeys.QQ.expirationDate
 
         public static let openID = Bus.OauthInfoKeys.QQ.openID
+    }
+}
+
+extension QQHandler {
+
+    private enum LastSignTokenData {
+
+        case share(pasteBoardItems: [String: Any], urlItems: [String: String])
+
+        case launch(urlItems: [String: String])
     }
 }

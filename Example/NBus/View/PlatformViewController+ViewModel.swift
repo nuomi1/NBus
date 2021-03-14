@@ -33,6 +33,7 @@ extension PlatformViewController {
 
         let isShareEnabled: Observable<Bool>
         let isOauthEnabled: Observable<Bool>
+        let isLaunchEnabled: Observable<Bool>
 
         init(_ element: AppState.PlatformItem) {
             title = .just("\(element.platform)")
@@ -54,6 +55,8 @@ extension PlatformViewController {
                 .map { $0 is ShareHandlerType }
             isOauthEnabled = currentHandler
                 .map { $0 is OauthHandlerType }
+            isLaunchEnabled = currentHandler
+                .map { $0 is LaunchHandlerType }
         }
 
         static let defaultOauthInfo = OauthInfo(isLogin: false, parameter: "未登录")

@@ -24,6 +24,7 @@ public class WechatSDKHandler {
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
+    private var launchCompletionHandler: Bus.LaunchCompletionHandler?
 
     public let appID: String
     public let universalLink: URL
@@ -124,7 +125,7 @@ extension WechatSDKHandler: ShareHandlerType {
             mediaMessage.mediaObject = miniProgramObject
 
         default:
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.unsupportedMessage))
             return
         }
@@ -170,7 +171,7 @@ extension WechatSDKHandler: ShareHandlerType {
                 Messages.file,
             ].contains(message)
         default:
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
     }
@@ -184,7 +185,7 @@ extension WechatSDKHandler: ShareHandlerType {
         case Endpoints.Wechat.favorite:
             return WXSceneFavorite
         default:
-            assertionFailure()
+            busAssertionFailure()
             return WXSceneSession
         }
     }
@@ -216,6 +217,34 @@ extension WechatSDKHandler: OauthHandlerType {
 
         let request = SendAuthReq()
         request.scope = "snsapi_userinfo"
+
+        WXApi.send(request) { result in
+            if !result {
+                completionHandler(.failure(.unknown))
+            }
+        }
+    }
+}
+
+extension WechatSDKHandler: LaunchHandlerType {
+
+    public func launch(
+        program: MiniProgramMessage,
+        options: [Bus.LaunchOptionKey: Any],
+        completionHandler: @escaping Bus.LaunchCompletionHandler
+    ) {
+        guard isInstalled else {
+            completionHandler(.failure(.missingApplication))
+            return
+        }
+
+        launchCompletionHandler = completionHandler
+
+        let request = WXLaunchMiniProgramReq()
+
+        request.userName = program.miniProgramID
+        request.path = program.path
+        request.miniProgramType = miniProgramType(program.miniProgramType)
 
         WXApi.send(request) { result in
             if !result {
@@ -258,8 +287,10 @@ extension WechatSDKHandler {
         }
 
         func onReq(_ req: BaseReq) {
-            assertionFailure("\(req)")
+            busAssertionFailure("\(req)")
         }
+
+        // swiftlint:disable cyclomatic_complexity function_body_length
 
         func onResp(_ resp: BaseResp) {
             switch resp {
@@ -270,7 +301,7 @@ extension WechatSDKHandler {
                 case WXErrCodeUserCancel.rawValue:
                     owner?.shareCompletionHandler?(.failure(.userCancelled))
                 default:
-                    assertionFailure()
+                    busAssertionFailure()
                     owner?.shareCompletionHandler?(.failure(.unknown))
                 }
             case let response as SendAuthResp:
@@ -285,19 +316,34 @@ extension WechatSDKHandler {
                     if !parameters.isEmpty {
                         owner?.oauthCompletionHandler?(.success(parameters))
                     } else {
-                        assertionFailure()
+                        busAssertionFailure()
                         owner?.oauthCompletionHandler?(.failure(.unknown))
                     }
-                case WXErrCodeAuthDeny.rawValue,
-                     WXErrCodeUserCancel.rawValue:
+                case WXErrCodeCommon.rawValue:
+                    owner?.oauthCompletionHandler?(.failure(.invalidParameter))
+                case WXErrCodeUserCancel.rawValue:
+                    owner?.oauthCompletionHandler?(.failure(.userCancelled))
+                case WXErrCodeAuthDeny.rawValue:
                     owner?.oauthCompletionHandler?(.failure(.userCancelled))
                 default:
-                    assertionFailure()
+                    busAssertionFailure()
                     owner?.oauthCompletionHandler?(.failure(.unknown))
                 }
+            case let response as WXLaunchMiniProgramResp:
+                switch response.errCode {
+                case WXErrCodeUserCancel.rawValue:
+                    owner?.launchCompletionHandler?(.failure(.userCancelled))
+                case WXErrCodeSentFail.rawValue:
+                    owner?.launchCompletionHandler?(.failure(.invalidParameter))
+                default:
+                    busAssertionFailure()
+                    owner?.launchCompletionHandler?(.failure(.unknown))
+                }
             default:
-                assertionFailure("\(resp)")
+                busAssertionFailure("\(resp)")
             }
         }
+
+        // swiftlint:enable cyclomatic_complexity function_body_length
     }
 }

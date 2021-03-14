@@ -36,6 +36,7 @@ class PlatformViewController: UIViewController {
 
     private let shareView = TitleContentView(title: "分享", contentView: ShareView())
     private let oauthView = TitleContentView(title: "登录", contentView: OauthView())
+    private let launchView = TitleContentView(title: "启动", contentView: LaunchView())
 }
 
 extension PlatformViewController {
@@ -43,7 +44,11 @@ extension PlatformViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
 
         setupNavigationItem()
         setupSubviews()
@@ -67,6 +72,11 @@ extension PlatformViewController {
             .sizeToFit(.width)
             .below(of: shareView)
 
+        launchView.pin
+            .horizontally()
+            .sizeToFit(.width)
+            .below(of: oauthView)
+
         let minHeight = scrollView.bounds.size.height
             - scrollView.pin.safeArea.top
             - scrollView.pin.safeArea.bottom
@@ -88,6 +98,7 @@ extension PlatformViewController {
 
         contentView.addSubview(shareView)
         contentView.addSubview(oauthView)
+        contentView.addSubview(launchView)
     }
 }
 
@@ -140,6 +151,11 @@ extension PlatformViewController {
         oauthView.contentView.binding(viewModel)
         oauthView.contentView.onOauth = { [weak self] platform in
             self?.oauth(with: platform)
+        }
+
+        launchView.contentView.binding(viewModel)
+        launchView.contentView.onLaunch = { [weak self] program, platform in
+            self?.launch(program: program, with: platform)
         }
     }
 }
@@ -210,6 +226,38 @@ extension PlatformViewController {
 
                 self.viewModel?.oauthInfo
                     .accept(.init(isLogin: false, parameter: "\(error)"))
+            }
+
+            let okAction = UIAlertAction(
+                title: "OK",
+                style: .default
+            )
+
+            alert.addAction(okAction)
+
+            self.present(alert, animated: true)
+        }
+    }
+
+    private func launch(program: MiniProgramMessage, with platform: Platform) {
+        Bus.shared.launch(program: program, with: platform) { [weak self] result in
+            guard let self = self else { return }
+
+            let alert: UIAlertController
+
+            switch result {
+            case .success:
+                alert = UIAlertController(
+                    title: "Success",
+                    message: nil,
+                    preferredStyle: .alert
+                )
+            case let .failure(error):
+                alert = UIAlertController(
+                    title: "Failure",
+                    message: "\(error)",
+                    preferredStyle: .alert
+                )
             }
 
             let okAction = UIAlertAction(

@@ -20,7 +20,7 @@ public class WeiboHandler {
 
     public var isInstalled: Bool {
         guard let url = URL(string: "sinaweibo://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -29,7 +29,7 @@ public class WeiboHandler {
 
     private var isSupported: Bool {
         guard let url = URL(string: "weibosdk3.3://") else {
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
 
@@ -63,7 +63,7 @@ public class WeiboHandler {
 
 extension WeiboHandler: ShareHandlerType {
 
-    // swiftlint:disable cyclomatic_complexity function_body_length
+    // swiftlint:disable function_body_length
 
     public func share(
         message: MessageType,
@@ -132,7 +132,7 @@ extension WeiboHandler: ShareHandlerType {
             )
 
         default:
-            assertionFailure()
+            busAssertionFailure()
             completionHandler(.failure(.unsupportedMessage))
             return
         }
@@ -141,20 +141,10 @@ extension WeiboHandler: ShareHandlerType {
 
         setPasteboard(with: transferObjectItems, in: .general)
 
-        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
-            assertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openShareUniversalLink(uuidString: uuidString)
     }
 
-    // swiftlint:enable cyclomatic_complexity function_body_length
+    // swiftlint:enable function_body_length
 
     private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
         switch endpoint {
@@ -167,7 +157,7 @@ extension WeiboHandler: ShareHandlerType {
                 Messages.webPage,
             ].contains(message)
         default:
-            assertionFailure()
+            busAssertionFailure()
             return false
         }
     }
@@ -229,17 +219,7 @@ extension WeiboHandler: OauthHandlerType {
 
         setPasteboard(with: transferObjectItems, in: .general)
 
-        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
-            assertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-            if !result {
-                completionHandler(.failure(.unknown))
-            }
-        }
+        openOauthUniversalLink(uuidString: uuidString)
     }
 }
 
@@ -271,7 +251,7 @@ extension WeiboHandler {
         guard
             let bundleID = bundleID
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -346,13 +326,44 @@ extension WeiboHandler {
     }
 }
 
+extension WeiboHandler {
+
+    private func openShareUniversalLink(uuidString: String) {
+        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
+            busAssertionFailure()
+            shareCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.shareCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+
+    private func openOauthUniversalLink(uuidString: String) {
+        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
+            busAssertionFailure()
+            oauthCompletionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+            if !result {
+                self?.oauthCompletionHandler?(.failure(.unknown))
+            }
+        }
+    }
+}
+
 extension WeiboHandler: OpenURLHandlerType {
 
     public func openURL(_ url: URL) {
         guard
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -360,7 +371,7 @@ extension WeiboHandler: OpenURLHandlerType {
         case "response" where components.path == "":
             handleGeneral()
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -372,7 +383,7 @@ extension WeiboHandler: OpenUserActivityHandlerType {
             let url = userActivity.webpageURL,
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -380,7 +391,7 @@ extension WeiboHandler: OpenUserActivityHandlerType {
         case universalLink.appendingPathComponent("weibosdk/response").path:
             handleGeneral()
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -391,7 +402,7 @@ extension WeiboHandler {
         guard
             let infos = getPlist(from: .general)
         else {
-            assertionFailure()
+            busAssertionFailure()
             return
         }
 
@@ -403,7 +414,7 @@ extension WeiboHandler {
         case "WBAuthorizeResponse":
             handleOauth(with: infos)
         default:
-            assertionFailure()
+            busAssertionFailure()
         }
     }
 }
@@ -414,12 +425,12 @@ extension WeiboHandler {
         let statusCode = infos["statusCode"] as? Int
 
         switch statusCode {
-        case 0:
+        case 0: // WeiboSDKResponseStatusCodeSuccess
             shareCompletionHandler?(.success(()))
-        case -1:
+        case -1: // WeiboSDKResponseStatusCodeUserCancel
             shareCompletionHandler?(.failure(.userCancelled))
         default:
-            assertionFailure()
+            busAssertionFailure()
             shareCompletionHandler?(.failure(.unknown))
         }
     }
@@ -428,7 +439,7 @@ extension WeiboHandler {
         let statusCode = infos["statusCode"] as? Int
 
         switch statusCode {
-        case 0:
+        case 0: // WeiboSDKResponseStatusCodeSuccess
             let accessToken = infos["accessToken"] as? String
             let expirationDate = (infos["expirationDate"] as? Date).map {
                 iso8601DateFormatter.string(from: $0)
@@ -448,13 +459,13 @@ extension WeiboHandler {
             if !parameters.isEmpty {
                 oauthCompletionHandler?(.success(parameters))
             } else {
-                assertionFailure()
+                busAssertionFailure()
                 oauthCompletionHandler?(.failure(.unknown))
             }
-        case -1:
+        case -1: // WeiboSDKResponseStatusCodeUserCancel
             oauthCompletionHandler?(.failure(.userCancelled))
         default:
-            assertionFailure()
+            busAssertionFailure()
             oauthCompletionHandler?(.failure(.unknown))
         }
     }
