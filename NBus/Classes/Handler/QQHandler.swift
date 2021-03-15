@@ -674,14 +674,14 @@ extension QQHandler {
     private func handleSignToken(with components: URLComponents) {
         guard
             let infos = getJSON(from: components, with: "appsign_extrainfo") ?? getPlist(from: .general),
-            let appSignToken = infos["appsign_token"] as? String,
+            let signToken = infos["appsign_token"] as? String,
             let lastSignTokenData = lastSignTokenData
         else {
             busAssertionFailure()
             return
         }
 
-        signToken = appSignToken
+        self.signToken = signToken
 
         switch lastSignTokenData {
         case let .share(pasteBoardItems, urlItems):
