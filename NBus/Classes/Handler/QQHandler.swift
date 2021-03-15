@@ -76,6 +76,12 @@ public class QQHandler {
 
     private var lastSignTokenData: LastSignTokenData?
 
+    private lazy var jsonDecoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dataDecodingStrategy = .base64
+        return decoder
+    }()
+
     private lazy var iso8601DateFormatter: ISO8601DateFormatter = {
         let dateFormatter = ISO8601DateFormatter()
         return dateFormatter
@@ -814,13 +820,10 @@ extension QQHandler {
     }
 
     private func getJSON(from components: URLComponents, with name: String) -> [String: String]? {
-        let decoder = JSONDecoder()
-        decoder.dataDecodingStrategy = .base64
-
         guard
             let item = components.queryItems?.first(where: { $0.name == name }),
             let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
-            let infos = try? decoder.decode([String: String].self, from: itemData)
+            let infos = try? jsonDecoder.decode([String: String].self, from: itemData)
         else {
             return nil
         }
