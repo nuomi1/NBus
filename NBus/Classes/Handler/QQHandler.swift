@@ -673,8 +673,8 @@ extension QQHandler {
 
     private func handleSignToken(with components: URLComponents) {
         guard
-            let infos = getSignTokenInfos(from: components) ?? getSignTokenInfos(from: .general),
-            let appSignToken = infos["appsign_token"],
+            let infos = getJSON(from: components, with: "appsign_extrainfo") ?? getPlist(from: .general),
+            let appSignToken = infos["appsign_token"] as? String,
             let lastSignTokenData = lastSignTokenData
         else {
             busAssertionFailure()
@@ -754,7 +754,7 @@ extension QQHandler {
 
     private func handleOauth(with components: URLComponents) {
         guard
-            let infos = getOauthInfos(from: components) ?? getOauthInfos(from: .general)
+            let infos = getPlist(from: components, with: "pasteboard") ?? getPlist(from: .general)
         else {
             busAssertionFailure()
             oauthCompletionHandler?(.failure(.invalidParameter))
@@ -796,28 +796,6 @@ extension QQHandler {
 }
 
 extension QQHandler {
-
-    private func getSignTokenInfos(from components: URLComponents) -> [String: String]? {
-        getJSON(from: components, with: "appsign_extrainfo")
-    }
-
-    private func getSignTokenInfos(from pasteboard: UIPasteboard) -> [String: String]? {
-        guard
-            let infos = getPlist(from: pasteboard)
-        else {
-            return nil
-        }
-
-        return infos.compactMapValues { $0 as? String }
-    }
-
-    private func getOauthInfos(from components: URLComponents) -> [String: Any]? {
-        getPlist(from: components, with: "pasteboard")
-    }
-
-    private func getOauthInfos(from pasteboard: UIPasteboard) -> [String: Any]? {
-        getPlist(from: pasteboard)
-    }
 
     private func getJSON(from components: URLComponents, with name: String) -> [String: String]? {
         guard
