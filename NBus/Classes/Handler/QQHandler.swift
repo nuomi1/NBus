@@ -646,16 +646,16 @@ extension QQHandler: OpenUserActivityHandlerType {
         guard
             let url = userActivity.webpageURL,
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-            let identifier = Bundle.main.bus.identifier
+            let bundleID = Bundle.main.bus.identifier
         else {
             busAssertionFailure()
             return
         }
 
         switch components.path {
-        case universalLink.appendingPathComponent("\(identifier)/mqqsignapp").path:
+        case universalLink.appendingPathComponent("\(bundleID)/mqqsignapp").path:
             handleSignToken(with: components)
-        case universalLink.appendingPathComponent("\(identifier)").path:
+        case universalLink.appendingPathComponent("\(bundleID)").path:
             handleActionInfo(with: components)
         default:
             busAssertionFailure()
