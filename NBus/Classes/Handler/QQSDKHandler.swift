@@ -152,6 +152,7 @@ extension QQSDKHandler: ShareHandlerType {
             )
 
             let miniProgramObject = QQApiMiniProgramObject()
+
             miniProgramObject.qqApiObject = webPageObject
             miniProgramObject.miniAppID = message.miniProgramID
             miniProgramObject.miniPath = message.path
@@ -178,6 +179,7 @@ extension QQSDKHandler: ShareHandlerType {
             code = QQApiInterface.sendReq(toQZone: request)
         default:
             busAssertionFailure()
+            completionHandler(.failure(.invalidParameter))
             return
         }
 
