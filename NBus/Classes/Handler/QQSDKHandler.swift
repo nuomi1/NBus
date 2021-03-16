@@ -301,8 +301,6 @@ extension QQSDKHandler: LaunchHandlerType {
         switch code {
         case .EQQAPISENDSUCESS:
             break
-        case .EQQAPIMESSAGECONTENTINVALID:
-            completionHandler(.failure(.invalidParameter))
         case .EQQAPIVERSIONNEEDUPDATE:
             completionHandler(.failure(.unsupportedApplication))
         default:
