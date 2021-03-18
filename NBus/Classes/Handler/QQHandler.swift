@@ -261,10 +261,10 @@ extension QQHandler: ShareHandlerType {
 
         switch endpoint {
         case Endpoints.QQ.friend:
-            flags.append(2) // qqapiCtrlFlagQZoneShareForbid
+            flags.append(2) // kQQAPICtrlFlagQZoneShareForbid
 
             if message == Messages.file {
-                flags.append(16) // qqapiCtrlFlagQQShareDataline
+                flags.append(16) // kQQAPICtrlFlagQQShareDataline
             }
 
             if message == Messages.miniProgram {
@@ -321,11 +321,11 @@ extension QQHandler: ShareHandlerType {
 
         switch miniProgramType {
         case .release:
-            result = 3 // online
+            result = 3 // MiniProgramType_Online
         case .test:
-            result = 1 // test
+            result = 1 // MiniProgramType_Test
         case .preview:
-            result = 4 // preview
+            result = 4 // MiniProgramType_Preview
         }
 
         return "\(result)"
