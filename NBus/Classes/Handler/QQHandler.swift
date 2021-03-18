@@ -135,10 +135,6 @@ extension QQHandler: ShareHandlerType {
         urlItems["cflag"] = cflag
         urlItems["shareType"] = shareType
 
-        if let oldText = oldText {
-            pasteBoardItems["pasted_string"] = oldText
-        }
-
         if let message = message as? MediaMessageType {
             if let title = message.title?.bus.base64EncodedString {
                 urlItems["title"] = title
@@ -214,12 +210,15 @@ extension QQHandler: ShareHandlerType {
             return
         }
 
-        setPasteboard(with: pasteBoardItems, in: .general)
+        if message is WebPageMessage || message is MiniProgramMessage {
+            setPasteboardIfNeeded(with: &pasteBoardItems, into: &urlItems)
+        }
 
-        if pasteBoardItems.contains(where: { $0.key == "file_data" }) {
+        setPasteboardIfNeeded(with: &pasteBoardItems, in: .general)
+
+        if !pasteBoardItems.isEmpty {
+            urlItems["generalpastboard"] = "1"
             urlItems["objectlocation"] = "pasteboard"
-        } else if message is MiniProgramMessage {
-            urlItems["objectlocation"] = "url"
         }
 
         if signToken == nil {
@@ -376,14 +375,11 @@ extension QQHandler: OauthHandlerType {
         pasteBoardItems["status_os"] = statusOS
         pasteBoardItems["status_version"] = statusVersion
 
-        if isNoPasteboardSupported {
-            let pbData = generatePasteboardData(with: pasteBoardItems)
+        setPasteboardIfNeeded(with: &pasteBoardItems, into: &urlItems)
 
-            urlItems["objectlocation"] = "url"
-            urlItems["pasteboard"] = pbData.base64EncodedString()
-        } else {
-            setPasteboard(with: pasteBoardItems, in: .general)
+        setPasteboardIfNeeded(with: &pasteBoardItems, in: .general)
 
+        if !pasteBoardItems.isEmpty {
             urlItems["generalpastboard"] = "1"
         }
 
@@ -469,13 +465,37 @@ extension QQHandler {
 
 extension QQHandler {
 
-    private func setPasteboard(
-        with pasteBoardItems: [String: Any],
+    private func setPasteboardIfNeeded(
+        with pasteBoardItems: inout [String: Any],
         in pasteboard: UIPasteboard
     ) {
+        guard !pasteBoardItems.isEmpty else {
+            return
+        }
+
+        if let oldText = oldText {
+            pasteBoardItems["pasted_string"] = oldText
+        }
+
         let pbData = generatePasteboardData(with: pasteBoardItems)
 
         pasteboard.setData(pbData, forPasteboardType: "com.tencent.mqq.api.apiLargeData")
+    }
+
+    private func setPasteboardIfNeeded(
+        with pasteBoardItems: inout [String: Any],
+        into urlItems: inout [String: String]
+    ) {
+        guard isNoPasteboardSupported else {
+            return
+        }
+
+        let pbData = generatePasteboardData(with: pasteBoardItems)
+
+        urlItems["objectlocation"] = "url"
+        urlItems["pasteboard"] = pbData.base64EncodedString()
+
+        pasteBoardItems = [:]
     }
 
     private func generatePasteboardData(with pasteBoardItems: [String: Any]) -> Data {
@@ -503,7 +523,6 @@ extension QQHandler {
 
         urlItems["callback_name"] = txID
         urlItems["callback_type"] = "scheme"
-        urlItems["generalpastboard"] = "1"
         urlItems["src_type"] = "app"
         urlItems["thirdAppDisplayName"] = displayNameEncoded
         urlItems["version"] = "1"
@@ -684,8 +703,8 @@ extension QQHandler {
         self.signToken = signToken
 
         switch lastSignTokenData {
-        case let .share(pasteBoardItems, urlItems):
-            setPasteboard(with: pasteBoardItems, in: .general)
+        case .share(var pasteBoardItems, let urlItems):
+            setPasteboardIfNeeded(with: &pasteBoardItems, in: .general)
             openShareUniversalLink(with: urlItems)
         case let .launch(urlItems):
             openLaunchUniversalLink(with: urlItems)
