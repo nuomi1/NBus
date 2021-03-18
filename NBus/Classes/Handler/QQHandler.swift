@@ -76,6 +76,12 @@ public class QQHandler {
 
     private var lastSignTokenData: LastSignTokenData?
 
+    private lazy var jsonDecoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dataDecodingStrategy = .base64
+        return decoder
+    }()
+
     private lazy var iso8601DateFormatter: ISO8601DateFormatter = {
         let dateFormatter = ISO8601DateFormatter()
         return dateFormatter
@@ -128,10 +134,6 @@ extension QQHandler: ShareHandlerType {
 
         urlItems["cflag"] = cflag
         urlItems["shareType"] = shareType
-
-        if let oldText = oldText {
-            pasteBoardItems["pasted_string"] = oldText
-        }
 
         if let message = message as? MediaMessageType {
             if let title = message.title?.bus.base64EncodedString {
@@ -208,12 +210,15 @@ extension QQHandler: ShareHandlerType {
             return
         }
 
-        setPasteboard(with: pasteBoardItems, in: .general)
+        if message is WebPageMessage || message is MiniProgramMessage {
+            setPasteboardIfNeeded(with: &pasteBoardItems, into: &urlItems)
+        }
 
-        if pasteBoardItems.contains(where: { $0.key == "file_data" }) {
+        setPasteboardIfNeeded(with: &pasteBoardItems, in: .general)
+
+        if !pasteBoardItems.isEmpty {
+            urlItems["generalpastboard"] = "1"
             urlItems["objectlocation"] = "pasteboard"
-        } else if message is MiniProgramMessage {
-            urlItems["objectlocation"] = "url"
         }
 
         if signToken == nil {
@@ -256,10 +261,10 @@ extension QQHandler: ShareHandlerType {
 
         switch endpoint {
         case Endpoints.QQ.friend:
-            flags.append(2) // qqapiCtrlFlagQZoneShareForbid
+            flags.append(2) // kQQAPICtrlFlagQZoneShareForbid
 
             if message == Messages.file {
-                flags.append(16) // qqapiCtrlFlagQQShareDataline
+                flags.append(16) // kQQAPICtrlFlagQQShareDataline
             }
 
             if message == Messages.miniProgram {
@@ -316,11 +321,11 @@ extension QQHandler: ShareHandlerType {
 
         switch miniProgramType {
         case .release:
-            result = 3 // online
+            result = 3 // MiniProgramType_Online
         case .test:
-            result = 1 // test
+            result = 1 // MiniProgramType_Test
         case .preview:
-            result = 4 // preview
+            result = 4 // MiniProgramType_Preview
         }
 
         return "\(result)"
@@ -370,14 +375,11 @@ extension QQHandler: OauthHandlerType {
         pasteBoardItems["status_os"] = statusOS
         pasteBoardItems["status_version"] = statusVersion
 
-        if isNoPasteboardSupported {
-            let pbData = generatePasteboardData(with: pasteBoardItems)
+        setPasteboardIfNeeded(with: &pasteBoardItems, into: &urlItems)
 
-            urlItems["objectlocation"] = "url"
-            urlItems["pasteboard"] = pbData.base64EncodedString()
-        } else {
-            setPasteboard(with: pasteBoardItems, in: .general)
+        setPasteboardIfNeeded(with: &pasteBoardItems, in: .general)
 
+        if !pasteBoardItems.isEmpty {
             urlItems["generalpastboard"] = "1"
         }
 
@@ -463,13 +465,37 @@ extension QQHandler {
 
 extension QQHandler {
 
-    private func setPasteboard(
-        with pasteBoardItems: [String: Any],
+    private func setPasteboardIfNeeded(
+        with pasteBoardItems: inout [String: Any],
         in pasteboard: UIPasteboard
     ) {
+        guard !pasteBoardItems.isEmpty else {
+            return
+        }
+
+        if let oldText = oldText {
+            pasteBoardItems["pasted_string"] = oldText
+        }
+
         let pbData = generatePasteboardData(with: pasteBoardItems)
 
         pasteboard.setData(pbData, forPasteboardType: "com.tencent.mqq.api.apiLargeData")
+    }
+
+    private func setPasteboardIfNeeded(
+        with pasteBoardItems: inout [String: Any],
+        into urlItems: inout [String: String]
+    ) {
+        guard isNoPasteboardSupported else {
+            return
+        }
+
+        let pbData = generatePasteboardData(with: pasteBoardItems)
+
+        urlItems["objectlocation"] = "url"
+        urlItems["pasteboard"] = pbData.base64EncodedString()
+
+        pasteBoardItems = [:]
     }
 
     private func generatePasteboardData(with pasteBoardItems: [String: Any]) -> Data {
@@ -497,7 +523,6 @@ extension QQHandler {
 
         urlItems["callback_name"] = txID
         urlItems["callback_type"] = "scheme"
-        urlItems["generalpastboard"] = "1"
         urlItems["src_type"] = "app"
         urlItems["thirdAppDisplayName"] = displayNameEncoded
         urlItems["version"] = "1"
@@ -646,16 +671,16 @@ extension QQHandler: OpenUserActivityHandlerType {
         guard
             let url = userActivity.webpageURL,
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-            let identifier = Bundle.main.bus.identifier
+            let bundleID = Bundle.main.bus.identifier
         else {
             busAssertionFailure()
             return
         }
 
         switch components.path {
-        case universalLink.appendingPathComponent("\(identifier)/mqqsignapp").path:
+        case universalLink.appendingPathComponent("\(bundleID)/mqqsignapp").path:
             handleSignToken(with: components)
-        case universalLink.appendingPathComponent("\(identifier)").path:
+        case universalLink.appendingPathComponent("\(bundleID)").path:
             handleActionInfo(with: components)
         default:
             busAssertionFailure()
@@ -667,19 +692,19 @@ extension QQHandler {
 
     private func handleSignToken(with components: URLComponents) {
         guard
-            let infos = getSignTokenInfos(from: components) ?? getSignTokenInfos(from: .general),
-            let appSignToken = infos["appsign_token"],
+            let infos = getJSON(from: components, with: "appsign_extrainfo") ?? getPlist(from: .general),
+            let signToken = infos["appsign_token"] as? String,
             let lastSignTokenData = lastSignTokenData
         else {
             busAssertionFailure()
             return
         }
 
-        signToken = appSignToken
+        self.signToken = signToken
 
         switch lastSignTokenData {
-        case let .share(pasteBoardItems, urlItems):
-            setPasteboard(with: pasteBoardItems, in: .general)
+        case .share(var pasteBoardItems, let urlItems):
+            setPasteboardIfNeeded(with: &pasteBoardItems, in: .general)
             openShareUniversalLink(with: urlItems)
         case let .launch(urlItems):
             openLaunchUniversalLink(with: urlItems)
@@ -732,6 +757,9 @@ extension QQHandler {
         switch item.value {
         case "0":
             shareCompletionHandler?(.success(()))
+        case "900101":
+            // msg_body error: url empty or contain illegal char
+            shareCompletionHandler?(.failure(.invalidParameter))
         case "-4":
             // the user give up the current operation
             shareCompletionHandler?(.failure(.userCancelled))
@@ -748,7 +776,7 @@ extension QQHandler {
 
     private func handleOauth(with components: URLComponents) {
         guard
-            let infos = getOauthInfos(from: components) ?? getOauthInfos(from: .general)
+            let infos = getPlist(from: components, with: "pasteboard") ?? getPlist(from: .general)
         else {
             busAssertionFailure()
             oauthCompletionHandler?(.failure(.invalidParameter))
@@ -791,36 +819,11 @@ extension QQHandler {
 
 extension QQHandler {
 
-    private func getSignTokenInfos(from components: URLComponents) -> [String: String]? {
-        getJSON(from: components, with: "appsign_extrainfo")
-    }
-
-    private func getSignTokenInfos(from pasteboard: UIPasteboard) -> [String: String]? {
-        guard
-            let infos = getPlist(from: pasteboard)
-        else {
-            return nil
-        }
-
-        return infos.compactMapValues { $0 as? String }
-    }
-
-    private func getOauthInfos(from components: URLComponents) -> [String: Any]? {
-        getPlist(from: components, with: "pasteboard")
-    }
-
-    private func getOauthInfos(from pasteboard: UIPasteboard) -> [String: Any]? {
-        getPlist(from: pasteboard)
-    }
-
     private func getJSON(from components: URLComponents, with name: String) -> [String: String]? {
-        let decoder = JSONDecoder()
-        decoder.dataDecodingStrategy = .base64
-
         guard
             let item = components.queryItems?.first(where: { $0.name == name }),
             let itemData = item.value.flatMap({ Data(base64Encoded: $0) }),
-            let infos = try? decoder.decode([String: String].self, from: itemData)
+            let infos = try? jsonDecoder.decode([String: String].self, from: itemData)
         else {
             return nil
         }
