@@ -757,6 +757,9 @@ extension QQHandler {
         switch item.value {
         case "0":
             shareCompletionHandler?(.success(()))
+        case "900101":
+            // msg_body error: url empty or contain illegal char
+            shareCompletionHandler?(.failure(.invalidParameter))
         case "-4":
             // the user give up the current operation
             shareCompletionHandler?(.failure(.userCancelled))

@@ -358,6 +358,9 @@ extension QQSDKHandler {
                 switch response.result {
                 case "0":
                     owner?.shareCompletionHandler?(.success(()))
+                case "900101":
+                    // msg_body error: url empty or contain illegal char
+                    owner?.shareCompletionHandler?(.failure(.invalidParameter))
                 case "-4":
                     // the user give up the current operation
                     owner?.shareCompletionHandler?(.failure(.userCancelled))
