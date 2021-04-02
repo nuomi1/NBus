@@ -1,33 +1,33 @@
 PODS:
-  - NBus/BusHandlers (0.11.0):
+  - NBus/BusHandlers (1.0.0):
     - NBus/QQHandler
     - NBus/SystemHandler
     - NBus/WechatHandler
     - NBus/WeiboHandler
-  - NBus/Core (0.11.0)
-  - NBus/QQHandler (0.11.0):
+  - NBus/Core (1.0.0)
+  - NBus/QQHandler (1.0.0):
     - NBus/Core
-  - NBus/QQSDK (0.11.0)
-  - NBus/QQSDKHandler (0.11.0):
+  - NBus/QQSDK (1.0.0)
+  - NBus/QQSDKHandler (1.0.0):
     - NBus/Core
     - NBus/QQSDK
-  - NBus/SDKHandlers (0.11.0):
+  - NBus/SDKHandlers (1.0.0):
     - NBus/QQSDKHandler
     - NBus/SystemHandler
     - NBus/WechatSDKHandler
     - NBus/WeiboSDKHandler
-  - NBus/SystemHandler (0.11.0):
+  - NBus/SystemHandler (1.0.0):
     - NBus/Core
-  - NBus/WechatHandler (0.11.0):
+  - NBus/WechatHandler (1.0.0):
     - NBus/Core
-  - NBus/WechatSDK (0.11.0)
-  - NBus/WechatSDKHandler (0.11.0):
+  - NBus/WechatSDK (1.0.0)
+  - NBus/WechatSDKHandler (1.0.0):
     - NBus/Core
     - NBus/WechatSDK
-  - NBus/WeiboHandler (0.11.0):
+  - NBus/WeiboHandler (1.0.0):
     - NBus/Core
-  - NBus/WeiboSDK (0.11.0)
-  - NBus/WeiboSDKHandler (0.11.0):
+  - NBus/WeiboSDK (1.0.0)
+  - NBus/WeiboSDKHandler (1.0.0):
     - NBus/Core
     - NBus/WeiboSDK
   - PinLayout (1.9.3)
@@ -62,7 +62,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  NBus: 1523db5c47d0665c2dd3246e1f60495cd1b5e6e9
+  NBus: e0f623fe47b890a345766f351193cba20359febb
   PinLayout: 4d8733121f8687edcc8f00c19bf1379d12808767
   RxCocoa: 3f79328fafa3645b34600f37c31e64c73ae3a80e
   RxRelay: 8d593be109c06ea850df027351beba614b012ffb
