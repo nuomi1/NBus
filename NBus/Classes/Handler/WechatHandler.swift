@@ -287,17 +287,9 @@ extension WechatHandler: LaunchHandlerType {
 
 extension WechatHandler {
 
-    private var bundleID: String? {
-        Bundle.main.bus.identifier
-    }
-
     private var contextID: String {
         let timestamp = Date().timeIntervalSince1970
         return "\(timestamp)".bus.sha1
-    }
-
-    private var oldText: String? {
-        UIPasteboard.general.bus.oldText
     }
 
     private var sdkVersion: String {
@@ -346,11 +338,7 @@ extension WechatHandler {
 extension WechatHandler {
 
     private func generateShareUniversalLink() -> URL? {
-        guard
-            var components = generateGeneralUniversalLink()
-        else {
-            return nil
-        }
+        var components = generateGeneralUniversalLink()
 
         components.path = "/app/\(appID)/sendreq/"
 
@@ -364,11 +352,7 @@ extension WechatHandler {
     }
 
     private func generateOauthUniversalLink() -> URL? {
-        guard
-            var components = generateGeneralUniversalLink()
-        else {
-            return nil
-        }
+        var components = generateGeneralUniversalLink()
 
         components.path = "/app/\(appID)/auth/"
 
@@ -380,11 +364,7 @@ extension WechatHandler {
     }
 
     private func generateLaunchUniversalLink(with urlItems: [String: String]) -> URL? {
-        guard
-            var components = generateGeneralUniversalLink()
-        else {
-            return nil
-        }
+        var components = generateGeneralUniversalLink()
 
         components.path = "/app/\(appID)/jumpWxa/"
 
@@ -401,13 +381,7 @@ extension WechatHandler {
         return components.url
     }
 
-    private func generateGeneralUniversalLink() -> URLComponents? {
-        guard
-            let bundleID = bundleID
-        else {
-            return nil
-        }
-
+    private func generateGeneralUniversalLink() -> URLComponents {
         var components = URLComponents()
 
         components.scheme = "https"
@@ -426,11 +400,7 @@ extension WechatHandler {
     }
 
     private func generateShareURLScheme() -> URL? {
-        guard
-            var components = generateGeneralURLScheme()
-        else {
-            return nil
-        }
+        var components = generateGeneralURLScheme()
 
         components.path = "/\(appID)/sendreq/"
 
@@ -438,11 +408,7 @@ extension WechatHandler {
     }
 
     private func generateLaunchURLScheme(with urlItems: [String: String]) -> URL? {
-        guard
-            var components = generateGeneralURLScheme()
-        else {
-            return nil
-        }
+        var components = generateGeneralURLScheme()
 
         components.path = "/\(appID)/jumpWxa/"
 
@@ -453,13 +419,7 @@ extension WechatHandler {
         return components.url
     }
 
-    private func generateGeneralURLScheme() -> URLComponents? {
-        guard
-            let bundleID = bundleID
-        else {
-            return nil
-        }
-
+    private func generateGeneralURLScheme() -> URLComponents {
         var components = URLComponents()
 
         components.scheme = "weixin"
@@ -478,6 +438,8 @@ extension WechatHandler {
 }
 
 extension WechatHandler: BusOpenExternalURLHelper {}
+
+extension WechatHandler: BusGetCommonInfoHelper {}
 
 extension WechatHandler: OpenURLHandlerType {
 
