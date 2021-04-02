@@ -291,7 +291,7 @@ extension WechatHandler {
         Bundle.main.bus.identifier
     }
 
-    private var contextID: String? {
+    private var contextID: String {
         let timestamp = Date().timeIntervalSince1970
         return "\(timestamp)".bus.sha1
     }
@@ -403,8 +403,7 @@ extension WechatHandler {
 
     private func generateGeneralUniversalLink() -> URLComponents? {
         guard
-            let bundleID = bundleID,
-            let contextID = contextID
+            let bundleID = bundleID
         else {
             return nil
         }
