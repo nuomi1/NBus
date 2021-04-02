@@ -18,23 +18,11 @@ public class WeiboHandler {
 
     public let platform: Platform = Platforms.weibo
 
-    public var isInstalled: Bool {
-        guard let url = URL(string: "sinaweibo://") else {
-            busAssertionFailure()
-            return false
-        }
+    @BusCheckURLScheme(url: URL(string: "sinaweibo://")!)
+    public var isInstalled: Bool
 
-        return UIApplication.shared.canOpenURL(url)
-    }
-
-    private var isSupported: Bool {
-        guard let url = URL(string: "weibosdk3.3://") else {
-            busAssertionFailure()
-            return false
-        }
-
-        return UIApplication.shared.canOpenURL(url)
-    }
+    @BusCheckURLScheme(url: URL(string: "weibosdk3.3://")!)
+    private var isSupported: Bool
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?

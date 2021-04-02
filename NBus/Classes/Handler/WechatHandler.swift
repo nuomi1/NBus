@@ -20,23 +20,11 @@ public class WechatHandler {
 
     public let platform: Platform = Platforms.wechat
 
-    public var isInstalled: Bool {
-        guard let url = URL(string: "weixin://") else {
-            busAssertionFailure()
-            return false
-        }
+    @BusCheckURLScheme(url: URL(string: "weixin://")!)
+    public var isInstalled: Bool
 
-        return UIApplication.shared.canOpenURL(url)
-    }
-
-    private var isSupported: Bool {
-        guard let url = URL(string: "weixinULAPI://") else {
-            busAssertionFailure()
-            return false
-        }
-
-        return UIApplication.shared.canOpenURL(url)
-    }
+    @BusCheckURLScheme(url: URL(string: "weixinULAPI://")!)
+    private var isSupported: Bool
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?

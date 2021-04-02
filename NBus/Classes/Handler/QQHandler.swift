@@ -19,50 +19,20 @@ public class QQHandler {
 
     public let platform: Platform = Platforms.qq
 
-    public var isInstalled: Bool {
-        guard let url = URL(string: "mqq://") else {
-            busAssertionFailure()
-            return false
-        }
+    @BusCheckURLScheme(url: URL(string: "mqq://")!)
+    public var isInstalled: Bool
 
-        return UIApplication.shared.canOpenURL(url)
-    }
+    @BusCheckURLScheme(url: URL(string: "mqqopensdkapiV2://")!)
+    private var isSupported: Bool
 
-    private var isSupported: Bool {
-        guard let url = URL(string: "mqqopensdkapiV2://") else {
-            busAssertionFailure()
-            return false
-        }
+    @BusCheckURLScheme(url: URL(string: "mqqopensdkminiapp://")!)
+    private var isMiniProgramSupported: Bool
 
-        return UIApplication.shared.canOpenURL(url)
-    }
+    @BusCheckURLScheme(url: URL(string: "mqqopensdknopasteboard://")!)
+    private var isNoPasteboardSupported: Bool
 
-    private var isMiniProgramSupported: Bool {
-        guard let url = URL(string: "mqqopensdkminiapp://") else {
-            busAssertionFailure()
-            return false
-        }
-
-        return UIApplication.shared.canOpenURL(url)
-    }
-
-    private var isNoPasteboardSupported: Bool {
-        guard let url = URL(string: "mqqopensdknopasteboard://") else {
-            busAssertionFailure()
-            return false
-        }
-
-        return UIApplication.shared.canOpenURL(url)
-    }
-
-    private var isLaunchMiniProgramSupported: Bool {
-        guard let url = URL(string: "mqqopensdklaunchminiapp://") else {
-            busAssertionFailure()
-            return false
-        }
-
-        return UIApplication.shared.canOpenURL(url)
-    }
+    @BusCheckURLScheme(url: URL(string: "mqqopensdklaunchminiapp://")!)
+    private var isLaunchMiniProgramSupported: Bool
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
