@@ -217,10 +217,6 @@ extension WeiboHandler {
         appID.trimmingCharacters(in: .letters)
     }
 
-    private var bundleID: String? {
-        Bundle.main.bus.identifier
-    }
-
     private var sdkShortVersion: String {
         "3.3"
     }
@@ -236,13 +232,6 @@ extension WeiboHandler {
         with transferObjectItems: [String: Any],
         in pasteboard: UIPasteboard
     ) {
-        guard
-            let bundleID = bundleID
-        else {
-            busAssertionFailure()
-            return
-        }
-
         var userInfoItems: [String: Any] = [:]
         var appItems: [String: Any] = [:]
 
@@ -285,12 +274,6 @@ extension WeiboHandler {
 extension WeiboHandler {
 
     private func generateGeneralUniversalLink(uuidString: String) -> URL? {
-        guard
-            let bundleID = bundleID
-        else {
-            return nil
-        }
-
         var components = URLComponents()
 
         components.scheme = "https"
@@ -315,6 +298,8 @@ extension WeiboHandler {
 }
 
 extension WeiboHandler: BusOpenExternalURLHelper {}
+
+extension WeiboHandler: BusGetCommonInfoHelper {}
 
 extension WeiboHandler: OpenURLHandlerType {
 
