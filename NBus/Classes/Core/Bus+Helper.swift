@@ -36,7 +36,7 @@ extension BusWrapper where Base == String {
         return data.base64EncodedString()
     }
 
-    var sha1: String? {
+    var sha1: String {
         let data = Data(base.utf8)
 
         var digest = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
