@@ -129,7 +129,7 @@ extension WeiboHandler: ShareHandlerType {
 
         setPasteboard(with: transferObjectItems, in: .general)
 
-        openShareUniversalLink(uuidString: uuidString)
+        open(generateGeneralUniversalLink(uuidString: uuidString), completionHandler: shareCompletionHandler)
     }
 
     // swiftlint:enable function_body_length
@@ -207,7 +207,7 @@ extension WeiboHandler: OauthHandlerType {
 
         setPasteboard(with: transferObjectItems, in: .general)
 
-        openOauthUniversalLink(uuidString: uuidString)
+        open(generateGeneralUniversalLink(uuidString: uuidString), completionHandler: oauthCompletionHandler)
     }
 }
 
@@ -316,30 +316,20 @@ extension WeiboHandler {
 
 extension WeiboHandler {
 
-    private func openShareUniversalLink(uuidString: String) {
-        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
+    private func open<Success>(
+        _ url: URL?,
+        options: [UIApplication.OpenExternalURLOptionsKey: Any] = [.universalLinksOnly: true],
+        completionHandler: ((Result<Success, Bus.Error>) -> Void)?
+    ) {
+        guard let url = url else {
             busAssertionFailure()
-            shareCompletionHandler?(.failure(.invalidParameter))
+            completionHandler?(.failure(.invalidParameter))
             return
         }
 
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+        UIApplication.shared.open(url, options: options) { result in
             if !result {
-                self?.shareCompletionHandler?(.failure(.unknown))
-            }
-        }
-    }
-
-    private func openOauthUniversalLink(uuidString: String) {
-        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
-            busAssertionFailure()
-            oauthCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
-            if !result {
-                self?.oauthCompletionHandler?(.failure(.unknown))
+                completionHandler?(.failure(.unknown))
             }
         }
     }
