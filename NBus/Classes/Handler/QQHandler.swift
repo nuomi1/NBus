@@ -195,7 +195,7 @@ extension QQHandler: ShareHandlerType {
             lastSignTokenData = .share(pasteBoardItems: pasteBoardItems, urlItems: urlItems)
         }
 
-        openShareUniversalLink(with: urlItems)
+        open(generateShareUniversalLink(with: urlItems), completionHandler: shareCompletionHandler)
     }
 
     // swiftlint:enable cyclomatic_complexity function_body_length
@@ -353,7 +353,7 @@ extension QQHandler: OauthHandlerType {
             urlItems["generalpastboard"] = "1"
         }
 
-        openOauthUniversalLink(with: urlItems)
+        open(generateOauthUniversalLink(with: urlItems), completionHandler: oauthCompletionHandler)
     }
 }
 
@@ -386,7 +386,7 @@ extension QQHandler: LaunchHandlerType {
             lastSignTokenData = .launch(urlItems: urlItems)
         }
 
-        openLaunchUniversalLink(with: urlItems)
+        open(generateLaunchUniversalLink(with: urlItems), completionHandler: launchCompletionHandler)
     }
 }
 
@@ -578,44 +578,20 @@ extension QQHandler {
 
 extension QQHandler {
 
-    private func openShareUniversalLink(with urlItems: [String: String]) {
-        guard let url = generateShareUniversalLink(with: urlItems) else {
+    private func open<Success>(
+        _ url: URL?,
+        options: [UIApplication.OpenExternalURLOptionsKey: Any] = [.universalLinksOnly: true],
+        completionHandler: ((Result<Success, Bus.Error>) -> Void)?
+    ) {
+        guard let url = url else {
             busAssertionFailure()
-            shareCompletionHandler?(.failure(.invalidParameter))
+            completionHandler?(.failure(.invalidParameter))
             return
         }
 
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
+        UIApplication.shared.open(url, options: options) { result in
             if !result {
-                self?.shareCompletionHandler?(.failure(.unknown))
-            }
-        }
-    }
-
-    private func openOauthUniversalLink(with urlItems: [String: String]) {
-        guard let url = generateOauthUniversalLink(with: urlItems) else {
-            busAssertionFailure()
-            oauthCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
-            if !result {
-                self?.oauthCompletionHandler?(.failure(.unknown))
-            }
-        }
-    }
-
-    private func openLaunchUniversalLink(with urlItems: [String: String]) {
-        guard let url = generateLaunchUniversalLink(with: urlItems) else {
-            busAssertionFailure()
-            launchCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
-            if !result {
-                self?.launchCompletionHandler?(.failure(.unknown))
+                completionHandler?(.failure(.unknown))
             }
         }
     }
@@ -675,9 +651,9 @@ extension QQHandler {
         switch lastSignTokenData {
         case .share(var pasteBoardItems, let urlItems):
             setPasteboardIfNeeded(with: &pasteBoardItems, in: .general)
-            openShareUniversalLink(with: urlItems)
+            open(generateShareUniversalLink(with: urlItems), completionHandler: shareCompletionHandler)
         case let .launch(urlItems):
-            openLaunchUniversalLink(with: urlItems)
+            open(generateLaunchUniversalLink(with: urlItems), completionHandler: launchCompletionHandler)
         }
 
         self.lastSignTokenData = nil
