@@ -301,7 +301,7 @@ extension WechatHandler {
     }
 
     private var sdkVersion: String {
-        "1.8.7.1"
+        "1.8.9"
     }
 }
 
