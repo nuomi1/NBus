@@ -53,22 +53,6 @@ extension OauthHandlerType {
     }
 }
 
-public protocol OpenURLHandlerType: HandlerType {
-
-    var appID: String { get }
-
-    func openURL(_ url: URL)
-
-    func canOpenURL(_ url: URL) -> Bool
-}
-
-extension OpenURLHandlerType {
-
-    public func canOpenURL(_ url: URL) -> Bool {
-        appID == url.scheme
-    }
-}
-
 public protocol LaunchHandlerType {
 
     var platform: Platform { get }
@@ -86,6 +70,22 @@ extension LaunchHandlerType {
 
     public func canLaunch(with platform: Platform) -> Bool {
         self.platform == platform
+    }
+}
+
+public protocol OpenURLHandlerType: HandlerType {
+
+    var appID: String { get }
+
+    func openURL(_ url: URL)
+
+    func canOpenURL(_ url: URL) -> Bool
+}
+
+extension OpenURLHandlerType {
+
+    public func canOpenURL(_ url: URL) -> Bool {
+        appID == url.scheme
     }
 }
 
