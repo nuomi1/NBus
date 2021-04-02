@@ -318,15 +318,6 @@ extension QQHandler: OauthHandlerType {
             return
         }
 
-        guard
-            let displayName = displayName,
-            let bundleID = bundleID
-        else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
         oauthCompletionHandler = completionHandler
 
         var urlItems: [String: String] = [:]
@@ -394,18 +385,6 @@ extension QQHandler {
 
     private var appNumber: String {
         appID.trimmingCharacters(in: .letters)
-    }
-
-    private var bundleID: String? {
-        Bundle.main.bus.identifier
-    }
-
-    private var displayName: String? {
-        Bundle.main.bus.displayName
-    }
-
-    private var oldText: String? {
-        UIPasteboard.general.bus.oldText
     }
 
     private var sdkShortVersion: String {
@@ -476,12 +455,7 @@ extension QQHandler {
 extension QQHandler {
 
     private func generateShareUniversalLink(with urlItems: [String: String]) -> URL? {
-        guard
-            var components = generateGeneralUniversalLink(),
-            let displayNameEncoded = displayName?.bus.base64EncodedString
-        else {
-            return nil
-        }
+        var components = generateGeneralUniversalLink()
 
         components.path = "/opensdkul/mqqapi/share/to_fri"
 
@@ -494,7 +468,7 @@ extension QQHandler {
         urlItems["callback_name"] = txID
         urlItems["callback_type"] = "scheme"
         urlItems["src_type"] = "app"
-        urlItems["thirdAppDisplayName"] = displayNameEncoded
+        urlItems["thirdAppDisplayName"] = displayName.bus.base64EncodedString
         urlItems["version"] = "1"
 
         components.queryItems?.append(contentsOf: urlItems.map { key, value in
@@ -505,11 +479,7 @@ extension QQHandler {
     }
 
     private func generateOauthUniversalLink(with urlItems: [String: String]) -> URL? {
-        guard
-            var components = generateGeneralUniversalLink()
-        else {
-            return nil
-        }
+        var components = generateGeneralUniversalLink()
 
         components.path = "/opensdkul/mqqOpensdkSSoLogin/SSoLogin/\(appID)"
 
@@ -521,12 +491,7 @@ extension QQHandler {
     }
 
     private func generateLaunchUniversalLink(with urlItems: [String: String]) -> URL? {
-        guard
-            var components = generateGeneralUniversalLink(),
-            let displayNameEncoded = displayName?.bus.base64EncodedString
-        else {
-            return nil
-        }
+        var components = generateGeneralUniversalLink()
 
         components.path = "/opensdkul/mqqapi/profile/sdk_launch_mini_app"
 
@@ -540,7 +505,7 @@ extension QQHandler {
         urlItems["callback_name"] = txID
         urlItems["callback_type"] = "scheme"
         urlItems["src_type"] = "app"
-        urlItems["thirdAppDisplayName"] = displayNameEncoded
+        urlItems["thirdAppDisplayName"] = displayName.bus.base64EncodedString
         urlItems["version"] = "1"
 
         components.queryItems?.append(contentsOf: urlItems.map { key, value in
@@ -550,13 +515,7 @@ extension QQHandler {
         return components.url
     }
 
-    private func generateGeneralUniversalLink() -> URLComponents? {
-        guard
-            let bundleIDEncoded = bundleID?.bus.base64EncodedString
-        else {
-            return nil
-        }
-
+    private func generateGeneralUniversalLink() -> URLComponents {
         var components = URLComponents()
 
         components.scheme = "https"
@@ -565,7 +524,7 @@ extension QQHandler {
         var urlItems: [String: String] = [:]
 
         urlItems["appsign_txid"] = txID
-        urlItems["bundleid"] = bundleIDEncoded
+        urlItems["bundleid"] = bundleID.bus.base64EncodedString
         urlItems["sdkv"] = sdkShortVersion
 
         components.queryItems = urlItems.map { key, value in
@@ -577,6 +536,8 @@ extension QQHandler {
 }
 
 extension QQHandler: BusOpenExternalURLHelper {}
+
+extension QQHandler: BusGetCommonInfoHelper {}
 
 extension QQHandler: OpenURLHandlerType {
 
@@ -597,8 +558,7 @@ extension QQHandler: OpenUserActivityHandlerType {
     public func openUserActivity(_ userActivity: NSUserActivity) {
         guard
             let url = userActivity.webpageURL,
-            let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-            let bundleID = Bundle.main.bus.identifier
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         else {
             busAssertionFailure()
             return

@@ -140,3 +140,20 @@ extension BusOpenExternalURLHelper {
         }
     }
 }
+
+protocol BusGetCommonInfoHelper: HandlerType {}
+
+extension BusGetCommonInfoHelper {
+
+    var bundleID: String {
+        Bundle.main.bus.identifier!
+    }
+
+    var displayName: String {
+        Bundle.main.bus.displayName!
+    }
+
+    var oldText: String? {
+        UIPasteboard.general.bus.oldText
+    }
+}
