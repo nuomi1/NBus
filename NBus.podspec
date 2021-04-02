@@ -146,9 +146,9 @@ Pod::Spec.new do |s|
     download_sdk ${QQ} ${QQ_VER} ${QQ_URL} ${QQ_SHA1} ${QQ_SEARCH}
 
     WECHAT="Wechat"
-    WECHAT_VER="1.8.7.1"
-    WECHAT_URL="https://res.wx.qq.com/op_res/DHI055JVxYur-5c7ss5McQZj2Y9KZQlp24xwD7FYnF88x8LA8rWCzSfdStN5tiCD"
-    WECHAT_SHA1="5359ec0b4fc707f41fcf458fe4faebb83efd4011"
+    WECHAT_VER="1.8.9"
+    WECHAT_URL="https://res.wx.qq.com/op_res/_Q5kJ9eIC1z-APXT9YPj2uWc-8esYianDXmZnbU7nFSxL_YmuvcoREglWUsrwLInpC6oj7QQB7DhLiZnlcfpGg"
+    WECHAT_SHA1="74a45a045602fde939b1a2d9106377993158639f"
     WECHAT_SEARCH="OpenSDK${WECHAT_VER}"
     download_sdk ${WECHAT} ${WECHAT_VER} ${WECHAT_URL} ${WECHAT_SHA1} ${WECHAT_SEARCH}
 
