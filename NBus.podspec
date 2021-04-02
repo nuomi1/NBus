@@ -124,6 +124,10 @@ Pod::Spec.new do |s|
 
       ditto -V -x -k --sequesterRsrc --rsrc ${VENDOR_FILE} ${VENDOR_ZIP_DIR}
 
+      if [ -n "$(find ${VENDOR_ZIP_DIR} -d 1 -name '*.zip')" ]; then
+        ditto -V -x -k --sequesterRsrc --rsrc ${VENDOR_ZIP_DIR}/*.zip ${VENDOR_ZIP_DIR}
+      fi
+
       for file in $(find -E ${VENDOR_ZIP_DIR}/${VENDOR_SEARCH} -d 1 -regex ".*/*.(bundle|framework|a|h)"); do
         cp -r ${file} ${VENDOR_SDK_DIR}
       done
@@ -135,13 +139,11 @@ Pod::Spec.new do |s|
     cd Vendor
 
     QQ="QQ"
-    QQ_VER="3.5.1"
-    QQ_URL="http://d3g.qq.com/qzone/iOS_SDK_${QQ_VER}_Lite.zip"
-    QQ_SHA1="15976ed9b90cd340818fe3ae3b1e266c67cf02d9"
-    QQ_SEARCH="Lite/TencentOpenApi(Lite)_3"
+    QQ_VER="3.5.3"
+    QQ_URL="https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V${QQ_VER}/iOS_V${QQ_VER}-Lite.zip"
+    QQ_SHA1="2f9871544e5c448b9c0cae129db48ea11fb85053"
+    QQ_SEARCH="."
     download_sdk ${QQ} ${QQ_VER} ${QQ_URL} ${QQ_SHA1} ${QQ_SEARCH}
-
-    sed -i "" "s/imoort/import/g" "QQ_SDK/TencentOpenAPI.framework/Headers/TencentOpenApiUmbrellaHeader.h"
 
     WECHAT="Wechat"
     WECHAT_VER="1.8.7.1"
