@@ -114,3 +114,29 @@ extension OpenUserActivityHandlerType {
         return lhs.hasPrefix(rhs)
     }
 }
+
+protocol BusOpenExternalURLHelper: HandlerType {}
+
+extension BusOpenExternalURLHelper {
+
+    func open<Success>(
+        _ url: URL?,
+        completionHandler: ((Result<Success, Bus.Error>) -> Void)?
+    ) {
+        guard let url = url else {
+            busAssertionFailure()
+            completionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        let options: [UIApplication.OpenExternalURLOptionsKey: Any] = url.scheme == "https"
+            ? [.universalLinksOnly: true]
+            : [:]
+
+        UIApplication.shared.open(url, options: options) { result in
+            if !result {
+                completionHandler?(.failure(.unknown))
+            }
+        }
+    }
+}
