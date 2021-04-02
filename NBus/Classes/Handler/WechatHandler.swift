@@ -343,11 +343,7 @@ extension WechatHandler {
             return
         }
 
-        setPasteboard(with: pbData, in: .general)
-    }
-
-    private func setPasteboard(with data: Data, in pasteboard: UIPasteboard) {
-        pasteboard.setData(data, forPasteboardType: "content")
+        pasteboard.setData(pbData, forPasteboardType: "content")
     }
 
     private func generatePasteboardData(with pasteBoardItems: [String: Any]) -> Data? {
