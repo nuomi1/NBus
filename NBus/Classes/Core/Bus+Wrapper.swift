@@ -61,3 +61,17 @@ extension BusUserDefaults {
         self.init(key: key.rawValue, userDefaults: userDefaults)
     }
 }
+
+@propertyWrapper
+public struct BusCheckURLScheme {
+
+    public let url: URL
+
+    public var wrappedValue: Bool {
+        UIApplication.shared.canOpenURL(url)
+    }
+
+    public init(url: URL) {
+        self.url = url
+    }
+}
