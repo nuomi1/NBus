@@ -478,26 +478,7 @@ extension WechatHandler {
     }
 }
 
-extension WechatHandler {
-
-    private func open<Success>(
-        _ url: URL?,
-        options: [UIApplication.OpenExternalURLOptionsKey: Any] = [.universalLinksOnly: true],
-        completionHandler: ((Result<Success, Bus.Error>) -> Void)?
-    ) {
-        guard let url = url else {
-            busAssertionFailure()
-            completionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: options) { result in
-            if !result {
-                completionHandler?(.failure(.unknown))
-            }
-        }
-    }
-}
+extension WechatHandler: BusOpenExternalURLHelper {}
 
 extension WechatHandler: OpenURLHandlerType {
 
@@ -586,10 +567,10 @@ extension WechatHandler {
         switch lastSignTokenData {
         case let .share(pasteBoardItems):
             setPasteboard(with: pasteBoardItems, in: .general)
-            open(generateShareURLScheme(), options: [:], completionHandler: shareCompletionHandler)
+            open(generateShareURLScheme(), completionHandler: shareCompletionHandler)
         case let .launch(pasteBoardItems, urlItems):
             setPasteboard(with: pasteBoardItems, in: .general)
-            open(generateLaunchURLScheme(with: urlItems), options: [:], completionHandler: launchCompletionHandler)
+            open(generateLaunchURLScheme(with: urlItems), completionHandler: launchCompletionHandler)
         }
 
         self.lastSignTokenData = nil

@@ -314,26 +314,7 @@ extension WeiboHandler {
     }
 }
 
-extension WeiboHandler {
-
-    private func open<Success>(
-        _ url: URL?,
-        options: [UIApplication.OpenExternalURLOptionsKey: Any] = [.universalLinksOnly: true],
-        completionHandler: ((Result<Success, Bus.Error>) -> Void)?
-    ) {
-        guard let url = url else {
-            busAssertionFailure()
-            completionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: options) { result in
-            if !result {
-                completionHandler?(.failure(.unknown))
-            }
-        }
-    }
-}
+extension WeiboHandler: BusOpenExternalURLHelper {}
 
 extension WeiboHandler: OpenURLHandlerType {
 
