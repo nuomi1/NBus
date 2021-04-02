@@ -53,22 +53,6 @@ extension OauthHandlerType {
     }
 }
 
-public protocol OpenURLHandlerType: HandlerType {
-
-    var appID: String { get }
-
-    func openURL(_ url: URL)
-
-    func canOpenURL(_ url: URL) -> Bool
-}
-
-extension OpenURLHandlerType {
-
-    public func canOpenURL(_ url: URL) -> Bool {
-        appID == url.scheme
-    }
-}
-
 public protocol LaunchHandlerType {
 
     var platform: Platform { get }
@@ -86,6 +70,22 @@ extension LaunchHandlerType {
 
     public func canLaunch(with platform: Platform) -> Bool {
         self.platform == platform
+    }
+}
+
+public protocol OpenURLHandlerType: HandlerType {
+
+    var appID: String { get }
+
+    func openURL(_ url: URL)
+
+    func canOpenURL(_ url: URL) -> Bool
+}
+
+extension OpenURLHandlerType {
+
+    public func canOpenURL(_ url: URL) -> Bool {
+        appID == url.scheme
     }
 }
 
@@ -112,5 +112,31 @@ extension OpenUserActivityHandlerType {
         let rhs = universalLink.absoluteString
 
         return lhs.hasPrefix(rhs)
+    }
+}
+
+protocol BusOpenExternalURLHelper: HandlerType {}
+
+extension BusOpenExternalURLHelper {
+
+    func open<Success>(
+        _ url: URL?,
+        completionHandler: ((Result<Success, Bus.Error>) -> Void)?
+    ) {
+        guard let url = url else {
+            busAssertionFailure()
+            completionHandler?(.failure(.invalidParameter))
+            return
+        }
+
+        let options: [UIApplication.OpenExternalURLOptionsKey: Any] = url.scheme == "https"
+            ? [.universalLinksOnly: true]
+            : [:]
+
+        UIApplication.shared.open(url, options: options) { result in
+            if !result {
+                completionHandler?(.failure(.unknown))
+            }
+        }
     }
 }
