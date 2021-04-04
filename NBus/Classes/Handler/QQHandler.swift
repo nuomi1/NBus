@@ -99,24 +99,17 @@ extension QQHandler: ShareHandlerType {
 
         shareCompletionHandler = completionHandler
 
-        var urlItems: [String: String] = [:]
+        var urlItems: [String: String?] = [:]
         var pasteBoardItems: [String: Any] = [:]
 
         urlItems["cflag"] = cflag
         urlItems["shareType"] = shareType
 
         if let message = message as? MediaMessageType {
-            if let title = message.title?.bus.base64EncodedString {
-                urlItems["title"] = title
-            }
+            urlItems["title"] = message.title?.bus.base64EncodedString
+            urlItems["description"] = message.description?.bus.base64EncodedString
 
-            if let description = message.description?.bus.base64EncodedString {
-                urlItems["description"] = description
-            }
-
-            if let thumbnail = message.thumbnail {
-                pasteBoardItems["previewimagedata"] = thumbnail
-            }
+            pasteBoardItems["previewimagedata"] = message.thumbnail
         }
 
         switch message {
@@ -135,9 +128,7 @@ extension QQHandler: ShareHandlerType {
 
             urlItems["url"] = message.link.absoluteString.bus.base64EncodedString
 
-            if let flashURL = message.dataLink?.absoluteString.bus.base64EncodedString {
-                urlItems["flashurl"] = flashURL
-            }
+            urlItems["flashurl"] = message.dataLink?.absoluteString.bus.base64EncodedString
 
         case let message as VideoMessage:
             urlItems["file_type"] = "video"
@@ -152,9 +143,7 @@ extension QQHandler: ShareHandlerType {
         case let message as FileMessage:
             urlItems["file_type"] = "localFile"
 
-            if let fileName = message.fullName {
-                urlItems["fileName"] = fileName
-            }
+            urlItems["fileName"] = message.fullName
 
             pasteBoardItems["file_data"] = message.data
 
@@ -320,7 +309,7 @@ extension QQHandler: OauthHandlerType {
 
         oauthCompletionHandler = completionHandler
 
-        var urlItems: [String: String] = [:]
+        var urlItems: [String: String?] = [:]
         var pasteBoardItems: [String: Any] = [:]
 
         pasteBoardItems["app_id"] = appNumber
@@ -367,7 +356,7 @@ extension QQHandler: LaunchHandlerType {
 
         launchCompletionHandler = completionHandler
 
-        var urlItems: [String: String] = [:]
+        var urlItems: [String: String?] = [:]
 
         urlItems["mini_appid"] = program.miniProgramID
         urlItems["mini_path"] = program.path.bus.base64EncodedString
@@ -422,9 +411,7 @@ extension QQHandler {
             return
         }
 
-        if let oldText = oldText {
-            pasteBoardItems["pasted_string"] = oldText
-        }
+        pasteBoardItems["pasted_string"] = oldText
 
         let pbData = generatePasteboardData(with: pasteBoardItems)
 
@@ -433,7 +420,7 @@ extension QQHandler {
 
     private func setPasteboardIfNeeded(
         with pasteBoardItems: inout [String: Any],
-        into urlItems: inout [String: String]
+        into urlItems: inout [String: String?]
     ) {
         guard isNoPasteboardSupported else {
             return
@@ -454,16 +441,14 @@ extension QQHandler {
 
 extension QQHandler {
 
-    private func generateShareUniversalLink(with urlItems: [String: String]) -> URL? {
+    private func generateShareUniversalLink(with urlItems: [String: String?]) -> URL? {
         var components = generateGeneralUniversalLink()
 
         components.path = "/opensdkul/mqqapi/share/to_fri"
 
         var urlItems = urlItems
 
-        if let signToken = signToken {
-            urlItems["appsign_token"] = signToken
-        }
+        urlItems["appsign_token"] = signToken
 
         urlItems["callback_name"] = txID
         urlItems["callback_type"] = "scheme"
@@ -471,35 +456,29 @@ extension QQHandler {
         urlItems["thirdAppDisplayName"] = displayName.bus.base64EncodedString
         urlItems["version"] = "1"
 
-        components.queryItems?.append(contentsOf: urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
-        })
+        components.queryItems = components.bus.mergingQueryItems(urlItems)
 
         return components.url
     }
 
-    private func generateOauthUniversalLink(with urlItems: [String: String]) -> URL? {
+    private func generateOauthUniversalLink(with urlItems: [String: String?]) -> URL? {
         var components = generateGeneralUniversalLink()
 
         components.path = "/opensdkul/mqqOpensdkSSoLogin/SSoLogin/\(appID)"
 
-        components.queryItems?.append(contentsOf: urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
-        })
+        components.queryItems = components.bus.mergingQueryItems(urlItems)
 
         return components.url
     }
 
-    private func generateLaunchUniversalLink(with urlItems: [String: String]) -> URL? {
+    private func generateLaunchUniversalLink(with urlItems: [String: String?]) -> URL? {
         var components = generateGeneralUniversalLink()
 
         components.path = "/opensdkul/mqqapi/profile/sdk_launch_mini_app"
 
         var urlItems = urlItems
 
-        if let signToken = signToken {
-            urlItems["appsign_token"] = signToken
-        }
+        urlItems["appsign_token"] = signToken
 
         urlItems["appid"] = appNumber
         urlItems["callback_name"] = txID
@@ -508,9 +487,7 @@ extension QQHandler {
         urlItems["thirdAppDisplayName"] = displayName.bus.base64EncodedString
         urlItems["version"] = "1"
 
-        components.queryItems?.append(contentsOf: urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
-        })
+        components.queryItems = components.bus.mergingQueryItems(urlItems)
 
         return components.url
     }
@@ -521,15 +498,13 @@ extension QQHandler {
         components.scheme = "https"
         components.host = "qm.qq.com"
 
-        var urlItems: [String: String] = [:]
+        var urlItems: [String: String?] = [:]
 
         urlItems["appsign_txid"] = txID
         urlItems["bundleid"] = bundleID.bus.base64EncodedString
         urlItems["sdkv"] = sdkShortVersion
 
-        components.queryItems = urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
-        }
+        components.queryItems = components.bus.mergingQueryItems(urlItems)
 
         return components
     }
@@ -766,8 +741,8 @@ extension QQHandler {
 
     private enum LastSignTokenData {
 
-        case share(pasteBoardItems: [String: Any], urlItems: [String: String])
+        case share(pasteBoardItems: [String: Any], urlItems: [String: String?])
 
-        case launch(urlItems: [String: String])
+        case launch(urlItems: [String: String?])
     }
 }

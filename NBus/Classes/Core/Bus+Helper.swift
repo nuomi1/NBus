@@ -49,6 +49,26 @@ extension BusWrapper where Base == String {
     }
 }
 
+extension URLComponents: BusCompatible {}
+
+extension BusWrapper where Base == URLComponents {
+
+    func mergingQueryItems(_ other: [String: String?]) -> [URLQueryItem]? {
+        let oldItems = base.queryItems ?? []
+        let newItems = other.map { URLQueryItem(name: $0, value: $1) }
+
+        let items = newItems + oldItems
+
+        var foundNames: Set<String> = []
+
+        let queryItems = items.filter {
+            $0.value != nil && foundNames.insert($0.name).inserted
+        }
+
+        return queryItems.isEmpty ? nil : queryItems
+    }
+}
+
 extension NSObject: BusCompatible {}
 
 extension BusWrapper where Base: Bundle {

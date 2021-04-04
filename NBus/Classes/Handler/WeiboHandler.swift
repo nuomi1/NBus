@@ -280,7 +280,7 @@ extension WeiboHandler {
         components.host = "open.weibo.com"
         components.path = "/weibosdk/request"
 
-        var urlItems: [String: String] = [:]
+        var urlItems: [String: String?] = [:]
 
         urlItems["lfid"] = bundleID
         urlItems["luicode"] = "10000360"
@@ -289,9 +289,7 @@ extension WeiboHandler {
         urlItems["sdkversion"] = sdkVersion
         urlItems["urltype"] = "link"
 
-        components.queryItems = urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
-        }
+        components.queryItems = components.bus.mergingQueryItems(urlItems)
 
         return components.url
     }
