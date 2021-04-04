@@ -486,9 +486,8 @@ extension WechatHandler {
 
     private func handleSignTokenSuccess(with components: URLComponents) {
         guard
-            let infos = components.queryItems,
-            let signTokenItem = infos.first(where: { $0.name == "wechat_auth_token" }),
-            let signToken = signTokenItem.value,
+            let item = components.queryItems?.first(where: { $0.name == "wechat_auth_token" }),
+            let signToken = item.value,
             let lastSignTokenData = lastSignTokenData
         else {
             busAssertionFailure()
@@ -584,9 +583,8 @@ extension WechatHandler {
 
     private func handleOauth(with components: URLComponents) {
         guard
-            let items = components.queryItems,
-            let codeItem = items.first(where: { $0.name == "code" }),
-            let code = codeItem.value
+            let item = components.queryItems?.first(where: { $0.name == "code" }),
+            let code = item.value
         else {
             busAssertionFailure()
             oauthCompletionHandler?(.failure(.invalidParameter))
