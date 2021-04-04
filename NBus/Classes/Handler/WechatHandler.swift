@@ -266,7 +266,7 @@ extension WechatHandler: LaunchHandlerType {
 
         launchCompletionHandler = completionHandler
 
-        var urlItems: [String: String] = [:]
+        var urlItems: [String: String?] = [:]
         var pasteBoardItems: [String: Any] = [:]
 
         urlItems["miniProgramType"] = "\(miniProgramType(program.miniProgramType))"
@@ -342,11 +342,11 @@ extension WechatHandler {
 
         components.path = "/app/\(appID)/sendreq/"
 
-        if let signToken = signToken {
-            components.queryItems?.append(
-                URLQueryItem(name: "wechat_auth_token", value: signToken)
-            )
-        }
+        var urlItems: [String: String?] = [:]
+
+        urlItems["wechat_auth_token"] = signToken
+
+        components.queryItems = components.bus.mergingQueryItems(urlItems)
 
         return components.url
     }
@@ -356,27 +356,25 @@ extension WechatHandler {
 
         components.path = "/app/\(appID)/auth/"
 
-        components.queryItems?.append(
-            URLQueryItem(name: "scope", value: "snsapi_userinfo")
-        )
+        var urlItems: [String: String?] = [:]
+
+        urlItems["scope"] = "snsapi_userinfo"
+
+        components.queryItems = components.bus.mergingQueryItems(urlItems)
 
         return components.url
     }
 
-    private func generateLaunchUniversalLink(with urlItems: [String: String]) -> URL? {
+    private func generateLaunchUniversalLink(with urlItems: [String: String?]) -> URL? {
         var components = generateGeneralUniversalLink()
 
         components.path = "/app/\(appID)/jumpWxa/"
 
-        components.queryItems?.append(contentsOf: urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
-        })
+        var urlItems = urlItems
 
-        if let signToken = signToken {
-            components.queryItems?.append(
-                URLQueryItem(name: "wechat_auth_token", value: signToken)
-            )
-        }
+        urlItems["wechat_auth_token"] = signToken
+
+        components.queryItems = components.bus.mergingQueryItems(urlItems)
 
         return components.url
     }
@@ -387,14 +385,12 @@ extension WechatHandler {
         components.scheme = "https"
         components.host = "help.wechat.com"
 
-        var urlItems: [String: String] = [:]
+        var urlItems: [String: String?] = [:]
 
         urlItems["wechat_app_bundleId"] = bundleID
         urlItems["wechat_auth_context_id"] = contextID
 
-        components.queryItems = urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
-        }
+        components.queryItems = components.bus.mergingQueryItems(urlItems)
 
         return components
     }
@@ -407,14 +403,12 @@ extension WechatHandler {
         return components.url
     }
 
-    private func generateLaunchURLScheme(with urlItems: [String: String]) -> URL? {
+    private func generateLaunchURLScheme(with urlItems: [String: String?]) -> URL? {
         var components = generateGeneralURLScheme()
 
         components.path = "/\(appID)/jumpWxa/"
 
-        components.queryItems?.append(contentsOf: urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
-        })
+        components.queryItems = components.bus.mergingQueryItems(urlItems)
 
         return components.url
     }
@@ -425,13 +419,11 @@ extension WechatHandler {
         components.scheme = "weixin"
         components.host = "app"
 
-        var urlItems: [String: String] = [:]
+        var urlItems: [String: String?] = [:]
 
         urlItems["wechat_app_bundleId"] = bundleID
 
-        components.queryItems = urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
-        }
+        components.queryItems = components.bus.mergingQueryItems(urlItems)
 
         return components
     }
@@ -665,6 +657,6 @@ extension WechatHandler {
 
         case share(pasteBoardItems: [String: Any])
 
-        case launch(pasteBoardItems: [String: Any], urlItems: [String: String])
+        case launch(pasteBoardItems: [String: Any], urlItems: [String: String?])
     }
 }
