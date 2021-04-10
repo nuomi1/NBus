@@ -307,13 +307,10 @@ extension QQHandler: LaunchHandlerType {
         options: [Bus.LaunchOptionKey: Any],
         completionHandler: @escaping Bus.LaunchCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkOauthSupported()
 
-        guard isSupported, isLaunchMiniProgramSupported else {
-            completionHandler(.failure(.unsupportedApplication))
+        guard case .success = checkResult, isLaunchMiniProgramSupported else {
+            completionHandler(checkResult.flatMap { _ in .failure(.missingApplication) })
             return
         }
 

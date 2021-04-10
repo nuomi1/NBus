@@ -208,13 +208,10 @@ extension WechatHandler: LaunchHandlerType {
         options: [Bus.LaunchOptionKey: Any],
         completionHandler: @escaping Bus.LaunchCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkOauthSupported()
 
-        guard isSupported else {
-            completionHandler(.failure(.unsupportedApplication))
+        guard case .success = checkResult else {
+            completionHandler(checkResult)
             return
         }
 
