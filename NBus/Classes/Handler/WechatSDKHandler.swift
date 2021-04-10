@@ -174,8 +174,10 @@ extension WechatSDKHandler: OauthHandlerType {
         options: [Bus.OauthOptionKey: Any] = [:],
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
+        let checkResult = checkOauthSupported()
+
+        guard case .success = checkResult else {
+            completionHandler(checkResult.flatMap { _ in .failure(.unknown) })
             return
         }
 

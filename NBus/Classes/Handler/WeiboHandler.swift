@@ -161,13 +161,10 @@ extension WeiboHandler: OauthHandlerType {
         options: [Bus.OauthOptionKey: Any],
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkOauthSupported()
 
-        guard isSupported else {
-            completionHandler(.failure(.unsupportedApplication))
+        guard case .success = checkResult else {
+            completionHandler(checkResult.flatMap { _ in .failure(.unknown) })
             return
         }
 

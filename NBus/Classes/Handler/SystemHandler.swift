@@ -148,9 +148,10 @@ extension SystemHandler: OauthHandlerType {
         options: [Bus.OauthOptionKey: Any] = [:],
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
-        guard #available(iOS 13.0, *) else {
-            busAssertionFailure()
-            completionHandler(.failure(.unknown))
+        let checkResult = checkOauthSupported()
+
+        guard case .success = checkResult, #available(iOS 13.0, *) else {
+            completionHandler(checkResult.flatMap { _ in .failure(.unknown) })
             return
         }
 
