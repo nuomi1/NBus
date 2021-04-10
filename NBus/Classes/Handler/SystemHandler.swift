@@ -151,7 +151,7 @@ extension SystemHandler: OauthHandlerType {
         let checkResult = checkOauthSupported()
 
         guard case .success = checkResult, #available(iOS 13.0, *) else {
-            completionHandler(checkResult.flatMap { _ in .failure(.unknown) })
+            completionHandler(checkResult.flatMap { _ in .failure(.missingApplication) })
             return
         }
 
