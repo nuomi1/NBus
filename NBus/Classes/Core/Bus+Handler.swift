@@ -145,6 +145,32 @@ extension BusShareHandlerHelper {
     }
 }
 
+protocol BusShareQQHandlerHelper: BusShareHandlerHelper {}
+
+extension BusShareQQHandlerHelper {
+
+    var supportedMessage: [Endpoint: [Message]] {
+        [
+            Endpoints.QQ.friend: [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+                Messages.file,
+                Messages.miniProgram,
+            ],
+            Endpoints.QQ.timeline: [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+            ],
+        ]
+    }
+}
+
 protocol BusOpenExternalURLHelper: HandlerType {}
 
 extension BusOpenExternalURLHelper {
