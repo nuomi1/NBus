@@ -141,13 +141,9 @@ protocol BusShareHandlerHelper: BusCheckUniversalLinkHandlerHelper {
 
 extension BusShareHandlerHelper {
 
-    func canShare(message: Message, to endpoint: Endpoint) -> Bool {
-        supportedMessage[endpoint]?.contains(message) ?? false
-    }
-
     func checkShareSupported(message: MessageType, to endpoint: Endpoint) -> Result<Void, Bus.Error> {
         checkUniversalLink().flatMap { success in
-            canShare(message: message.identifier, to: endpoint)
+            supportedMessage[endpoint]?.contains(message.identifier) ?? false
                 ? .success(success)
                 : .failure(.unsupportedMessage)
         }
