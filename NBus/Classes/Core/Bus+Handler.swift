@@ -179,7 +179,7 @@ extension BusLaunchHandlerHelper {
     }
 }
 
-protocol BusQQHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper {}
+protocol BusQQHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper, BusLaunchHandlerHelper {}
 
 extension BusQQHandlerHelper {
 
@@ -205,7 +205,7 @@ extension BusQQHandlerHelper {
     }
 }
 
-protocol BusWechatHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper {}
+protocol BusWechatHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper, BusLaunchHandlerHelper {}
 
 extension BusWechatHandlerHelper {
 
