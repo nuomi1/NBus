@@ -117,6 +117,23 @@ extension OpenUserActivityHandlerType {
     }
 }
 
+protocol BusCheckUniversalLinkHandlerHelper: HandlerType {}
+
+extension BusCheckUniversalLinkHandlerHelper {
+
+    fileprivate func checkUniversalLink() -> Result<Void, Bus.Error> {
+        guard isInstalled else {
+            return .failure(.missingApplication)
+        }
+
+        guard isSupported else {
+            return .failure(.unsupportedApplication)
+        }
+
+        return .success(())
+    }
+}
+
 protocol BusShareHandlerHelper: HandlerType {
 
     var supportedMessage: [Endpoint: [Message]] { get }
