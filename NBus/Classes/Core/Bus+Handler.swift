@@ -145,9 +145,9 @@ extension BusShareHandlerHelper {
     }
 }
 
-protocol BusShareQQHandlerHelper: BusShareHandlerHelper {}
+protocol BusQQHandlerHelper: BusShareHandlerHelper {}
 
-extension BusShareQQHandlerHelper {
+extension BusQQHandlerHelper {
 
     var supportedMessage: [Endpoint: [Message]] {
         [
@@ -171,9 +171,9 @@ extension BusShareQQHandlerHelper {
     }
 }
 
-protocol BusShareWechatHandlerHelper: BusShareHandlerHelper {}
+protocol BusWechatHandlerHelper: BusShareHandlerHelper {}
 
-extension BusShareWechatHandlerHelper {
+extension BusWechatHandlerHelper {
 
     var supportedMessage: [Endpoint: [Message]] {
         [
@@ -205,9 +205,9 @@ extension BusShareWechatHandlerHelper {
     }
 }
 
-protocol BusShareWeiboHandlerHelper: BusShareHandlerHelper {}
+protocol BusWeiboHandlerHelper: BusShareHandlerHelper {}
 
-extension BusShareWeiboHandlerHelper {
+extension BusWeiboHandlerHelper {
 
     var supportedMessage: [Endpoint: [Message]] {
         [
@@ -222,9 +222,9 @@ extension BusShareWeiboHandlerHelper {
     }
 }
 
-protocol BusShareSystemHandlerHelper: BusShareHandlerHelper {}
+protocol BusSystemHandlerHelper: BusShareHandlerHelper {}
 
-extension BusShareSystemHandlerHelper {
+extension BusSystemHandlerHelper {
 
     var supportedMessage: [Endpoint: [Message]] {
         [
