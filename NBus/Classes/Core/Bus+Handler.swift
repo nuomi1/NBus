@@ -171,6 +171,40 @@ extension BusShareQQHandlerHelper {
     }
 }
 
+protocol BusShareWechatHandlerHelper: BusShareHandlerHelper {}
+
+extension BusShareWechatHandlerHelper {
+
+    var supportedMessage: [Endpoint: [Message]] {
+        [
+            Endpoints.Wechat.friend: [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+                Messages.file,
+                Messages.miniProgram,
+            ],
+            Endpoints.Wechat.timeline: [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+            ],
+            Endpoints.Wechat.favorite: [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+                Messages.file,
+            ],
+        ]
+    }
+}
+
 protocol BusOpenExternalURLHelper: HandlerType {}
 
 extension BusOpenExternalURLHelper {
