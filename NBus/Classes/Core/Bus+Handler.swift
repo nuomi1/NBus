@@ -145,6 +145,23 @@ extension BusShareHandlerHelper {
     }
 }
 
+protocol BusOauthHandlerHelper: HandlerType {}
+
+extension BusOauthHandlerHelper {
+
+    func checkOauthSupported() -> Result<Void, Bus.Error> {
+        guard isInstalled else {
+            return .failure(.missingApplication)
+        }
+
+        guard isSupported else {
+            return .failure(.unsupportedApplication)
+        }
+
+        return .success(())
+    }
+}
+
 protocol BusQQHandlerHelper: BusShareHandlerHelper {}
 
 extension BusQQHandlerHelper {
