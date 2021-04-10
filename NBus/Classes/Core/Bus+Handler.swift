@@ -162,7 +162,7 @@ extension BusOauthHandlerHelper {
     }
 }
 
-protocol BusQQHandlerHelper: BusShareHandlerHelper {}
+protocol BusQQHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper {}
 
 extension BusQQHandlerHelper {
 
@@ -188,7 +188,7 @@ extension BusQQHandlerHelper {
     }
 }
 
-protocol BusWechatHandlerHelper: BusShareHandlerHelper {}
+protocol BusWechatHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper {}
 
 extension BusWechatHandlerHelper {
 
@@ -222,7 +222,7 @@ extension BusWechatHandlerHelper {
     }
 }
 
-protocol BusWeiboHandlerHelper: BusShareHandlerHelper {}
+protocol BusWeiboHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper {}
 
 extension BusWeiboHandlerHelper {
 
@@ -239,7 +239,7 @@ extension BusWeiboHandlerHelper {
     }
 }
 
-protocol BusSystemHandlerHelper: BusShareHandlerHelper {}
+protocol BusSystemHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper {}
 
 extension BusSystemHandlerHelper {
 
