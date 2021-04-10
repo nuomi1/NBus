@@ -222,6 +222,24 @@ extension BusShareWeiboHandlerHelper {
     }
 }
 
+protocol BusShareSystemHandlerHelper: BusShareHandlerHelper {}
+
+extension BusShareSystemHandlerHelper {
+
+    var supportedMessage: [Endpoint: [Message]] {
+        [
+            Endpoints.System.activity: [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+                Messages.file,
+            ],
+        ]
+    }
+}
+
 protocol BusOpenExternalURLHelper: HandlerType {}
 
 extension BusOpenExternalURLHelper {
