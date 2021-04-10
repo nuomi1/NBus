@@ -205,6 +205,23 @@ extension BusShareWechatHandlerHelper {
     }
 }
 
+protocol BusShareWeiboHandlerHelper: BusShareHandlerHelper {}
+
+extension BusShareWeiboHandlerHelper {
+
+    var supportedMessage: [Endpoint: [Message]] {
+        [
+            Endpoints.Weibo.timeline: [
+                Messages.text,
+                Messages.image,
+                Messages.audio,
+                Messages.video,
+                Messages.webPage,
+            ],
+        ]
+    }
+}
+
 protocol BusOpenExternalURLHelper: HandlerType {}
 
 extension BusOpenExternalURLHelper {
