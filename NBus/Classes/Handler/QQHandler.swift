@@ -310,7 +310,7 @@ extension QQHandler: LaunchHandlerType {
         let checkResult = checkOauthSupported()
 
         guard case .success = checkResult, isLaunchMiniProgramSupported else {
-            completionHandler(checkResult.flatMap { _ in .failure(.missingApplication) })
+            completionHandler(checkResult.flatMap { _ in .failure(.unsupportedApplication) })
             return
         }
 
