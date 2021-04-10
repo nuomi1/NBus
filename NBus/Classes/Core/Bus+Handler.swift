@@ -117,6 +117,34 @@ extension OpenUserActivityHandlerType {
     }
 }
 
+protocol BusShareHandlerHelper: HandlerType {
+
+    var supportedMessage: [Endpoint: [Message]] { get }
+}
+
+extension BusShareHandlerHelper {
+
+    func canShare(message: Message, to endpoint: Endpoint) -> Bool {
+        supportedMessage[endpoint]?.contains(message) ?? false
+    }
+
+    func checkShareSupported(message: MessageType, to endpoint: Endpoint) -> Result<Void, Bus.Error> {
+        guard isInstalled else {
+            return .failure(.missingApplication)
+        }
+
+        guard isSupported else {
+            return .failure(.unsupportedApplication)
+        }
+
+        guard canShare(message: message.identifier, to: endpoint) else {
+            return .failure(.unsupportedMessage)
+        }
+
+        return .success(())
+    }
+}
+
 protocol BusOpenExternalURLHelper: HandlerType {}
 
 extension BusOpenExternalURLHelper {
