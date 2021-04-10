@@ -134,7 +134,7 @@ extension BusCheckUniversalLinkHandlerHelper {
     }
 }
 
-protocol BusShareHandlerHelper: HandlerType {
+protocol BusShareHandlerHelper: BusCheckUniversalLinkHandlerHelper {
 
     var supportedMessage: [Endpoint: [Message]] { get }
 }
@@ -146,53 +146,29 @@ extension BusShareHandlerHelper {
     }
 
     func checkShareSupported(message: MessageType, to endpoint: Endpoint) -> Result<Void, Bus.Error> {
-        guard isInstalled else {
-            return .failure(.missingApplication)
+        checkUniversalLink().flatMap { success in
+            canShare(message: message.identifier, to: endpoint)
+                ? .success(success)
+                : .failure(.unsupportedMessage)
         }
-
-        guard isSupported else {
-            return .failure(.unsupportedApplication)
-        }
-
-        guard canShare(message: message.identifier, to: endpoint) else {
-            return .failure(.unsupportedMessage)
-        }
-
-        return .success(())
     }
 }
 
-protocol BusOauthHandlerHelper: HandlerType {}
+protocol BusOauthHandlerHelper: BusCheckUniversalLinkHandlerHelper {}
 
 extension BusOauthHandlerHelper {
 
     func checkOauthSupported() -> Result<Void, Bus.Error> {
-        guard isInstalled else {
-            return .failure(.missingApplication)
-        }
-
-        guard isSupported else {
-            return .failure(.unsupportedApplication)
-        }
-
-        return .success(())
+        checkUniversalLink()
     }
 }
 
-protocol BusLaunchHandlerHelper: HandlerType {}
+protocol BusLaunchHandlerHelper: BusCheckUniversalLinkHandlerHelper {}
 
 extension BusLaunchHandlerHelper {
 
     func checkLaunchhSupported() -> Result<Void, Bus.Error> {
-        guard isInstalled else {
-            return .failure(.missingApplication)
-        }
-
-        guard isSupported else {
-            return .failure(.unsupportedApplication)
-        }
-
-        return .success(())
+        checkUniversalLink()
     }
 }
 
