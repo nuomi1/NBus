@@ -140,7 +140,7 @@ Pod::Spec.new do |s|
 
     QQ="QQ"
     QQ_VER="3.5.3"
-    QQ_URL="https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V${QQ_VER}/iOS_V${QQ_VER}-Lite.zip"
+    QQ_URL="https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V${QQ_VER}/iOS_V${QQ_VER}_Lite.zip"
     QQ_SHA1="2f9871544e5c448b9c0cae129db48ea11fb85053"
     QQ_SEARCH="."
     download_sdk ${QQ} ${QQ_VER} ${QQ_URL} ${QQ_SHA1} ${QQ_SEARCH}
