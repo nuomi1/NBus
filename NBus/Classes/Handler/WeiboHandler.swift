@@ -22,7 +22,7 @@ public class WeiboHandler {
     public var isInstalled: Bool
 
     @BusCheckURLScheme(url: URL(string: "weibosdk3.3://")!)
-    private var isSupported: Bool
+    public var isSupported: Bool
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?

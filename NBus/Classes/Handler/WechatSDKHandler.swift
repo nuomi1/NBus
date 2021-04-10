@@ -22,6 +22,10 @@ public class WechatSDKHandler {
         WXApi.isWXAppInstalled()
     }
 
+    public var isSupported: Bool {
+        true
+    }
+
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
     private var launchCompletionHandler: Bus.LaunchCompletionHandler?

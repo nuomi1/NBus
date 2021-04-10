@@ -24,7 +24,7 @@ public class WechatHandler {
     public var isInstalled: Bool
 
     @BusCheckURLScheme(url: URL(string: "weixinULAPI://")!)
-    private var isSupported: Bool
+    public var isSupported: Bool
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?

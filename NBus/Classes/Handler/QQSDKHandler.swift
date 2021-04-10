@@ -23,6 +23,10 @@ public class QQSDKHandler {
         QQApiInterface.isQQInstalled()
     }
 
+    public var isSupported: Bool {
+        true
+    }
+
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
     private var launchCompletionHandler: Bus.LaunchCompletionHandler?

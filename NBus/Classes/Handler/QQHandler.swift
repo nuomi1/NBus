@@ -23,7 +23,7 @@ public class QQHandler {
     public var isInstalled: Bool
 
     @BusCheckURLScheme(url: URL(string: "mqqopensdkapiV2://")!)
-    private var isSupported: Bool
+    public var isSupported: Bool
 
     @BusCheckURLScheme(url: URL(string: "mqqopensdkminiapp://")!)
     private var isMiniProgramSupported: Bool

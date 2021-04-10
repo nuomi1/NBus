@@ -21,6 +21,10 @@ public class SystemHandler {
         true
     }
 
+    public var isSupported: Bool {
+        true
+    }
+
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
     private var boxedCoordinator: Any!
