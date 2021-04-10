@@ -49,7 +49,7 @@ public class WeiboHandler {
     }
 }
 
-extension WeiboHandler: ShareHandlerType {
+extension WeiboHandler: ShareHandlerType, BusShareWeiboHandlerHelper {
 
     // swiftlint:disable function_body_length
 
@@ -59,18 +59,10 @@ extension WeiboHandler: ShareHandlerType {
         options: [Bus.ShareOptionKey: Any],
         completionHandler: @escaping Bus.ShareCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkShareSupported(message: message, to: endpoint)
 
-        guard isSupported else {
-            completionHandler(.failure(.unsupportedApplication))
-            return
-        }
-
-        guard canShare(message: message.identifier, to: endpoint) else {
-            completionHandler(.failure(.unsupportedMessage))
+        guard case .success = checkResult else {
+            completionHandler(checkResult)
             return
         }
 
@@ -133,22 +125,6 @@ extension WeiboHandler: ShareHandlerType {
     }
 
     // swiftlint:enable function_body_length
-
-    private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
-        switch endpoint {
-        case Endpoints.Weibo.timeline:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-            ].contains(message)
-        default:
-            busAssertionFailure()
-            return false
-        }
-    }
 
     private func imageItems(
         data: Data
