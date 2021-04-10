@@ -63,7 +63,7 @@ public class QQHandler {
     }
 }
 
-extension QQHandler: ShareHandlerType, BusShareQQHandlerHelper {
+extension QQHandler: ShareHandlerType {
 
     // swiftlint:disable cyclomatic_complexity function_body_length
 
@@ -475,6 +475,8 @@ extension QQHandler {
         return components
     }
 }
+
+extension QQHandler: BusQQHandlerHelper {}
 
 extension QQHandler: BusOpenExternalURLHelper {}
 

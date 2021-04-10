@@ -49,7 +49,7 @@ public class WeiboHandler {
     }
 }
 
-extension WeiboHandler: ShareHandlerType, BusShareWeiboHandlerHelper {
+extension WeiboHandler: ShareHandlerType {
 
     // swiftlint:disable function_body_length
 
@@ -270,6 +270,8 @@ extension WeiboHandler {
         return components.url
     }
 }
+
+extension WeiboHandler: BusWeiboHandlerHelper {}
 
 extension WeiboHandler: BusOpenExternalURLHelper {}
 

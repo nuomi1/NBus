@@ -57,7 +57,7 @@ public class QQSDKHandler {
     }
 }
 
-extension QQSDKHandler: ShareHandlerType, BusShareQQHandlerHelper {
+extension QQSDKHandler: ShareHandlerType {
 
     // swiftlint:disable cyclomatic_complexity function_body_length
 
@@ -284,6 +284,8 @@ extension QQSDKHandler: LaunchHandlerType {
         }
     }
 }
+
+extension QQSDKHandler: BusQQHandlerHelper {}
 
 extension QQSDKHandler: OpenURLHandlerType {
 

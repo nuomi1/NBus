@@ -43,7 +43,7 @@ public class SystemHandler {
     }
 }
 
-extension SystemHandler: ShareHandlerType, BusShareSystemHandlerHelper {
+extension SystemHandler: ShareHandlerType {
 
     // swiftlint:disable cyclomatic_complexity function_body_length
 
@@ -167,6 +167,8 @@ extension SystemHandler: OauthHandlerType {
         controller.performRequests()
     }
 }
+
+extension SystemHandler: BusSystemHandlerHelper {}
 
 extension SystemHandler {
 

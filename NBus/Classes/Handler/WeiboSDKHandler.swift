@@ -52,7 +52,7 @@ public class WeiboSDKHandler {
     }
 }
 
-extension WeiboSDKHandler: ShareHandlerType, BusShareWeiboHandlerHelper {
+extension WeiboSDKHandler: ShareHandlerType {
 
     public func share(
         message: MessageType,
@@ -160,6 +160,8 @@ extension WeiboSDKHandler: OauthHandlerType {
         }
     }
 }
+
+extension WeiboSDKHandler: BusWeiboHandlerHelper {}
 
 extension WeiboSDKHandler: OpenURLHandlerType {
 

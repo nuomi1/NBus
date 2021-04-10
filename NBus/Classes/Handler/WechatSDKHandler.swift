@@ -48,7 +48,7 @@ public class WechatSDKHandler {
     }
 }
 
-extension WechatSDKHandler: ShareHandlerType, BusShareWechatHandlerHelper {
+extension WechatSDKHandler: ShareHandlerType {
 
     // swiftlint:disable cyclomatic_complexity function_body_length
 
@@ -219,6 +219,8 @@ extension WechatSDKHandler: LaunchHandlerType {
         }
     }
 }
+
+extension WechatSDKHandler: BusWechatHandlerHelper {}
 
 extension WechatSDKHandler: OpenURLHandlerType {
 
