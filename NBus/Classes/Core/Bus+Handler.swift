@@ -11,6 +11,8 @@ import Foundation
 public protocol HandlerType {
 
     var isInstalled: Bool { get }
+
+    var isSupported: Bool { get }
 }
 
 public protocol ShareHandlerType: HandlerType {
