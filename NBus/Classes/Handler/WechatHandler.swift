@@ -44,7 +44,7 @@ public class WechatHandler {
     }
 }
 
-extension WechatHandler: ShareHandlerType {
+extension WechatHandler: ShareHandlerType, BusShareWechatHandlerHelper {
 
     // swiftlint:disable cyclomatic_complexity function_body_length
 
@@ -54,18 +54,10 @@ extension WechatHandler: ShareHandlerType {
         options: [Bus.ShareOptionKey: Any],
         completionHandler: @escaping Bus.ShareCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkShareSupported(message: message, to: endpoint)
 
-        guard isSupported else {
-            completionHandler(.failure(.unsupportedApplication))
-            return
-        }
-
-        guard canShare(message: message.identifier, to: endpoint) else {
-            completionHandler(.failure(.unsupportedMessage))
+        guard case .success = checkResult else {
+            completionHandler(checkResult)
             return
         }
 
@@ -150,41 +142,6 @@ extension WechatHandler: ShareHandlerType {
     }
 
     // swiftlint:enable cyclomatic_complexity function_body_length
-
-    private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
-        switch endpoint {
-        case Endpoints.Wechat.friend:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-                Messages.file,
-                Messages.miniProgram,
-            ].contains(message)
-        case Endpoints.Wechat.timeline:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-            ].contains(message)
-        case Endpoints.Wechat.favorite:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-                Messages.file,
-            ].contains(message)
-        default:
-            busAssertionFailure()
-            return false
-        }
-    }
 
     private func scene(_ endpoint: Endpoint) -> String? {
         let result: Int
