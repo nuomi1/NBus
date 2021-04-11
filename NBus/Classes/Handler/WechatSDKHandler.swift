@@ -22,6 +22,10 @@ public class WechatSDKHandler {
         WXApi.isWXAppInstalled()
     }
 
+    public var isSupported: Bool {
+        true
+    }
+
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
     private var launchCompletionHandler: Bus.LaunchCompletionHandler?
@@ -54,13 +58,10 @@ extension WechatSDKHandler: ShareHandlerType {
         options: [Bus.ShareOptionKey: Any] = [:],
         completionHandler: @escaping Bus.ShareCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkShareSupported(message: message, to: endpoint)
 
-        guard canShare(message: message.identifier, to: endpoint) else {
-            completionHandler(.failure(.unsupportedMessage))
+        guard case .success = checkResult else {
+            completionHandler(checkResult)
             return
         }
 
@@ -141,41 +142,6 @@ extension WechatSDKHandler: ShareHandlerType {
 
     // swiftlint:enable cyclomatic_complexity function_body_length
 
-    private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
-        switch endpoint {
-        case Endpoints.Wechat.friend:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-                Messages.file,
-                Messages.miniProgram,
-            ].contains(message)
-        case Endpoints.Wechat.timeline:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-            ].contains(message)
-        case Endpoints.Wechat.favorite:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-                Messages.file,
-            ].contains(message)
-        default:
-            busAssertionFailure()
-            return false
-        }
-    }
-
     private func scene(_ endpoint: Endpoint) -> WXScene {
         switch endpoint {
         case Endpoints.Wechat.friend:
@@ -208,8 +174,10 @@ extension WechatSDKHandler: OauthHandlerType {
         options: [Bus.OauthOptionKey: Any] = [:],
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
+        let checkResult = checkOauthSupported()
+
+        guard case .success = checkResult else {
+            completionHandler(checkResult.flatMap { _ in .failure(.unknown) })
             return
         }
 
@@ -233,8 +201,10 @@ extension WechatSDKHandler: LaunchHandlerType {
         options: [Bus.LaunchOptionKey: Any],
         completionHandler: @escaping Bus.LaunchCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
+        let checkResult = checkOauthSupported()
+
+        guard case .success = checkResult else {
+            completionHandler(checkResult)
             return
         }
 
@@ -253,6 +223,8 @@ extension WechatSDKHandler: LaunchHandlerType {
         }
     }
 }
+
+extension WechatSDKHandler: BusWechatHandlerHelper {}
 
 extension WechatSDKHandler: OpenURLHandlerType {
 

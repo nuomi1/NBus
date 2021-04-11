@@ -22,7 +22,7 @@ public class WeiboHandler {
     public var isInstalled: Bool
 
     @BusCheckURLScheme(url: URL(string: "weibosdk3.3://")!)
-    private var isSupported: Bool
+    public var isSupported: Bool
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
@@ -59,18 +59,10 @@ extension WeiboHandler: ShareHandlerType {
         options: [Bus.ShareOptionKey: Any],
         completionHandler: @escaping Bus.ShareCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkShareSupported(message: message, to: endpoint)
 
-        guard isSupported else {
-            completionHandler(.failure(.unsupportedApplication))
-            return
-        }
-
-        guard canShare(message: message.identifier, to: endpoint) else {
-            completionHandler(.failure(.unsupportedMessage))
+        guard case .success = checkResult else {
+            completionHandler(checkResult)
             return
         }
 
@@ -134,22 +126,6 @@ extension WeiboHandler: ShareHandlerType {
 
     // swiftlint:enable function_body_length
 
-    private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
-        switch endpoint {
-        case Endpoints.Weibo.timeline:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-            ].contains(message)
-        default:
-            busAssertionFailure()
-            return false
-        }
-    }
-
     private func imageItems(
         data: Data
     ) -> [String: Any] {
@@ -185,13 +161,10 @@ extension WeiboHandler: OauthHandlerType {
         options: [Bus.OauthOptionKey: Any],
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkOauthSupported()
 
-        guard isSupported else {
-            completionHandler(.failure(.unsupportedApplication))
+        guard case .success = checkResult else {
+            completionHandler(checkResult.flatMap { _ in .failure(.unknown) })
             return
         }
 
@@ -294,6 +267,8 @@ extension WeiboHandler {
         return components.url
     }
 }
+
+extension WeiboHandler: BusWeiboHandlerHelper {}
 
 extension WeiboHandler: BusOpenExternalURLHelper {}
 

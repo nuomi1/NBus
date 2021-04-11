@@ -23,7 +23,7 @@ public class QQHandler {
     public var isInstalled: Bool
 
     @BusCheckURLScheme(url: URL(string: "mqqopensdkapiV2://")!)
-    private var isSupported: Bool
+    public var isSupported: Bool
 
     @BusCheckURLScheme(url: URL(string: "mqqopensdkminiapp://")!)
     private var isMiniProgramSupported: Bool
@@ -73,18 +73,10 @@ extension QQHandler: ShareHandlerType {
         options: [Bus.ShareOptionKey: Any],
         completionHandler: @escaping Bus.ShareCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkShareSupported(message: message, to: endpoint)
 
-        guard isSupported else {
-            completionHandler(.failure(.unsupportedApplication))
-            return
-        }
-
-        guard canShare(message: message.identifier, to: endpoint) else {
-            completionHandler(.failure(.unsupportedMessage))
+        guard case .success = checkResult else {
+            completionHandler(checkResult)
             return
         }
 
@@ -189,32 +181,6 @@ extension QQHandler: ShareHandlerType {
 
     // swiftlint:enable cyclomatic_complexity function_body_length
 
-    private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
-        switch endpoint {
-        case Endpoints.QQ.friend:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-                Messages.file,
-                Messages.miniProgram,
-            ].contains(message)
-        case Endpoints.QQ.timeline:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-            ].contains(message)
-        default:
-            busAssertionFailure()
-            return false
-        }
-    }
-
     private func cflag(_ endpoint: Endpoint, _ message: Message) -> String? {
         var flags: [Int] = []
 
@@ -297,13 +263,10 @@ extension QQHandler: OauthHandlerType {
         options: [Bus.OauthOptionKey: Any],
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkOauthSupported()
 
-        guard isSupported else {
-            completionHandler(.failure(.unsupportedApplication))
+        guard case .success = checkResult else {
+            completionHandler(checkResult.flatMap { _ in .failure(.unknown) })
             return
         }
 
@@ -344,13 +307,10 @@ extension QQHandler: LaunchHandlerType {
         options: [Bus.LaunchOptionKey: Any],
         completionHandler: @escaping Bus.LaunchCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkOauthSupported()
 
-        guard isSupported, isLaunchMiniProgramSupported else {
-            completionHandler(.failure(.unsupportedApplication))
+        guard case .success = checkResult, isLaunchMiniProgramSupported else {
+            completionHandler(checkResult.flatMap { _ in .failure(.unsupportedApplication) })
             return
         }
 
@@ -509,6 +469,8 @@ extension QQHandler {
         return components
     }
 }
+
+extension QQHandler: BusQQHandlerHelper {}
 
 extension QQHandler: BusOpenExternalURLHelper {}
 
