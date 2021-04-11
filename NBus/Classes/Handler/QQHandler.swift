@@ -80,22 +80,13 @@ extension QQHandler: ShareHandlerType {
             return
         }
 
-        guard
-            let cflag = cflag(endpoint, message.identifier),
-            let shareType = shareType(endpoint, message.identifier)
-        else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
         shareCompletionHandler = completionHandler
 
         var urlItems: [String: String?] = [:]
         var pasteBoardItems: [String: Any] = [:]
 
-        urlItems["cflag"] = cflag
-        urlItems["shareType"] = shareType
+        urlItems["cflag"] = cflag(endpoint, message.identifier)!
+        urlItems["shareType"] = shareType(endpoint, message.identifier)!
 
         if let message = message as? MediaMessageType {
             urlItems["title"] = message.title?.bus.base64EncodedString
