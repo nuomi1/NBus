@@ -121,7 +121,7 @@ protocol BusCheckUniversalLinkHandlerHelper: HandlerType {}
 
 extension BusCheckUniversalLinkHandlerHelper {
 
-    fileprivate func checkUniversalLink() -> Result<Void, Bus.Error> {
+    fileprivate func checkUniversalLinkSupported() -> Result<Void, Bus.Error> {
         guard isInstalled else {
             return .failure(.missingApplication)
         }
@@ -142,7 +142,7 @@ protocol BusShareHandlerHelper: BusCheckUniversalLinkHandlerHelper {
 extension BusShareHandlerHelper {
 
     func checkShareSupported(message: MessageType, to endpoint: Endpoint) -> Result<Void, Bus.Error> {
-        checkUniversalLink().flatMap { success in
+        checkUniversalLinkSupported().flatMap { success in
             supportedMessage[endpoint]?.contains(message.identifier) ?? false
                 ? .success(success)
                 : .failure(.unsupportedMessage)
@@ -155,7 +155,7 @@ protocol BusOauthHandlerHelper: BusCheckUniversalLinkHandlerHelper {}
 extension BusOauthHandlerHelper {
 
     func checkOauthSupported() -> Result<Void, Bus.Error> {
-        checkUniversalLink()
+        checkUniversalLinkSupported()
     }
 }
 
@@ -164,7 +164,7 @@ protocol BusLaunchHandlerHelper: BusCheckUniversalLinkHandlerHelper {}
 extension BusLaunchHandlerHelper {
 
     func checkLaunchhSupported() -> Result<Void, Bus.Error> {
-        checkUniversalLink()
+        checkUniversalLinkSupported()
     }
 }
 
