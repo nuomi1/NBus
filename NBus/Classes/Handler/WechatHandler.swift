@@ -61,20 +61,12 @@ extension WechatHandler: ShareHandlerType {
             return
         }
 
-        guard
-            let scene = scene(endpoint)
-        else {
-            busAssertionFailure()
-            completionHandler(.failure(.invalidParameter))
-            return
-        }
-
         shareCompletionHandler = completionHandler
 
         var pasteBoardItems: [String: Any] = [:]
 
         pasteBoardItems["command"] = "1010"
-        pasteBoardItems["scene"] = scene
+        pasteBoardItems["scene"] = scene(endpoint)!
 
         if let message = message as? MediaMessageType {
             pasteBoardItems["title"] = message.title
