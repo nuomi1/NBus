@@ -213,7 +213,7 @@ Bus.shared.oauth(with: platform) { result in
 let program = Messages.miniProgram(
     miniProgramID: "123456",
     path: "/example",
-    link: URL(string: "https://www.example")!,
+    link: URL(string: "https://www.example.com")!,
     miniProgramType: .release,
     title: "NBus",
     description: "NBus",
