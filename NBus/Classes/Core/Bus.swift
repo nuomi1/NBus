@@ -29,6 +29,7 @@ public final class Bus {
 
 extension Bus {
 
+    @available(*, deprecated)
     public typealias LogHandler = (String, String, String, UInt) -> Void
 }
 

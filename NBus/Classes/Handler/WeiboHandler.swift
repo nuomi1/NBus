@@ -18,23 +18,11 @@ public class WeiboHandler {
 
     public let platform: Platform = Platforms.weibo
 
-    public var isInstalled: Bool {
-        guard let url = URL(string: "sinaweibo://") else {
-            busAssertionFailure()
-            return false
-        }
+    @BusCheckURLScheme(url: URL(string: "sinaweibo://")!)
+    public var isInstalled: Bool
 
-        return UIApplication.shared.canOpenURL(url)
-    }
-
-    private var isSupported: Bool {
-        guard let url = URL(string: "weibosdk3.3://") else {
-            busAssertionFailure()
-            return false
-        }
-
-        return UIApplication.shared.canOpenURL(url)
-    }
+    @BusCheckURLScheme(url: URL(string: "weibosdk3.3://")!)
+    public var isSupported: Bool
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
@@ -71,18 +59,10 @@ extension WeiboHandler: ShareHandlerType {
         options: [Bus.ShareOptionKey: Any],
         completionHandler: @escaping Bus.ShareCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkShareSupported(message: message, to: endpoint)
 
-        guard isSupported else {
-            completionHandler(.failure(.unsupportedApplication))
-            return
-        }
-
-        guard canShare(message: message.identifier, to: endpoint) else {
-            completionHandler(.failure(.unsupportedMessage))
+        guard case .success = checkResult else {
+            completionHandler(checkResult)
             return
         }
 
@@ -141,26 +121,10 @@ extension WeiboHandler: ShareHandlerType {
 
         setPasteboard(with: transferObjectItems, in: .general)
 
-        openShareUniversalLink(uuidString: uuidString)
+        open(generateGeneralUniversalLink(uuidString: uuidString), completionHandler: shareCompletionHandler)
     }
 
     // swiftlint:enable function_body_length
-
-    private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
-        switch endpoint {
-        case Endpoints.Weibo.timeline:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-            ].contains(message)
-        default:
-            busAssertionFailure()
-            return false
-        }
-    }
 
     private func imageItems(
         data: Data
@@ -197,13 +161,10 @@ extension WeiboHandler: OauthHandlerType {
         options: [Bus.OauthOptionKey: Any],
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkOauthSupported()
 
-        guard isSupported else {
-            completionHandler(.failure(.unsupportedApplication))
+        guard case .success = checkResult else {
+            completionHandler(checkResult.flatMap { _ in .failure(.unknown) })
             return
         }
 
@@ -219,7 +180,7 @@ extension WeiboHandler: OauthHandlerType {
 
         setPasteboard(with: transferObjectItems, in: .general)
 
-        openOauthUniversalLink(uuidString: uuidString)
+        open(generateGeneralUniversalLink(uuidString: uuidString), completionHandler: oauthCompletionHandler)
     }
 }
 
@@ -227,10 +188,6 @@ extension WeiboHandler {
 
     private var appNumber: String {
         appID.trimmingCharacters(in: .letters)
-    }
-
-    private var bundleID: String? {
-        Bundle.main.bus.identifier
     }
 
     private var sdkShortVersion: String {
@@ -248,13 +205,6 @@ extension WeiboHandler {
         with transferObjectItems: [String: Any],
         in pasteboard: UIPasteboard
     ) {
-        guard
-            let bundleID = bundleID
-        else {
-            busAssertionFailure()
-            return
-        }
-
         var userInfoItems: [String: Any] = [:]
         var appItems: [String: Any] = [:]
 
@@ -297,19 +247,13 @@ extension WeiboHandler {
 extension WeiboHandler {
 
     private func generateGeneralUniversalLink(uuidString: String) -> URL? {
-        guard
-            let bundleID = bundleID
-        else {
-            return nil
-        }
-
         var components = URLComponents()
 
         components.scheme = "https"
         components.host = "open.weibo.com"
         components.path = "/weibosdk/request"
 
-        var urlItems: [String: String] = [:]
+        var urlItems: [String: String?] = [:]
 
         urlItems["lfid"] = bundleID
         urlItems["luicode"] = "10000360"
@@ -318,44 +262,17 @@ extension WeiboHandler {
         urlItems["sdkversion"] = sdkVersion
         urlItems["urltype"] = "link"
 
-        components.queryItems = urlItems.map { key, value in
-            URLQueryItem(name: key, value: value)
-        }
+        components.queryItems = components.bus.mergingQueryItems(urlItems)
 
         return components.url
     }
 }
 
-extension WeiboHandler {
+extension WeiboHandler: BusWeiboHandlerHelper {}
 
-    private func openShareUniversalLink(uuidString: String) {
-        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
-            busAssertionFailure()
-            shareCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
+extension WeiboHandler: BusOpenExternalURLHelper {}
 
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
-            if !result {
-                self?.shareCompletionHandler?(.failure(.unknown))
-            }
-        }
-    }
-
-    private func openOauthUniversalLink(uuidString: String) {
-        guard let url = generateGeneralUniversalLink(uuidString: uuidString) else {
-            busAssertionFailure()
-            oauthCompletionHandler?(.failure(.invalidParameter))
-            return
-        }
-
-        UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] result in
-            if !result {
-                self?.oauthCompletionHandler?(.failure(.unknown))
-            }
-        }
-    }
-}
+extension WeiboHandler: BusGetCommonInfoHelper {}
 
 extension WeiboHandler: OpenURLHandlerType {
 

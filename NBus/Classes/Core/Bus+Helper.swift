@@ -36,7 +36,7 @@ extension BusWrapper where Base == String {
         return data.base64EncodedString()
     }
 
-    var sha1: String? {
+    var sha1: String {
         let data = Data(base.utf8)
 
         var digest = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
@@ -46,6 +46,26 @@ extension BusWrapper where Base == String {
 
         let bytes = digest.map { String(format: "%02hhx", $0) }
         return bytes.joined()
+    }
+}
+
+extension URLComponents: BusCompatible {}
+
+extension BusWrapper where Base == URLComponents {
+
+    func mergingQueryItems(_ other: [String: String?]) -> [URLQueryItem]? {
+        let oldItems = base.queryItems ?? []
+        let newItems = other.map { URLQueryItem(name: $0, value: $1) }
+
+        let items = newItems + oldItems
+
+        var foundNames: Set<String> = []
+
+        let queryItems = items.filter {
+            $0.value != nil && foundNames.insert($0.name).inserted
+        }
+
+        return queryItems.isEmpty ? nil : queryItems
     }
 }
 

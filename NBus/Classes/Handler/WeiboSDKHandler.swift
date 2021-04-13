@@ -20,6 +20,10 @@ public class WeiboSDKHandler {
         WeiboSDK.isWeiboAppInstalled()
     }
 
+    public var isSupported: Bool {
+        true
+    }
+
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
@@ -56,13 +60,10 @@ extension WeiboSDKHandler: ShareHandlerType {
         options: [Bus.ShareOptionKey: Any] = [:],
         completionHandler: @escaping Bus.ShareCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkShareSupported(message: message, to: endpoint)
 
-        guard canShare(message: message.identifier, to: endpoint) else {
-            completionHandler(.failure(.unsupportedMessage))
+        guard case .success = checkResult else {
+            completionHandler(checkResult)
             return
         }
 
@@ -118,22 +119,6 @@ extension WeiboSDKHandler: ShareHandlerType {
         }
     }
 
-    private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
-        switch endpoint {
-        case Endpoints.Weibo.timeline:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-            ].contains(message)
-        default:
-            busAssertionFailure()
-            return false
-        }
-    }
-
     private func wbWebpageObject(
         link: URL,
         title: String?,
@@ -158,8 +143,10 @@ extension WeiboSDKHandler: OauthHandlerType {
         options: [Bus.OauthOptionKey: Any] = [:],
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
+        let checkResult = checkOauthSupported()
+
+        guard case .success = checkResult else {
+            completionHandler(checkResult.flatMap { _ in .failure(.unknown) })
             return
         }
 
@@ -175,6 +162,8 @@ extension WeiboSDKHandler: OauthHandlerType {
         }
     }
 }
+
+extension WeiboSDKHandler: BusWeiboHandlerHelper {}
 
 extension WeiboSDKHandler: OpenURLHandlerType {
 

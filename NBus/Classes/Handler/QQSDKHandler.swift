@@ -8,8 +8,6 @@
 
 import Foundation
 
-// swiftlint:disable file_length
-
 public class QQSDKHandler {
 
     public let endpoints: [Endpoint] = [
@@ -21,6 +19,10 @@ public class QQSDKHandler {
 
     public var isInstalled: Bool {
         QQApiInterface.isQQInstalled()
+    }
+
+    public var isSupported: Bool {
+        true
     }
 
     private var shareCompletionHandler: Bus.ShareCompletionHandler?
@@ -63,13 +65,10 @@ extension QQSDKHandler: ShareHandlerType {
         options: [Bus.ShareOptionKey: Any] = [:],
         completionHandler: @escaping Bus.ShareCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
-            return
-        }
+        let checkResult = checkShareSupported(message: message, to: endpoint)
 
-        guard canShare(message: message.identifier, to: endpoint) else {
-            completionHandler(.failure(.unsupportedMessage))
+        guard case .success = checkResult else {
+            completionHandler(checkResult)
             return
         }
 
@@ -152,6 +151,7 @@ extension QQSDKHandler: ShareHandlerType {
             )
 
             let miniProgramObject = QQApiMiniProgramObject()
+
             miniProgramObject.qqApiObject = webPageObject
             miniProgramObject.miniAppID = message.miniProgramID
             miniProgramObject.miniPath = message.path
@@ -178,6 +178,7 @@ extension QQSDKHandler: ShareHandlerType {
             code = QQApiInterface.sendReq(toQZone: request)
         default:
             busAssertionFailure()
+            completionHandler(.failure(.invalidParameter))
             return
         }
 
@@ -195,32 +196,6 @@ extension QQSDKHandler: ShareHandlerType {
     }
 
     // swiftlint:enable cyclomatic_complexity function_body_length
-
-    private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
-        switch endpoint {
-        case Endpoints.QQ.friend:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-                Messages.file,
-                Messages.miniProgram,
-            ].contains(message)
-        case Endpoints.QQ.timeline:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-            ].contains(message)
-        default:
-            busAssertionFailure()
-            return false
-        }
-    }
 
     private func miniProgramType(_ miniProgramType: MiniProgramMessage.MiniProgramType) -> MiniProgramType {
         switch miniProgramType {
@@ -257,8 +232,10 @@ extension QQSDKHandler: OauthHandlerType {
         options: [Bus.OauthOptionKey: Any] = [:],
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
+        let checkResult = checkOauthSupported()
+
+        guard case .success = checkResult else {
+            completionHandler(checkResult.flatMap { _ in .failure(.unknown) })
             return
         }
 
@@ -279,8 +256,10 @@ extension QQSDKHandler: LaunchHandlerType {
         options: [Bus.LaunchOptionKey: Any],
         completionHandler: @escaping Bus.LaunchCompletionHandler
     ) {
-        guard isInstalled else {
-            completionHandler(.failure(.missingApplication))
+        let checkResult = checkOauthSupported()
+
+        guard case .success = checkResult else {
+            completionHandler(checkResult)
             return
         }
 
@@ -299,8 +278,6 @@ extension QQSDKHandler: LaunchHandlerType {
         switch code {
         case .EQQAPISENDSUCESS:
             break
-        case .EQQAPIMESSAGECONTENTINVALID:
-            completionHandler(.failure(.invalidParameter))
         case .EQQAPIVERSIONNEEDUPDATE:
             completionHandler(.failure(.unsupportedApplication))
         default:
@@ -309,6 +286,8 @@ extension QQSDKHandler: LaunchHandlerType {
         }
     }
 }
+
+extension QQSDKHandler: BusQQHandlerHelper {}
 
 extension QQSDKHandler: OpenURLHandlerType {
 
@@ -358,6 +337,9 @@ extension QQSDKHandler {
                 switch response.result {
                 case "0":
                     owner?.shareCompletionHandler?(.success(()))
+                case "900101":
+                    // msg_body error: url empty or contain illegal char
+                    owner?.shareCompletionHandler?(.failure(.invalidParameter))
                 case "-4":
                     // the user give up the current operation
                     owner?.shareCompletionHandler?(.failure(.userCancelled))

@@ -21,6 +21,10 @@ public class SystemHandler {
         true
     }
 
+    public var isSupported: Bool {
+        true
+    }
+
     private var oauthCompletionHandler: Bus.OauthCompletionHandler?
 
     private var boxedCoordinator: Any!
@@ -49,17 +53,19 @@ extension SystemHandler: ShareHandlerType {
         options: [Bus.ShareOptionKey: Any] = [:],
         completionHandler: @escaping Bus.ShareCompletionHandler
     ) {
+        let checkResult = checkShareSupported(message: message, to: endpoint)
+
+        guard case .success = checkResult else {
+            completionHandler(checkResult)
+            return
+        }
+
         guard
             let presentingViewController = options[ShareOptionKeys.presentingViewController] as? UIViewController
             ?? UIApplication.shared.keyWindow?.rootViewController
         else {
             busAssertionFailure()
             completionHandler(.failure(.invalidParameter))
-            return
-        }
-
-        guard canShare(message: message.identifier, to: endpoint) else {
-            completionHandler(.failure(.unsupportedMessage))
             return
         }
 
@@ -134,23 +140,6 @@ extension SystemHandler: ShareHandlerType {
     }
 
     // swiftlint:enable cyclomatic_complexity function_body_length
-
-    private func canShare(message: Message, to endpoint: Endpoint) -> Bool {
-        switch endpoint {
-        case Endpoints.System.activity:
-            return [
-                Messages.text,
-                Messages.image,
-                Messages.audio,
-                Messages.video,
-                Messages.webPage,
-                Messages.file,
-            ].contains(message)
-        default:
-            busAssertionFailure()
-            return false
-        }
-    }
 }
 
 extension SystemHandler: OauthHandlerType {
@@ -159,9 +148,10 @@ extension SystemHandler: OauthHandlerType {
         options: [Bus.OauthOptionKey: Any] = [:],
         completionHandler: @escaping Bus.OauthCompletionHandler
     ) {
-        guard #available(iOS 13.0, *) else {
-            busAssertionFailure()
-            completionHandler(.failure(.unknown))
+        let checkResult = checkOauthSupported()
+
+        guard case .success = checkResult, #available(iOS 13.0, *) else {
+            completionHandler(checkResult.flatMap { _ in .failure(.unsupportedApplication) })
             return
         }
 
@@ -178,6 +168,8 @@ extension SystemHandler: OauthHandlerType {
         controller.performRequests()
     }
 }
+
+extension SystemHandler: BusSystemHandlerHelper {}
 
 extension SystemHandler {
 
