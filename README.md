@@ -143,12 +143,12 @@ func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
 ) -> Bool {
-    let qqSDKHandler = QQHandler(
+    let qqHandler = QQHandler(
         appID: "tencent123456",
         universalLink: URL(string: "https://www.example.com/qq_conn/123456/")!
     )
 
-    Bus.shared.handlers = [qqSDKHandler]
+    Bus.shared.handlers = [qqHandler]
 }
 ```
 
