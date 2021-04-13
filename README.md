@@ -65,6 +65,9 @@ NBus also supports system's sharing and Sign in with Apple.
 1. Edit `LSApplicationQueriesSchemes` in `Info.plist`.
 
 ```plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
 <array>
     <string>mqq</string>
     <string>mqqopensdkapiV2</string>
@@ -77,11 +80,15 @@ NBus also supports system's sharing and Sign in with Apple.
     <string>weibosdk</string>
     <string>weibosdk3.3</string>
 </array>
+</plist>
 ```
 
 2. Edit `CFBundleURLTypes` in `Info.plist`.
 
 ```plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
 <array>
     <dict>
         <key>CFBundleTypeRole</key>
@@ -114,14 +121,19 @@ NBus also supports system's sharing and Sign in with Apple.
         </array>
     </dict>
 </array>
+</plist>
 ```
 
 3. Edit `com.apple.developer.associated-domains` in `TARGET.entitlements`.
 
 ```plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
 <array>
     <string>applinks:www.example.com</string>
 </array>
+</plist>
 ```
 
 4. Register handler(s) before using NBus.
@@ -131,12 +143,12 @@ func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
 ) -> Bool {
-    let qqSDKHandler = QQHandler(
+    let qqHandler = QQHandler(
         appID: "tencent123456",
         universalLink: URL(string: "https://www.example.com/qq_conn/123456/")!
     )
 
-    Bus.shared.handlers = [qqSDKHandler]
+    Bus.shared.handlers = [qqHandler]
 }
 ```
 
@@ -201,7 +213,7 @@ Bus.shared.oauth(with: platform) { result in
 let program = Messages.miniProgram(
     miniProgramID: "123456",
     path: "/example",
-    link: URL(string: "https://www.example")!,
+    link: URL(string: "https://www.example.com")!,
     miniProgramType: .release,
     title: "NBus",
     description: "NBus",
