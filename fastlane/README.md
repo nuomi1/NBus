@@ -61,6 +61,26 @@ fastlane ios download_wechat_sdk
 fastlane ios download_weibo_sdk
 ```
 
+### ios upload_all_sdk
+```
+fastlane ios upload_all_sdk
+```
+
+### ios upload_qq_sdk
+```
+fastlane ios upload_qq_sdk
+```
+
+### ios upload_wechat_sdk
+```
+fastlane ios upload_wechat_sdk
+```
+
+### ios upload_weibo_sdk
+```
+fastlane ios upload_weibo_sdk
+```
+
 
 ----
 
