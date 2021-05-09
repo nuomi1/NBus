@@ -77,6 +77,36 @@ platform :ios do
 
     download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
   end
+
+  lane :upload_all_sdk do
+    upload_qq_sdk
+    upload_wechat_sdk
+    upload_weibo_sdk
+  end
+
+  lane :upload_qq_sdk do
+    vendor = "QQ"
+    vendor_version = "3.5.3"
+    vendor_package = "nbusqqsdk"
+
+    upload_sdk(vendor, vendor_version, vendor_package)
+  end
+
+  lane :upload_wechat_sdk do
+    vendor = "Wechat"
+    vendor_version = "1.8.9"
+    vendor_package = "nbuswechatsdk"
+
+    upload_sdk(vendor, vendor_version, vendor_package)
+  end
+
+  lane :upload_weibo_sdk do
+    vendor = "Weibo"
+    vendor_version = "3.3.0"
+    vendor_package = "nbusweibosdk"
+
+    upload_sdk(vendor, vendor_version, vendor_package)
+  end
 end
 
 # download
@@ -146,4 +176,96 @@ def extract_file(version, file, search, zip_directory, sdk_directory)
 
   FileUtils.mkdir_p(sdk_version_source_directory)
   FileUtils.touch(sdk_dummy_swift_file)
+end
+
+# upload
+
+def upload_sdk(vendor, vendor_version, vendor_package)
+  root = (Pathname.pwd / "../NBus/Vendor").expand_path
+
+  vendor_sdk_directory = root / "#{vendor}SDK"
+  vendor_img_directory = root / "#{vendor}IMG"
+  vendor_tar_file = vendor_img_directory / "#{vendor}SDK.tar"
+  vendor_tar_gz_file = vendor_img_directory / "#{vendor}SDK.tar.gz"
+
+  owner = "nuomi1"
+  repo = "nbus"
+
+  vendor_package_url = URI("docker://ghcr.io/#{owner}/#{repo}/#{vendor_package}:#{vendor_version}")
+
+  make_docker_container(vendor_sdk_directory, vendor_img_directory, vendor_tar_file, vendor_tar_gz_file)
+
+  upload_github_package(vendor_img_directory, vendor_package_url)
+end
+
+def make_docker_container(sdk_directory, img_directory, tar_file, tar_gz_file)
+  FileUtils.rm_rf(img_directory)
+  FileUtils.mkdir_p(img_directory)
+
+  sh("tar", "-c", "--exclude", ".DS_Store", "-C", sdk_directory.dirname.to_s, "-f", tar_file.to_s, sdk_directory.basename.to_s)
+
+  platform_hash = {
+    architecture: "amd64",
+    os: "darwin",
+  }
+
+  tar_sha256 = Digest::SHA256.file(tar_file)
+
+  config_json_sha256, config_json_size = write_image_config(platform_hash, tar_sha256, img_directory)
+
+  sh("gzip", "-9", tar_file.to_s)
+
+  tar_gz_sha256 = write_tar_gz(tar_gz_file, img_directory)
+  tar_gz_size = File.size(tar_gz_file)
+
+  FileUtils.rm_rf(tar_gz_file)
+
+  image_manifest = {
+    schemaVersion: 2,
+    config: {
+      mediaType: "application/vnd.oci.image.config.v1+json",
+      size: config_json_size,
+      digest: "sha256:#{config_json_sha256}",
+    },
+    layers: [{
+      mediaType: "application/vnd.oci.image.layer.v1.tar+gzip",
+      size: tar_gz_size,
+      digest: "sha256:#{tar_gz_sha256}",
+    }],
+  }
+
+  write_hash(img_directory, image_manifest, "manifest.json")
+end
+
+def upload_github_package(img_directory, package_url)
+  sh("skopeo", "copy", "dir:#{img_directory}", package_url.to_s)
+end
+
+# from homebrew
+
+def write_tar_gz(local_file, blobs)
+  tar_gz_sha256 = Digest::SHA256.file(local_file).hexdigest
+  FileUtils.cp(local_file, blobs / tar_gz_sha256)
+  tar_gz_sha256
+end
+
+def write_image_config(platform_hash, tar_sha256, blobs)
+  image_config = platform_hash.merge({
+    rootfs: {
+      diff_ids: ["sha256:#{tar_sha256}"],
+      type: "layers",
+    },
+  })
+  write_hash(blobs, image_config)
+end
+
+def write_hash(directory, hash, filename = nil)
+  json = JSON.pretty_generate(hash)
+  sha256 = Digest::SHA256.hexdigest(json)
+  filename ||= sha256
+  path = directory / filename
+  path.unlink if path.exist?
+  path.write(json)
+
+  [sha256, json.size]
 end
