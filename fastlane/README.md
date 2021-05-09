@@ -41,6 +41,11 @@ fastlane ios format
 fastlane ios lint
 ```
 
+### ios pod_lint
+```
+fastlane ios pod_lint
+```
+
 ### ios download_all_sdk
 ```
 fastlane ios download_all_sdk
