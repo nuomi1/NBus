@@ -1,6 +1,8 @@
-require "URI"
 require "Digest"
+require "FileUtils"
 require "Open3"
+require "Pathname"
+require "URI"
 
 def download_sdk(category)
   root = (Pathname.pwd / "./NBus/Vendor").expand_path
