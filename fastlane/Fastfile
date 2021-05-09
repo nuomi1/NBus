@@ -55,13 +55,7 @@ platform :ios do
     vendor_sha256 = "6026e3dfc1fa227ef401cdaea79c524f810bf70e5e5d322f8497c8e7e91d3639"
     vendor_search = "."
 
-    download_sdk(
-      vendor: vendor,
-      version: vendor_version,
-      url: vendor_url,
-      sha256: vendor_sha256,
-      search: vendor_search,
-    )
+    download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
   end
 
   lane :download_wechat_sdk do
@@ -71,13 +65,7 @@ platform :ios do
     vendor_sha256 = "3ab48734e97ce6c25979286b2552dc87c46da7ecc5b832348f1fda68200bd5dd"
     vendor_search = "OpenSDK#{vendor_version}"
 
-    download_sdk(
-      vendor: vendor,
-      version: vendor_version,
-      url: vendor_url,
-      sha256: vendor_sha256,
-      search: vendor_search,
-    )
+    download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
   end
 
   lane :download_weibo_sdk do
@@ -87,105 +75,75 @@ platform :ios do
     vendor_sha256 = "ce89b655067d5bba30c490c5f79d2a93a331eb7cfbd6bb8d0860ef444ff2778a"
     vendor_search = "weibo_ios_sdk-#{vendor_version}/libWeiboSDK"
 
-    download_sdk(
-      vendor: vendor,
-      version: vendor_version,
-      url: vendor_url,
-      sha256: vendor_sha256,
-      search: vendor_search,
-    )
+    download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
   end
+end
 
-  lane :download_sdk do |options|
-    vendor_pwd = File.expand_path("#{Dir.pwd}/../NBus/Vendor")
+# download
 
-    root = Pathname(vendor_pwd)
+def download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
+  root = (Pathname.pwd / "../NBus/Vendor").expand_path
 
-    vendor = options[:vendor]
-    vendor_version = options[:version]
-    vendor_url = options[:url]
-    vendor_file = root / "Vendor_#{vendor}_#{vendor_version}.zip"
-    vendor_sha256 = options[:sha256]
-    vendor_search = options[:search]
-    vendor_zip_directory = root / "#{vendor}ZIP"
-    vendor_sdk_directory = root / "#{vendor}SDK"
+  vendor_file = root / "Vendor_#{vendor}_#{vendor_version}.zip"
+  vendor_zip_directory = root / "#{vendor}ZIP"
+  vendor_sdk_directory = root / "#{vendor}SDK"
 
-    FileUtils.mkdir_p(vendor_pwd)
+  FileUtils.mkdir_p(root)
 
-    download_file(
-      url: vendor_url,
-      file: vendor_file,
-      sha256: vendor_sha256,
-    )
+  download_file(vendor_url, vendor_file, vendor_sha256)
 
-    extract_file(
-      vendor: vendor,
-      version: vendor_version,
-      file: vendor_file,
-      search: vendor_search,
-      zip_directory: vendor_zip_directory,
-      sdk_directory: vendor_sdk_directory,
-    )
-  end
+  extract_file(vendor_version, vendor_file, vendor_search, vendor_zip_directory, vendor_sdk_directory)
+end
 
-  lane :download_file do |options|
-    url = options[:url]
-    file = options[:file]
-    sha256 = options[:sha256]
-
-    if File.exist?(file) && Digest::SHA256.file(file) == sha256
-      puts("file exist")
+def download_file(url, file, sha256)
+  if file.exist? && Digest::SHA256.file(file) == sha256
+    puts("file exist")
+  else
+    sh("wget", url, "-O", file.to_s)
+    if Digest::SHA256.file(file) == sha256
+      puts("download success")
     else
-      sh("wget", url, "-O", file.to_s)
-      if Digest::SHA256.file(file) == sha256
-        puts("download success")
-      else
-        raise("download failure")
-      end
+      raise("download failure")
     end
   end
+end
 
-  lane :extract_file do |options|
-    file = options[:file]
-    version = options[:version]
-    search = options[:search]
-    zip_directory = options[:zip_directory]
-    sdk_directory = options[:sdk_directory]
-    sdk_version_directory = sdk_directory / version
-    sdk_version_header_directory = sdk_version_directory / "Headers"
-    sdk_version_resource_directory = sdk_version_directory / "Resources"
-    sdk_version_source_directory = sdk_version_directory / "Sources"
-    sdk_dummy_swift_file = sdk_version_source_directory / "ReplaceMe.swift"
+def extract_file(version, file, search, zip_directory, sdk_directory)
+  zip_search_directory = zip_directory / search
+  sdk_version_directory = sdk_directory / version
+  sdk_version_header_directory = sdk_version_directory / "Headers"
+  sdk_version_resource_directory = sdk_version_directory / "Resources"
+  sdk_version_source_directory = sdk_version_directory / "Sources"
+  sdk_dummy_swift_file = sdk_version_source_directory / "ReplaceMe.swift"
 
-    FileUtils.rm_rf(zip_directory)
+  FileUtils.rm_rf(zip_directory)
 
+  sh("ditto", "-x", "-k", "--sequesterRsrc", "--rsrc", file.to_s, zip_directory.to_s)
+
+  zip_directory.glob("*.zip").each do |file|
     sh("ditto", "-x", "-k", "--sequesterRsrc", "--rsrc", file.to_s, zip_directory.to_s)
-
-    Dir["#{zip_directory}/*.zip"].each do |file|
-      sh("ditto", "-x", "-k", "--sequesterRsrc", "--rsrc", file.to_s, zip_directory.to_s)
-    end
-
-    FileUtils.rm_rf(sdk_directory)
-    FileUtils.mkdir_p(sdk_version_directory)
-
-    Dir["#{zip_directory}/#{search}/*.{bundle,framework,a,h}"].each do |file|
-      case File.extname(file)
-      when ".bundle"
-        FileUtils.mkdir_p(sdk_version_resource_directory)
-        FileUtils.cp_r(file, sdk_version_resource_directory)
-      when ".framework"
-        FileUtils.cp_r(file, sdk_version_directory)
-      when ".a"
-        FileUtils.cp_r(file, sdk_version_directory)
-      when ".h"
-        FileUtils.mkdir_p(sdk_version_header_directory)
-        FileUtils.cp_r(file, sdk_version_header_directory)
-      else
-        raise("never")
-      end
-    end
-
-    FileUtils.mkdir_p(sdk_version_source_directory)
-    FileUtils.touch(sdk_dummy_swift_file)
   end
+
+  FileUtils.rm_rf(sdk_directory)
+  FileUtils.mkdir_p(sdk_version_directory)
+
+  zip_search_directory.glob("*.{bundle,framework,a,h}").each do |file|
+    case file.extname
+    when ".bundle"
+      FileUtils.mkdir_p(sdk_version_resource_directory)
+      FileUtils.cp_r(file, sdk_version_resource_directory)
+    when ".framework"
+      FileUtils.cp_r(file, sdk_version_directory)
+    when ".a"
+      FileUtils.cp_r(file, sdk_version_directory)
+    when ".h"
+      FileUtils.mkdir_p(sdk_version_header_directory)
+      FileUtils.cp_r(file, sdk_version_header_directory)
+    else
+      raise("never")
+    end
+  end
+
+  FileUtils.mkdir_p(sdk_version_source_directory)
+  FileUtils.touch(sdk_dummy_swift_file)
 end
