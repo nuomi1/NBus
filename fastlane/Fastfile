@@ -42,6 +42,34 @@ platform :ios do
     swiftlint
   end
 
+  lane :pod_lint do |options|
+    case options[:target]
+    when "NBusQQSDK"
+      pod_lib_lint(
+        podspec: "NBusQQSDK.podspec",
+        allow_warnings: true,
+      )
+    when "NBusWechatSDK"
+      pod_lib_lint(
+        podspec: "NBusWechatSDK.podspec",
+        allow_warnings: true,
+      )
+    when "NBusWeiboSDK"
+      pod_lib_lint(
+        podspec: "NBusWeiboSDK.podspec",
+        allow_warnings: true,
+      )
+    when "NBus"
+      pod_lib_lint(
+        podspec: "NBus.podspec",
+        allow_warnings: true,
+        include_podspecs: "{NBusQQSDK,NBusWechatSDK,NBusWeiboSDK}.podspec",
+      )
+    else
+      raise("never")
+    end
+  end
+
   lane :download_all_sdk do
     download_qq_sdk
     download_wechat_sdk
