@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import NBusWechatSDK
 
 public class WechatSDKHandler {
 

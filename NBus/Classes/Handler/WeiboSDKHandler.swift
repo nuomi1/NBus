@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import NBusWeiboSDK
 
 public class WeiboSDKHandler {
 
