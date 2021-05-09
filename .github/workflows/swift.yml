@@ -25,4 +25,4 @@ jobs:
       - name: SwiftLint
         run: bundle exec fastlane lint
       - name: CocoaPods Lint
-        run: bundle exec fastlane pod_lint ${{ matrix.target }}
+        run: bundle exec fastlane pod_lint target:${{ matrix.target }}
