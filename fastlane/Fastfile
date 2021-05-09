@@ -136,7 +136,7 @@ platform :ios do
     if File.exist?(file) && Digest::SHA256.file(file) == sha256
       puts("file exist")
     else
-      sh("wget", url, "-O", file)
+      sh("wget", url, "-O", file.to_s)
       if Digest::SHA256.file(file) == sha256
         puts("download success")
       else
