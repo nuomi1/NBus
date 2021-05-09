@@ -61,21 +61,6 @@ fastlane ios download_wechat_sdk
 fastlane ios download_weibo_sdk
 ```
 
-### ios download_sdk
-```
-fastlane ios download_sdk
-```
-
-### ios download_file
-```
-fastlane ios download_file
-```
-
-### ios extract_file
-```
-fastlane ios extract_file
-```
-
 
 ----
 
