@@ -10,17 +10,14 @@ def download_sdk(category)
   case category
   when "qq"
     vendor = "QQ"
-    vendor_version = "3.5.3"
     vendor_package = "nbusqqsdk"
     vendor_sha256 = "77ccee516791e191b1edeab9fe3e20879d5022eebc0e2a5270fa6007b575699d"
   when "wechat"
     vendor = "Wechat"
-    vendor_version = "1.8.9"
     vendor_package = "nbuswechatsdk"
     vendor_sha256 = "418aef25e95950de4744ca17ddf6965235cb67ebd08fd8ba1bccae076bbe7285"
   when "weibo"
     vendor = "Weibo"
-    vendor_version = "3.3.0"
     vendor_package = "nbusweibosdk"
     vendor_sha256 = "6034a464f2eca3c5d01999c02a8bf68fa4998c1f61dcf0904980e49a5647d127"
   else
