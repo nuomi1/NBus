@@ -150,6 +150,10 @@ platform :ios do
     zip_directory = options[:zip_directory]
     sdk_directory = options[:sdk_directory]
     sdk_version_directory = File.join(sdk_directory, version)
+    sdk_version_header_directory = File.join(sdk_version_directory, "Headers")
+    sdk_version_resource_directory = File.join(sdk_version_directory, "Resources")
+    sdk_version_source_directory = File.join(sdk_version_directory, "Sources")
+    sdk_dummy_swift_file = File.join(sdk_version_source_directory, "ReplaceMe.swift")
 
     FileUtils.rm_rf(zip_directory)
 
@@ -163,7 +167,23 @@ platform :ios do
     FileUtils.mkdir_p(sdk_version_directory)
 
     Dir["#{zip_directory}/#{search}/*.{bundle,framework,a,h}"].each do |file|
-      FileUtils.cp_r(file, sdk_version_directory)
+      case File.extname(file)
+      when ".bundle"
+        FileUtils.mkdir_p(sdk_version_resource_directory)
+        FileUtils.cp_r(file, sdk_version_resource_directory)
+      when ".framework"
+        FileUtils.cp_r(file, sdk_version_directory)
+      when ".a"
+        FileUtils.cp_r(file, sdk_version_directory)
+      when ".h"
+        FileUtils.mkdir_p(sdk_version_header_directory)
+        FileUtils.cp_r(file, sdk_version_header_directory)
+      else
+        raise("never")
+      end
     end
+
+    FileUtils.mkdir_p(sdk_version_source_directory)
+    FileUtils.touch(sdk_dummy_swift_file)
   end
 end
