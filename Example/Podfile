@@ -16,6 +16,18 @@ target "BusMock" do
   pod "WoodPeckeriOS"
 end
 
+target "BusMockQQSDK" do
+  pod "NBusQQSDK", :path => "../"
+end
+
+target "BusMockWechatSDK" do
+  pod "NBusWechatSDK", :path => "../"
+end
+
+target "BusMockWeiboSDK" do
+  pod "NBusWeiboSDK", :path => "../"
+end
+
 post_install do |installer|
   installer.pods_project.root_object.attributes["ORGANIZATIONNAME"] = "nuomi1"
 end
