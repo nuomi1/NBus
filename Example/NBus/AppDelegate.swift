@@ -75,7 +75,7 @@ extension AppDelegate {
             .map { _ -> [[String]] in
                 let items = UIPasteboard.general.items
 
-                return items.enumerated().map { (index, item) -> [String] in
+                return items.enumerated().map { index, item -> [String] in
                     item.map { key, value -> String in
                         let identity: String
                         let index = "(\(index + 1)/\(items.count))"

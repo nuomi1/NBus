@@ -13,13 +13,65 @@ targets:
     platform: iOS
     deploymentTarget: 10.0
     sources:
-      - NBus
+      - path: NBus
+        excludes:
+          - AppDelegateQQSDK.swift
+          - AppDelegateWechatSDK.swift
+          - AppDelegateWeiboSDK.swift
     settings:
       base:
         CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/$(TARGET_NAME).entitlements
         SWIFT_VERSION: 5.0
     dependencies:
       - package: Logging
+  BusMockQQSDK:
+    type: application
+    platform: iOS
+    deploymentTarget: 10.0
+    sources:
+      - path: NBus
+        excludes:
+          - Model
+          - View
+          - AppDelegate.swift
+          - AppDelegateWechatSDK.swift
+          - AppDelegateWeiboSDK.swift
+    settings:
+      base:
+        CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/BusMock.entitlements
+        SWIFT_VERSION: 5.0
+  BusMockWechatSDK:
+    type: application
+    platform: iOS
+    deploymentTarget: 10.0
+    sources:
+      - path: NBus
+        excludes:
+          - Model
+          - View
+          - AppDelegate.swift
+          - AppDelegateQQSDK.swift
+          - AppDelegateWeiboSDK.swift
+    settings:
+      base:
+        CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/BusMock.entitlements
+        SWIFT_VERSION: 5.0
+  BusMockWeiboSDK:
+    type: application
+    platform: iOS
+    deploymentTarget: 10.0
+    sources:
+      - path: NBus
+        excludes:
+          - Model
+          - View
+          - AppDelegate.swift
+          - AppDelegateQQSDK.swift
+          - AppDelegateWechatSDK.swift
+    settings:
+      base:
+        CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/BusMock.entitlements
+        SWIFT_VERSION: 5.0
 
 packages:
   Logging:

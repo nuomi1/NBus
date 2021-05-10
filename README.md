@@ -267,6 +267,16 @@ pod "NBus/WeiboHandler"
 pod "NBus/SystemHandler"
 ```
 
+even those SDKs.
+
+```ruby
+pod "NBusQQSDK"
+
+pod "NBusWechatSDK"
+
+pod "NBusWeiboSDK"
+```
+
 ## WARNING
 
 1. `WeiboSDK.bundle` must saved in App's root path.
