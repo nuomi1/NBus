@@ -6,9 +6,9 @@ target "BusMock" do
   pod "NBus/BusHandlers", :path => "../"
   pod "NBus/SDKHandlers", :path => "../"
 
+  pod "NBusQQSDK", :path => "../"
   pod "NBusWechatSDK", :path => "../"
   pod "NBusWeiboSDK", :path => "../"
-  pod "NBusQQSDK", :path => "../"
 
   pod "PinLayout"
   pod "RxCocoa"
