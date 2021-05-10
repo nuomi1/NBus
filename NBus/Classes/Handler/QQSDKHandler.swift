@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import NBusQQSDK
 
 public class QQSDKHandler {
 

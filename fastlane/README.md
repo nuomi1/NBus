@@ -41,6 +41,51 @@ fastlane ios format
 fastlane ios lint
 ```
 
+### ios pod_lint
+```
+fastlane ios pod_lint
+```
+
+### ios download_all_sdk
+```
+fastlane ios download_all_sdk
+```
+
+### ios download_qq_sdk
+```
+fastlane ios download_qq_sdk
+```
+
+### ios download_wechat_sdk
+```
+fastlane ios download_wechat_sdk
+```
+
+### ios download_weibo_sdk
+```
+fastlane ios download_weibo_sdk
+```
+
+### ios upload_all_sdk
+```
+fastlane ios upload_all_sdk
+```
+
+### ios upload_qq_sdk
+```
+fastlane ios upload_qq_sdk
+```
+
+### ios upload_wechat_sdk
+```
+fastlane ios upload_wechat_sdk
+```
+
+### ios upload_weibo_sdk
+```
+fastlane ios upload_weibo_sdk
+```
+
 
 ----
 

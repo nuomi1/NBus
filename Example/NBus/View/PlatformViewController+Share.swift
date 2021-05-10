@@ -170,7 +170,7 @@ extension PlatformViewController.ShareView {
 
         segmentedControl.rx
             .selectedSegmentIndex
-            .withLatestFrom(viewModel.endpoints) { (index, endpoints) -> Endpoint? in
+            .withLatestFrom(viewModel.endpoints) { index, endpoints -> Endpoint? in
                 endpoints[safe: index]
             }
             .bind(to: viewModel.currentEndpoint)

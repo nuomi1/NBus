@@ -3,7 +3,6 @@ name: Swift
 on:
   push:
     branches: [develop]
-
   pull_request:
     branches: [develop]
 
@@ -13,19 +12,17 @@ env:
 jobs:
   build:
     runs-on: macos-latest
-
+    strategy:
+      matrix:
+        target: [NBusQQSDK, NBusWechatSDK, NBusWeiboSDK, NBus]
     steps:
       - uses: actions/checkout@v2
-
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-
       - name: Setup Xcode
         run: bundle exec fastlane setup
-
       - name: SwiftLint
         run: bundle exec fastlane lint
-
       - name: CocoaPods Lint
-        run: bundle exec pod lib lint --allow-warnings
+        run: bundle exec fastlane pod_lint target:${{ matrix.target }}
