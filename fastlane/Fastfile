@@ -48,22 +48,26 @@ platform :ios do
       pod_lib_lint(
         podspec: "NBusQQSDK.podspec",
         allow_warnings: true,
+        verbose: true,
       )
     when "NBusWechatSDK"
       pod_lib_lint(
         podspec: "NBusWechatSDK.podspec",
         allow_warnings: true,
+        verbose: true,
       )
     when "NBusWeiboSDK"
       pod_lib_lint(
         podspec: "NBusWeiboSDK.podspec",
         allow_warnings: true,
+        verbose: true,
       )
     when "NBus"
       pod_lib_lint(
         podspec: "NBus.podspec",
         allow_warnings: true,
         include_podspecs: "{NBusQQSDK,NBusWechatSDK,NBusWeiboSDK}.podspec",
+        verbose: true,
       )
     else
       raise("never")
