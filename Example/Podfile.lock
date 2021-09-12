@@ -1,35 +1,35 @@
 PODS:
-  - NBus/BusHandlers (1.1.0):
+  - NBus/BusHandlers (1.2.0):
     - NBus/QQHandler
     - NBus/SystemHandler
     - NBus/WechatHandler
     - NBus/WeiboHandler
-  - NBus/Core (1.1.0)
-  - NBus/QQHandler (1.1.0):
+  - NBus/Core (1.2.0)
+  - NBus/QQHandler (1.2.0):
     - NBus/Core
-  - NBus/QQSDKHandler (1.1.0):
+  - NBus/QQSDKHandler (1.2.0):
     - NBus/Core
     - NBusQQSDK
-  - NBus/SDKHandlers (1.1.0):
+  - NBus/SDKHandlers (1.2.0):
     - NBus/QQSDKHandler
     - NBus/SystemHandler
     - NBus/WechatSDKHandler
     - NBus/WeiboSDKHandler
-  - NBus/SystemHandler (1.1.0):
+  - NBus/SystemHandler (1.2.0):
     - NBus/Core
-  - NBus/WechatHandler (1.1.0):
+  - NBus/WechatHandler (1.2.0):
     - NBus/Core
-  - NBus/WechatSDKHandler (1.1.0):
+  - NBus/WechatSDKHandler (1.2.0):
     - NBus/Core
     - NBusWechatSDK
-  - NBus/WeiboHandler (1.1.0):
+  - NBus/WeiboHandler (1.2.0):
     - NBus/Core
-  - NBus/WeiboSDKHandler (1.1.0):
+  - NBus/WeiboSDKHandler (1.2.0):
     - NBus/Core
     - NBusWeiboSDK
-  - NBusQQSDK (1.1.0)
-  - NBusWechatSDK (1.1.0)
-  - NBusWeiboSDK (1.1.0)
+  - NBusQQSDK (1.2.0)
+  - NBusWechatSDK (1.2.0)
+  - NBusWeiboSDK (1.2.0)
   - PinLayout (1.9.3)
   - RxCocoa (6.0.0):
     - RxRelay (= 6.0.0)
@@ -71,10 +71,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  NBus: 40852aac276e22a8be685ad00b78f88277e1edbf
-  NBusQQSDK: 3c76cf2e000167ff93107edc523823fde0c360b8
-  NBusWechatSDK: 037e80710c02e25a07d146b0ebb84f887a94f86a
-  NBusWeiboSDK: 682756d75ecd0656a33b9f714f14429df15bf9e8
+  NBus: 4a55a119c071788957a44da94bac3c37dc894331
+  NBusQQSDK: f5c0e2f1ee4ce9890f26fc981a129025367f8c9d
+  NBusWechatSDK: c1c595876e67b68736be9532b7a830a6ad30a384
+  NBusWeiboSDK: 4c41a2f4b180f2e49821275510394a750b535ed9
   PinLayout: 4d8733121f8687edcc8f00c19bf1379d12808767
   RxCocoa: 3f79328fafa3645b34600f37c31e64c73ae3a80e
   RxRelay: 8d593be109c06ea850df027351beba614b012ffb
@@ -84,4 +84,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 5a4008dd7f37cb627bf857accb2ec39b29f874f0
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.10.1
