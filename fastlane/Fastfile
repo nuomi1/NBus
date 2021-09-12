@@ -18,6 +18,8 @@ default_platform(:ios)
 platform :ios do
   before_all do
     ENV["FL_COCOAPODS_PODFILE"] ||= "Example/Podfile"
+    ENV["FL_POD_LIB_LINT_ALLOW_WARNINGS"] ||= "true"
+    ENV["FL_POD_LIB_LINT_VERBOSE"] ||= "true"
     ENV["XCODEGEN_SPEC"] ||= "Example/project.yml"
   end
 
@@ -47,27 +49,32 @@ platform :ios do
     when "NBusQQSDK"
       pod_lib_lint(
         podspec: "NBusQQSDK.podspec",
-        allow_warnings: true,
-        verbose: true,
       )
     when "NBusWechatSDK"
       pod_lib_lint(
         podspec: "NBusWechatSDK.podspec",
-        allow_warnings: true,
-        verbose: true,
       )
     when "NBusWeiboSDK"
       pod_lib_lint(
         podspec: "NBusWeiboSDK.podspec",
-        allow_warnings: true,
-        verbose: true,
       )
     when "NBus"
       pod_lib_lint(
         podspec: "NBus.podspec",
-        allow_warnings: true,
         include_podspecs: "{NBusQQSDK,NBusWechatSDK,NBusWeiboSDK}.podspec",
-        verbose: true,
+        use_libraries: true,
+      )
+    when "NBusBusHandlers"
+      pod_lib_lint(
+        podspec: "NBus.podspec",
+        subspec: "BusHandlers",
+      )
+    when "NBusSDKHandlers"
+      pod_lib_lint(
+        podspec: "NBus.podspec",
+        subspec: "SDKHandlers",
+        include_podspecs: "{NBusQQSDK,NBusWechatSDK,NBusWeiboSDK}.podspec",
+        use_libraries: true,
       )
     else
       raise("never")
