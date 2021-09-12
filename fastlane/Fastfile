@@ -150,15 +150,18 @@ def download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_searc
   vendor_file = root / "Vendor_#{vendor}_#{vendor_version}.zip"
   vendor_zip_directory = root / "#{vendor}ZIP"
   vendor_sdk_directory = root / "#{vendor}SDK"
-
-  FileUtils.mkdir_p(root)
+  vendor_search_directory = (vendor_zip_directory / vendor_search).expand_path
 
   download_file(vendor_url, vendor_file, vendor_sha256)
 
-  extract_file(vendor_version, vendor_file, vendor_search, vendor_zip_directory, vendor_sdk_directory)
+  extract_file(vendor_file, vendor_zip_directory)
+
+  make_framework(vendor, vendor_version, vendor_search_directory, vendor_sdk_directory)
 end
 
 def download_file(url, file, sha256)
+  FileUtils.mkdir_p(file.dirname)
+
   if file.exist? && Digest::SHA256.file(file) == sha256
     puts("file exist")
   else
@@ -171,35 +174,50 @@ def download_file(url, file, sha256)
   end
 end
 
-def extract_file(version, file, search, zip_directory, sdk_directory)
-  zip_search_directory = zip_directory / search
-  sdk_version_directory = sdk_directory / version
-  sdk_version_header_directory = sdk_version_directory / "Headers"
-  sdk_version_resource_directory = sdk_version_directory / "Resources"
-  sdk_version_source_directory = sdk_version_directory / "Sources"
-  sdk_dummy_swift_file = sdk_version_source_directory / "ReplaceMe.swift"
-
+def extract_file(file, zip_directory)
   FileUtils.rm_rf(zip_directory)
 
   sh("ditto", "-x", "-k", "--sequesterRsrc", "--rsrc", file.to_s, zip_directory.to_s)
 
-  zip_directory.glob("*.zip").each do |file|
-    sh("ditto", "-x", "-k", "--sequesterRsrc", "--rsrc", file.to_s, zip_directory.to_s)
+  qq_file = zip_directory / "TencentOpenApi(Lite)_3.5.5.121.zip"
+
+  if qq_file.exist?
+    sh("ditto", "-x", "-k", "--sequesterRsrc", "--rsrc", qq_file.to_s, zip_directory.to_s)
   end
+end
 
+def make_framework(vendor, version, search_directory, sdk_directory)
+  sdk_vendor = "NBus#{vendor}SDK"
+  sdk_framework_directory = sdk_directory / "#{sdk_vendor}.framework"
+  sdk_version_directory = sdk_framework_directory / "Versions" / version
+  sdk_version_library = sdk_version_directory / sdk_vendor
+  sdk_version_header_directory = sdk_version_directory / "Headers"
+  sdk_version_umbrella_header = sdk_version_header_directory / "#{sdk_vendor}-umbrella.h"
+  sdk_version_modulemap = sdk_framework_directory / "Modules" / "module.modulemap"
+
+  make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory)
+
+  make_framework_symlink(sdk_vendor, version, sdk_framework_directory)
+
+  make_umbrella_header(sdk_vendor, sdk_version_header_directory, sdk_version_umbrella_header)
+
+  make_modulemap(sdk_vendor, sdk_version_umbrella_header, sdk_version_modulemap)
+end
+
+def make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory)
   FileUtils.rm_rf(sdk_directory)
-  FileUtils.mkdir_p(sdk_version_directory)
 
-  zip_search_directory.glob("*.{bundle,framework,a,h}").each do |file|
+  search_directory.glob("**/*.{bundle,a,h}").each do |file|
     case file.extname
     when ".bundle"
-      FileUtils.mkdir_p(sdk_version_resource_directory)
-      FileUtils.cp_r(file, sdk_version_resource_directory)
-    when ".framework"
-      FileUtils.cp_r(file, sdk_version_directory)
+      FileUtils.mkdir_p(sdk_directory)
+      FileUtils.cp_r(file, sdk_directory)
     when ".a"
-      FileUtils.cp_r(file, sdk_version_directory)
+      FileUtils.mkdir_p(sdk_version_library.dirname)
+      FileUtils.cp_r(file, sdk_version_library)
     when ".h"
+      next if file.basename.to_s == "TencentOpenApiUmbrellaHeader.h"
+
       FileUtils.mkdir_p(sdk_version_header_directory)
       FileUtils.cp_r(file, sdk_version_header_directory)
     else
@@ -207,8 +225,69 @@ def extract_file(version, file, search, zip_directory, sdk_directory)
     end
   end
 
-  FileUtils.mkdir_p(sdk_version_source_directory)
-  FileUtils.touch(sdk_dummy_swift_file)
+  qq_library = search_directory / "TencentOpenAPI.framework" / "TencentOpenAPI"
+
+  if qq_library.exist?
+    FileUtils.cp_r(qq_library, sdk_version_library)
+  end
+end
+
+def make_framework_symlink(sdk_vendor, version, sdk_framework_directory)
+  pwd = Pathname.pwd
+
+  FileUtils.cd(sdk_framework_directory / "Versions")
+  FileUtils.ln_s(version, "Current")
+
+  FileUtils.cd(sdk_framework_directory)
+  FileUtils.ln_s("Versions/Current/#{sdk_vendor}", sdk_vendor)
+  FileUtils.ln_s("Versions/Current/Headers", "Headers")
+
+  FileUtils.cd(pwd) # original pwd
+end
+
+def make_umbrella_header(sdk_vendor, sdk_version_header_directory, sdk_version_umbrella_header)
+  umbrella_header = common_header_info()
+
+  sdk_version_header_directory.glob("*.h").each do |file|
+    umbrella_header << <<-EOF
+#import <#{sdk_vendor}/#{file.basename}>
+    EOF
+  end
+
+  FileUtils.mkdir_p(sdk_version_umbrella_header.dirname)
+
+  umbrella_header_file = File.new(sdk_version_umbrella_header, "w")
+  umbrella_header_file.write(umbrella_header)
+  umbrella_header_file.close()
+end
+
+def make_modulemap(sdk_vendor, sdk_version_umbrella_header, sdk_version_modulemap)
+  modulemap = common_header_info()
+
+  modulemap << <<-EOF
+framework module #{sdk_vendor} {
+  umbrella header "#{sdk_version_umbrella_header.basename}"
+
+  export *
+  module * { export * }
+}
+  EOF
+
+  FileUtils.mkdir_p(sdk_version_modulemap.dirname)
+
+  modulemap_file = File.new(sdk_version_modulemap, "w")
+  modulemap_file.write(modulemap)
+  modulemap_file.close()
+end
+
+def common_header_info()
+  <<-EOF
+//
+// This is a generated file, do not edit!
+// Generated by NBus, see https://github.com/nuomi1/NBus
+//
+
+  EOF
 end
 
 # upload
