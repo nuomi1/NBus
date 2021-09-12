@@ -82,9 +82,9 @@ platform :ios do
 
   lane :download_qq_sdk do
     vendor = "QQ"
-    vendor_version = "3.5.3"
-    vendor_url = "https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V#{vendor_version}/iOS_V#{vendor_version}_Lite.zip"
-    vendor_sha256 = "6026e3dfc1fa227ef401cdaea79c524f810bf70e5e5d322f8497c8e7e91d3639"
+    vendor_version = "3.5.5"
+    vendor_url = "https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V#{vendor_version}/iOS_V#{vendor_version}-Lite.zip"
+    vendor_sha256 = "94e88a9898728231b34fa01879c39b5e6bb3e116b9c9015d330f385cb03f15da"
     vendor_search = "."
 
     download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
@@ -92,20 +92,21 @@ platform :ios do
 
   lane :download_wechat_sdk do
     vendor = "Wechat"
-    vendor_version = "1.8.9"
-    vendor_url = "https://res.wx.qq.com/op_res/_Q5kJ9eIC1z-APXT9YPj2uWc-8esYianDXmZnbU7nFSxL_YmuvcoREglWUsrwLInpC6oj7QQB7DhLiZnlcfpGg"
-    vendor_sha256 = "3ab48734e97ce6c25979286b2552dc87c46da7ecc5b832348f1fda68200bd5dd"
-    vendor_search = "OpenSDK#{vendor_version}"
+    vendor_version = "1.9.2"
+    vendor_url = "https://res.wx.qq.com/op_res/XP2S6Df6fFmoNCdbbD14fbkHfjxvl3Q4lw61HkI79tjBQjppRTgJSmJ1cYKIXZdQh9IeX2xXCWX7AqnzuWfUvw"
+    vendor_sha256 = "a0c264034d96889c45691dfac8cc5dcc2fab170f9ac3f26864905142e92d42ff"
+    vendor_search = "."
 
     download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
   end
 
   lane :download_weibo_sdk do
     vendor = "Weibo"
-    vendor_version = "3.3.0"
-    vendor_url = "https://github.com/sinaweibosdk/weibo_ios_sdk/archive/refs/tags/#{vendor_version}.zip"
-    vendor_sha256 = "ce89b655067d5bba30c490c5f79d2a93a331eb7cfbd6bb8d0860ef444ff2778a"
-    vendor_search = "weibo_ios_sdk-#{vendor_version}/libWeiboSDK"
+    vendor_version = "3.3.1"
+    vendor_commit = "c25727f89523d3785a59ddaf2cfc15606df9b391" # no tag, use master branch
+    vendor_url = "https://github.com/sinaweibosdk/weibo_ios_sdk/archive/#{vendor_commit}.zip"
+    vendor_sha256 = "df5ed2200b1bdbe3b2bb1a7ba3e2f460e8c0d774c0a96b307782521bcd2d7f5f"
+    vendor_search = "weibo_ios_sdk-#{vendor_commit}/libWeiboSDK"
 
     download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
   end
@@ -118,7 +119,7 @@ platform :ios do
 
   lane :upload_qq_sdk do
     vendor = "QQ"
-    vendor_version = "3.5.3"
+    vendor_version = "3.5.5"
     vendor_package = "nbusqqsdk"
 
     upload_sdk(vendor, vendor_version, vendor_package)
@@ -126,7 +127,7 @@ platform :ios do
 
   lane :upload_wechat_sdk do
     vendor = "Wechat"
-    vendor_version = "1.8.9"
+    vendor_version = "1.9.2"
     vendor_package = "nbuswechatsdk"
 
     upload_sdk(vendor, vendor_version, vendor_package)
@@ -134,7 +135,7 @@ platform :ios do
 
   lane :upload_weibo_sdk do
     vendor = "Weibo"
-    vendor_version = "3.3.0"
+    vendor_version = "3.3.1"
     vendor_package = "nbusweibosdk"
 
     upload_sdk(vendor, vendor_version, vendor_package)
