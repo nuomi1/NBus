@@ -63,7 +63,6 @@ platform :ios do
     when "NBus"
       pod_lib_lint(
         podspec: "NBus.podspec",
-        include_podspecs: "{NBusQQSDK,NBusWechatSDK,NBusWeiboSDK}.podspec",
         use_libraries: true,
       )
     when "NBusBusHandlers"
@@ -75,7 +74,6 @@ platform :ios do
       pod_lib_lint(
         podspec: "NBus.podspec",
         subspec: "SDKHandlers",
-        include_podspecs: "{NBusQQSDK,NBusWechatSDK,NBusWeiboSDK}.podspec",
         use_libraries: true,
       )
     else
