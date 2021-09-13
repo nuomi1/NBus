@@ -14,7 +14,13 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        target: [NBusQQSDK, NBusWechatSDK, NBusWeiboSDK, NBus]
+        target:
+          - NBusQQSDK
+          - NBusWechatSDK
+          - NBusWeiboSDK
+          - NBus
+          - NBusBusHandlers
+          - NBusSDKHandlers
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
