@@ -27,9 +27,9 @@ PODS:
   - NBus/WeiboSDKHandler (1.2.0):
     - NBus/Core
     - NBusWeiboSDK
-  - NBusQQSDK (1.2.0)
-  - NBusWechatSDK (1.2.0)
-  - NBusWeiboSDK (1.2.0)
+  - NBusQQSDK (3.5.5)
+  - NBusWechatSDK (1.9.2)
+  - NBusWeiboSDK (3.3.1)
   - PinLayout (1.9.3)
   - RxCocoa (6.0.0):
     - RxRelay (= 6.0.0)
@@ -43,9 +43,9 @@ PODS:
 DEPENDENCIES:
   - NBus/BusHandlers (from `../`)
   - NBus/SDKHandlers (from `../`)
-  - NBusQQSDK (from `../`)
-  - NBusWechatSDK (from `../`)
-  - NBusWeiboSDK (from `../`)
+  - NBusQQSDK
+  - NBusWechatSDK
+  - NBusWeiboSDK
   - PinLayout
   - RxCocoa
   - SwiftTrace
@@ -53,6 +53,9 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - NBusQQSDK
+    - NBusWechatSDK
+    - NBusWeiboSDK
     - PinLayout
     - RxCocoa
     - RxRelay
@@ -63,18 +66,12 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   NBus:
     :path: "../"
-  NBusQQSDK:
-    :path: "../"
-  NBusWechatSDK:
-    :path: "../"
-  NBusWeiboSDK:
-    :path: "../"
 
 SPEC CHECKSUMS:
   NBus: 4a55a119c071788957a44da94bac3c37dc894331
-  NBusQQSDK: f5c0e2f1ee4ce9890f26fc981a129025367f8c9d
-  NBusWechatSDK: c1c595876e67b68736be9532b7a830a6ad30a384
-  NBusWeiboSDK: 4c41a2f4b180f2e49821275510394a750b535ed9
+  NBusQQSDK: 142d3d57365a2f95138f2eea6aabc8398abf669c
+  NBusWechatSDK: b8d9c4e44232fb2a903f8be08332fbf8196541b4
+  NBusWeiboSDK: bc486ada525aa8d4c12a272357c6e2e5f217f57f
   PinLayout: 4d8733121f8687edcc8f00c19bf1379d12808767
   RxCocoa: 3f79328fafa3645b34600f37c31e64c73ae3a80e
   RxRelay: 8d593be109c06ea850df027351beba614b012ffb
@@ -82,6 +79,6 @@ SPEC CHECKSUMS:
   SwiftTrace: affc6601a316add7c299a3916d9f43c286a583ef
   WoodPeckeriOS: f16864f7a78d5c6daa605591dd66690d466d95be
 
-PODFILE CHECKSUM: 5a4008dd7f37cb627bf857accb2ec39b29f874f0
+PODFILE CHECKSUM: 7615e56e197a0fccb1a3d0d7e94e2eb4c3b595fa
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.0

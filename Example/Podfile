@@ -6,9 +6,9 @@ target "BusMock" do
   pod "NBus/BusHandlers", :path => "../"
   pod "NBus/SDKHandlers", :path => "../"
 
-  pod "NBusQQSDK", :path => "../"
-  pod "NBusWechatSDK", :path => "../"
-  pod "NBusWeiboSDK", :path => "../"
+  pod "NBusQQSDK"
+  pod "NBusWechatSDK"
+  pod "NBusWeiboSDK"
 
   pod "PinLayout"
   pod "RxCocoa"
@@ -17,15 +17,15 @@ target "BusMock" do
 end
 
 target "BusMockQQSDK" do
-  pod "NBusQQSDK", :path => "../"
+  pod "NBusQQSDK"
 end
 
 target "BusMockWechatSDK" do
-  pod "NBusWechatSDK", :path => "../"
+  pod "NBusWechatSDK"
 end
 
 target "BusMockWeiboSDK" do
-  pod "NBusWeiboSDK", :path => "../"
+  pod "NBusWeiboSDK"
 end
 
 post_install do |installer|
