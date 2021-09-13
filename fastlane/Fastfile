@@ -20,6 +20,8 @@ platform :ios do
     ENV["FL_COCOAPODS_PODFILE"] ||= "Example/Podfile"
     ENV["FL_POD_LIB_LINT_ALLOW_WARNINGS"] ||= "true"
     ENV["FL_POD_LIB_LINT_VERBOSE"] ||= "true"
+    ENV["FL_POD_SPEC_LINT_ALLOW_WARNINGS"] ||= "true"
+    ENV["FL_POD_SPEC_LINT_VERBOSE"] ||= "true"
     ENV["XCODEGEN_SPEC"] ||= "Example/project.yml"
   end
 
@@ -47,15 +49,15 @@ platform :ios do
   lane :pod_lint do |options|
     case options[:target]
     when "NBusQQSDK"
-      pod_lib_lint(
+      pod_spec_lint(
         podspec: "NBusQQSDK.podspec",
       )
     when "NBusWechatSDK"
-      pod_lib_lint(
+      pod_spec_lint(
         podspec: "NBusWechatSDK.podspec",
       )
     when "NBusWeiboSDK"
-      pod_lib_lint(
+      pod_spec_lint(
         podspec: "NBusWeiboSDK.podspec",
       )
     when "NBus"
