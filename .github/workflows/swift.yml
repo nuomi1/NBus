@@ -10,8 +10,24 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
 
 jobs:
-  build:
-    runs-on: macos-latest
+  setup:
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Setup Xcode
+        run: bundle exec fastlane setup
+  swift-lint:
+    needs: setup
+    runs-on: macos-10.15
+    steps:
+      - name: SwiftLint
+        run: bundle exec fastlane lint
+  pod-lint:
+    needs: setup
+    runs-on: macos-10.15
     strategy:
       matrix:
         target:
@@ -22,13 +38,5 @@ jobs:
           - NBusBusHandlers
           - NBusSDKHandlers
     steps:
-      - uses: actions/checkout@v2
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - name: Setup Xcode
-        run: bundle exec fastlane setup
-      - name: SwiftLint
-        run: bundle exec fastlane lint
       - name: CocoaPods Lint
         run: bundle exec fastlane pod_lint target:${{ matrix.target }}
