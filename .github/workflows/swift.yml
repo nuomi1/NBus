@@ -26,6 +26,8 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      - name: Setup Homebrew
+        run: brew bundle
       - name: Setup Xcode
         run: bundle exec fastlane setup
       - name: SwiftLint
