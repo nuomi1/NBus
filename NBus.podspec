@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "NBus"
-  s.version = "1.2.0"
+  s.version = "1.3.0"
   s.summary = "NBus is a sharing and signin library for Chinese Social Application, such as WeChat, QQ and Weibo."
 
   s.homepage = "https://github.com/nuomi1/NBus"
