@@ -76,6 +76,17 @@ platform :ios do
         subspec: "SDKHandlers",
         use_libraries: true,
       )
+    when "all"
+      targets = ["NBusQQSDK",
+                 "NBusWechatSDK",
+                 "NBusWeiboSDK",
+                 "NBus",
+                 "NBusBusHandlers",
+                 "NBusSDKHandlers"]
+
+      targets.each do |target|
+        pod_lint(target: target)
+      end
     else
       raise("never")
     end
