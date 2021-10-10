@@ -194,18 +194,18 @@ extension Bus {
 
 extension Bus {
 
-    enum OauthInfoKeys {
+    public enum OauthInfoKeys {
 
-        enum QQ {
+        public enum QQ {
 
-            static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qq.accessToken")
+            public static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qq.accessToken")
 
-            static let expirationDate = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qq.expirationDate")
+            public static let expirationDate = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qq.expirationDate")
 
-            static let openID = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qq.openID")
+            public static let openID = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.qq.openID")
         }
 
-        enum Weibo {
+        public enum Weibo {
 
             public static let accessToken = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.weibo.accessToken")
 
@@ -216,7 +216,7 @@ extension Bus {
             public static let userID = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.weibo.userID")
         }
 
-        enum Wechat {
+        public enum Wechat {
 
             public static let code = Bus.OauthInfoKey(rawValue: "com.nuomi1.bus.wechat.code")
         }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 public protocol HandlerType {
 
@@ -117,7 +118,7 @@ extension OpenUserActivityHandlerType {
     }
 }
 
-protocol BusCheckUniversalLinkHandlerHelper: HandlerType {}
+public protocol BusCheckUniversalLinkHandlerHelper: HandlerType {}
 
 extension BusCheckUniversalLinkHandlerHelper {
 
@@ -134,14 +135,14 @@ extension BusCheckUniversalLinkHandlerHelper {
     }
 }
 
-protocol BusShareHandlerHelper: BusCheckUniversalLinkHandlerHelper {
+public protocol BusShareHandlerHelper: BusCheckUniversalLinkHandlerHelper {
 
     var supportedMessage: [Endpoint: [Message]] { get }
 }
 
 extension BusShareHandlerHelper {
 
-    func checkShareSupported(message: MessageType, to endpoint: Endpoint) -> Result<Void, Bus.Error> {
+    public func checkShareSupported(message: MessageType, to endpoint: Endpoint) -> Result<Void, Bus.Error> {
         checkUniversalLinkSupported().flatMap { success in
             supportedMessage[endpoint]?.contains(message.identifier) ?? false
                 ? .success(success)
@@ -150,29 +151,29 @@ extension BusShareHandlerHelper {
     }
 }
 
-protocol BusOauthHandlerHelper: BusCheckUniversalLinkHandlerHelper {}
+public protocol BusOauthHandlerHelper: BusCheckUniversalLinkHandlerHelper {}
 
 extension BusOauthHandlerHelper {
 
-    func checkOauthSupported() -> Result<Void, Bus.Error> {
+    public func checkOauthSupported() -> Result<Void, Bus.Error> {
         checkUniversalLinkSupported()
     }
 }
 
-protocol BusLaunchHandlerHelper: BusCheckUniversalLinkHandlerHelper {}
+public protocol BusLaunchHandlerHelper: BusCheckUniversalLinkHandlerHelper {}
 
 extension BusLaunchHandlerHelper {
 
-    func checkLaunchhSupported() -> Result<Void, Bus.Error> {
+    public func checkLaunchhSupported() -> Result<Void, Bus.Error> {
         checkUniversalLinkSupported()
     }
 }
 
-protocol BusQQHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper, BusLaunchHandlerHelper {}
+public protocol BusQQHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper, BusLaunchHandlerHelper {}
 
 extension BusQQHandlerHelper {
 
-    var supportedMessage: [Endpoint: [Message]] {
+    public var supportedMessage: [Endpoint: [Message]] {
         [
             Endpoints.QQ.friend: [
                 Messages.text,
@@ -194,11 +195,11 @@ extension BusQQHandlerHelper {
     }
 }
 
-protocol BusWechatHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper, BusLaunchHandlerHelper {}
+public protocol BusWechatHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper, BusLaunchHandlerHelper {}
 
 extension BusWechatHandlerHelper {
 
-    var supportedMessage: [Endpoint: [Message]] {
+    public var supportedMessage: [Endpoint: [Message]] {
         [
             Endpoints.Wechat.friend: [
                 Messages.text,
@@ -228,11 +229,11 @@ extension BusWechatHandlerHelper {
     }
 }
 
-protocol BusWeiboHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper {}
+public protocol BusWeiboHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper {}
 
 extension BusWeiboHandlerHelper {
 
-    var supportedMessage: [Endpoint: [Message]] {
+    public var supportedMessage: [Endpoint: [Message]] {
         [
             Endpoints.Weibo.timeline: [
                 Messages.text,
@@ -245,11 +246,11 @@ extension BusWeiboHandlerHelper {
     }
 }
 
-protocol BusSystemHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper {}
+public protocol BusSystemHandlerHelper: BusShareHandlerHelper, BusOauthHandlerHelper {}
 
 extension BusSystemHandlerHelper {
 
-    var supportedMessage: [Endpoint: [Message]] {
+    public var supportedMessage: [Endpoint: [Message]] {
         [
             Endpoints.System.activity: [
                 Messages.text,
@@ -263,11 +264,11 @@ extension BusSystemHandlerHelper {
     }
 }
 
-protocol BusOpenExternalURLHelper: HandlerType {}
+public protocol BusOpenExternalURLHelper: HandlerType {}
 
 extension BusOpenExternalURLHelper {
 
-    func open<Success>(
+    public func open<Success>(
         _ url: URL?,
         completionHandler: ((Result<Success, Bus.Error>) -> Void)?
     ) {
@@ -289,19 +290,19 @@ extension BusOpenExternalURLHelper {
     }
 }
 
-protocol BusGetCommonInfoHelper: HandlerType {}
+public protocol BusGetCommonInfoHelper: HandlerType {}
 
 extension BusGetCommonInfoHelper {
 
-    var bundleID: String {
+    public var bundleID: String {
         Bundle.main.bus.identifier!
     }
 
-    var displayName: String {
+    public var displayName: String {
         Bundle.main.bus.displayName!
     }
 
-    var oldText: String? {
+    public var oldText: String? {
         UIPasteboard.general.bus.oldText
     }
 }

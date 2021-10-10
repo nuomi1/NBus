@@ -8,7 +8,7 @@
 
 import Foundation
 
-func busAssertionFailure(
+public func busAssertionFailure(
     _ message: @autoclosure () -> String = String(),
     file: StaticString = #file,
     line: UInt = #line
