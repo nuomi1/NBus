@@ -7,25 +7,8 @@ configFiles:
   Debug: NBus/Config.xcconfig
   Release: NBus/Config.xcconfig
 
-targets:
-  BusMock:
-    type: application
-    platform: iOS
-    deploymentTarget: 10.0
-    sources:
-      - path: NBus
-        excludes:
-          - AppDelegateQQSDK.swift
-          - AppDelegateWechatSDK.swift
-          - AppDelegateWeiboSDK.swift
-    settings:
-      base:
-        CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/$(TARGET_NAME).entitlements
-        SWIFT_VERSION: 5.0
-    dependencies:
-      - package: Logging
-    scheme: {}
-  BusMockQQSDK:
+targetTemplates:
+  BusMockTemplate:
     type: application
     platform: iOS
     deploymentTarget: 10.0
@@ -35,45 +18,13 @@ targets:
           - Model
           - View
           - AppDelegate.swift
-          - AppDelegateWechatSDK.swift
-          - AppDelegateWeiboSDK.swift
+          - AppDelegateSDK.swift
     settings:
       base:
-        CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/BusMock.entitlements
-        SWIFT_VERSION: 5.0
-    scheme: {}
-  BusMockWechatSDK:
-    type: application
-    platform: iOS
-    deploymentTarget: 10.0
-    sources:
-      - path: NBus
-        excludes:
-          - Model
-          - View
-          - AppDelegate.swift
-          - AppDelegateQQSDK.swift
-          - AppDelegateWeiboSDK.swift
-    settings:
-      base:
-        CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/BusMock.entitlements
-        SWIFT_VERSION: 5.0
-    scheme: {}
-  BusMockWeiboSDK:
-    type: application
-    platform: iOS
-    deploymentTarget: 10.0
-    sources:
-      - path: NBus
-        excludes:
-          - Model
-          - View
-          - AppDelegate.swift
-          - AppDelegateQQSDK.swift
-          - AppDelegateWechatSDK.swift
-    settings:
-      base:
-        CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/BusMock.entitlements
+        CODE_SIGN_ENTITLEMENTS: $(SRCROOT)/$(PROJECT_NAME)/BusMock.entitlements
+        OTHER_SWIFT_FLAGS:
+          - "$(inherited)"
+          - "-D ${target_name}"
         SWIFT_VERSION: 5.0
     scheme: {}
 
@@ -81,3 +32,31 @@ packages:
   Logging:
     url: https://github.com/apple/swift-log
     majorVersion: 1.4.0
+
+targets:
+  BusMock:
+    templates:
+      - BusMockTemplate
+    sources:
+      - path: NBus
+        includes:
+          - Model
+          - View
+          - AppDelegate.swift
+    dependencies:
+      - package: Logging
+  BusMockQQSDK:
+    templates:
+      - BusMockTemplate
+    sources:
+      - NBus/AppDelegateSDK.swift
+  BusMockWechatSDK:
+    templates:
+      - BusMockTemplate
+    sources:
+      - NBus/AppDelegateSDK.swift
+  BusMockWeiboSDK:
+    templates:
+      - BusMockTemplate
+    sources:
+      - NBus/AppDelegateSDK.swift
