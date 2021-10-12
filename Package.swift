@@ -49,5 +49,6 @@ let package = Package(
             name: "NBusTests",
             dependencies: ["NBusCore"]
         ),
-    ]
+    ],
+    swiftLanguageVersions: [.v5]
 )
