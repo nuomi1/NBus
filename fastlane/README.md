@@ -51,24 +51,9 @@ fastlane ios pod_lint
 fastlane ios gym_lint
 ```
 
-### ios download_all_sdk
+### ios download_sdk
 ```
-fastlane ios download_all_sdk
-```
-
-### ios download_qq_sdk
-```
-fastlane ios download_qq_sdk
-```
-
-### ios download_wechat_sdk
-```
-fastlane ios download_wechat_sdk
-```
-
-### ios download_weibo_sdk
-```
-fastlane ios download_weibo_sdk
+fastlane ios download_sdk
 ```
 
 ### ios upload_all_sdk
