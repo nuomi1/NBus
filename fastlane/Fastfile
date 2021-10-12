@@ -135,9 +135,9 @@ platform :ios do
     case options[:target]
     when "QQ"
       vendor = "QQ"
-      vendor_version = "3.5.5"
-      vendor_url = "https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V#{vendor_version}/iOS_V#{vendor_version}-Lite.zip"
-      vendor_sha256 = "94e88a9898728231b34fa01879c39b5e6bb3e116b9c9015d330f385cb03f15da"
+      vendor_version = "3.5.7"
+      vendor_url = "https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V#{vendor_version}/#{vendor_version}_lite.zip"
+      vendor_sha256 = "e751d2d5dc59de36ff75061d4cd94cdc24418b32e330af45f27868c62b104cb2"
       vendor_search = "."
 
       _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
@@ -240,7 +240,7 @@ def extract_file(file, zip_directory)
 
   sh("ditto", "-x", "-k", "--sequesterRsrc", "--rsrc", file.to_s, zip_directory.to_s)
 
-  qq_file = zip_directory / "TencentOpenApi(Lite)_3.5.5.121.zip"
+  qq_file = zip_directory / "3.5.7_lite" / "TencentOpenApi(Lite)_3.5.7.143.zip"
 
   if qq_file.exist?
     sh("ditto", "-x", "-k", "--sequesterRsrc", "--rsrc", qq_file.to_s, zip_directory.to_s)
