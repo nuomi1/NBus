@@ -151,11 +151,10 @@ platform :ios do
       _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
     when "Weibo"
       vendor = "Weibo"
-      vendor_version = "3.3.1"
-      vendor_commit = "c25727f89523d3785a59ddaf2cfc15606df9b391" # no tag, use master branch
-      vendor_url = "https://github.com/sinaweibosdk/weibo_ios_sdk/archive/#{vendor_commit}.zip"
-      vendor_sha256 = "df5ed2200b1bdbe3b2bb1a7ba3e2f460e8c0d774c0a96b307782521bcd2d7f5f"
-      vendor_search = "weibo_ios_sdk-#{vendor_commit}/libWeiboSDK"
+      vendor_version = "3.3.2"
+      vendor_url = "https://github.com/sinaweibosdk/weibo_ios_sdk/archive/refs/tags/#{vendor_version}.zip"
+      vendor_sha256 = "cd731502fe85d6eab4c4878940413d4826a978a4ac78f4c14cb7f12b750e3096"
+      vendor_search = "weibo_ios_sdk-#{vendor_version}/libWeiboSDK"
 
       _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
     when "all"
