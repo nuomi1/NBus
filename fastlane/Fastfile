@@ -52,6 +52,15 @@ platform :ios do
   end
 
   lane :pod_lint do |options|
+    targets = [
+      "NBusQQSDK",
+      "NBusWechatSDK",
+      "NBusWeiboSDK",
+      "NBus",
+      "NBusBusHandlers",
+      "NBusSDKHandlers",
+    ]
+
     case options[:target]
     when "NBusQQSDK"
       pod_spec_lint(
@@ -82,18 +91,11 @@ platform :ios do
         use_libraries: true,
       )
     when "all"
-      targets = ["NBusQQSDK",
-                 "NBusWechatSDK",
-                 "NBusWeiboSDK",
-                 "NBus",
-                 "NBusBusHandlers",
-                 "NBusSDKHandlers"]
-
       targets.each do |target|
         pod_lint(target: target)
       end
     else
-      raise("never")
+      raise("use target with #{targets.join(", ")} or all")
     end
   end
 
@@ -113,7 +115,7 @@ platform :ios do
     when "BusMockWeiboSDK"
       gym(scheme: "BusMockWeiboSDK")
     when "BusMock"
-      gym(scheme: "BusMock")
+      # gym(scheme: "BusMock") # build error on Xcode 11.7
     when "all"
       targets.each do |target|
         gym_lint(target: target)
@@ -123,77 +125,87 @@ platform :ios do
     end
   end
 
-  lane :download_all_sdk do
-    download_qq_sdk
-    download_wechat_sdk
-    download_weibo_sdk
+  lane :download_sdk do |options|
+    targets = [
+      "QQ",
+      "Wechat",
+      "Weibo",
+    ]
+
+    case options[:target]
+    when "QQ"
+      vendor = "QQ"
+      vendor_version = "3.5.5"
+      vendor_url = "https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V#{vendor_version}/iOS_V#{vendor_version}-Lite.zip"
+      vendor_sha256 = "94e88a9898728231b34fa01879c39b5e6bb3e116b9c9015d330f385cb03f15da"
+      vendor_search = "."
+
+      _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
+    when "Wechat"
+      vendor = "Wechat"
+      vendor_version = "1.9.2"
+      vendor_url = "https://res.wx.qq.com/op_res/XP2S6Df6fFmoNCdbbD14fbkHfjxvl3Q4lw61HkI79tjBQjppRTgJSmJ1cYKIXZdQh9IeX2xXCWX7AqnzuWfUvw"
+      vendor_sha256 = "a0c264034d96889c45691dfac8cc5dcc2fab170f9ac3f26864905142e92d42ff"
+      vendor_search = "."
+
+      _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
+    when "Weibo"
+      vendor = "Weibo"
+      vendor_version = "3.3.1"
+      vendor_commit = "c25727f89523d3785a59ddaf2cfc15606df9b391" # no tag, use master branch
+      vendor_url = "https://github.com/sinaweibosdk/weibo_ios_sdk/archive/#{vendor_commit}.zip"
+      vendor_sha256 = "df5ed2200b1bdbe3b2bb1a7ba3e2f460e8c0d774c0a96b307782521bcd2d7f5f"
+      vendor_search = "weibo_ios_sdk-#{vendor_commit}/libWeiboSDK"
+
+      _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
+    when "all"
+      targets.each do |target|
+        download_sdk(target: target)
+      end
+    else
+      raise("use target with #{targets.join(", ")} or all")
+    end
   end
 
-  lane :download_qq_sdk do
-    vendor = "QQ"
-    vendor_version = "3.5.5"
-    vendor_url = "https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V#{vendor_version}/iOS_V#{vendor_version}-Lite.zip"
-    vendor_sha256 = "94e88a9898728231b34fa01879c39b5e6bb3e116b9c9015d330f385cb03f15da"
-    vendor_search = "."
+  lane :upload_sdk do |options|
+    targets = [
+      "QQ",
+      "Wechat",
+      "Weibo",
+    ]
 
-    download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
-  end
+    case options[:target]
+    when "QQ"
+      vendor = "QQ"
+      vendor_version = "3.5.5"
+      vendor_package = "nbusqqsdk"
 
-  lane :download_wechat_sdk do
-    vendor = "Wechat"
-    vendor_version = "1.9.2"
-    vendor_url = "https://res.wx.qq.com/op_res/XP2S6Df6fFmoNCdbbD14fbkHfjxvl3Q4lw61HkI79tjBQjppRTgJSmJ1cYKIXZdQh9IeX2xXCWX7AqnzuWfUvw"
-    vendor_sha256 = "a0c264034d96889c45691dfac8cc5dcc2fab170f9ac3f26864905142e92d42ff"
-    vendor_search = "."
+      _upload_sdk(vendor, vendor_version, vendor_package)
+    when "Wechat"
+      vendor = "Wechat"
+      vendor_version = "1.9.2"
+      vendor_package = "nbuswechatsdk"
 
-    download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
-  end
+      _upload_sdk(vendor, vendor_version, vendor_package)
+    when "Weibo"
+      vendor = "Weibo"
+      vendor_version = "3.3.1"
+      vendor_package = "nbusweibosdk"
 
-  lane :download_weibo_sdk do
-    vendor = "Weibo"
-    vendor_version = "3.3.1"
-    vendor_commit = "c25727f89523d3785a59ddaf2cfc15606df9b391" # no tag, use master branch
-    vendor_url = "https://github.com/sinaweibosdk/weibo_ios_sdk/archive/#{vendor_commit}.zip"
-    vendor_sha256 = "df5ed2200b1bdbe3b2bb1a7ba3e2f460e8c0d774c0a96b307782521bcd2d7f5f"
-    vendor_search = "weibo_ios_sdk-#{vendor_commit}/libWeiboSDK"
-
-    download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
-  end
-
-  lane :upload_all_sdk do
-    upload_qq_sdk
-    upload_wechat_sdk
-    upload_weibo_sdk
-  end
-
-  lane :upload_qq_sdk do
-    vendor = "QQ"
-    vendor_version = "3.5.5"
-    vendor_package = "nbusqqsdk"
-
-    upload_sdk(vendor, vendor_version, vendor_package)
-  end
-
-  lane :upload_wechat_sdk do
-    vendor = "Wechat"
-    vendor_version = "1.9.2"
-    vendor_package = "nbuswechatsdk"
-
-    upload_sdk(vendor, vendor_version, vendor_package)
-  end
-
-  lane :upload_weibo_sdk do
-    vendor = "Weibo"
-    vendor_version = "3.3.1"
-    vendor_package = "nbusweibosdk"
-
-    upload_sdk(vendor, vendor_version, vendor_package)
+      _upload_sdk(vendor, vendor_version, vendor_package)
+    when "all"
+      targets.each do |target|
+        upload_sdk(target: target)
+      end
+    else
+      raise("use target with #{targets.join(", ")} or all")
+    end
   end
 end
 
 # download
 
-def download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
+def _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
   root = (Pathname.pwd / "../NBus/Vendor").expand_path
 
   vendor_file = root / "Vendor_#{vendor}_#{vendor_version}.zip"
@@ -341,7 +353,7 @@ end
 
 # upload
 
-def upload_sdk(vendor, vendor_version, vendor_package)
+def _upload_sdk(vendor, vendor_version, vendor_package)
   root = (Pathname.pwd / "../NBus/Vendor").expand_path
 
   vendor_sdk_directory = root / "#{vendor}SDK"
