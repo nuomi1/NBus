@@ -22,6 +22,11 @@ platform :ios do
     ENV["FL_POD_LIB_LINT_VERBOSE"] ||= "true"
     ENV["FL_POD_SPEC_LINT_ALLOW_WARNINGS"] ||= "true"
     ENV["FL_POD_SPEC_LINT_VERBOSE"] ||= "true"
+    ENV["GYM_CLEAN"] ||= "true"
+    ENV["GYM_CONFIGURATION"] ||= "Debug"
+    ENV["GYM_DESTINATION"] ||= "platform=iOS Simulator,name=iPhone 6s"
+    ENV["GYM_SKIP_ARCHIVE"] ||= "true"
+    ENV["GYM_WORKSPACE"] ||= "Example/NBus.xcworkspace"
     ENV["XCODEGEN_SPEC"] ||= "Example/project.yml"
   end
 
@@ -89,6 +94,32 @@ platform :ios do
       end
     else
       raise("never")
+    end
+  end
+
+  lane :gym_lint do |options|
+    targets = [
+      "BusMockQQSDK",
+      "BusMockWechatSDK",
+      "BusMockWeiboSDK",
+      "BusMock",
+    ]
+
+    case options[:target]
+    when "BusMockQQSDK"
+      gym(scheme: "BusMockQQSDK")
+    when "BusMockWechatSDK"
+      gym(scheme: "BusMockWechatSDK")
+    when "BusMockWeiboSDK"
+      gym(scheme: "BusMockWeiboSDK")
+    when "BusMock"
+      gym(scheme: "BusMock")
+    when "all"
+      targets.each do |target|
+        gym_lint(target: target)
+      end
+    else
+      raise("use target with #{targets.join(", ")} or all")
     end
   end
 

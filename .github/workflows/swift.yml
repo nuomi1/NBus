@@ -25,3 +25,7 @@ jobs:
         run: bundle exec fastlane lint
       - name: CocoaPods Lint
         run: bundle exec fastlane pod_lint target:all
+      - name: Xcode Lint
+        env:
+          GYM_DESTINATION: platform=iOS Simulator,name=iPhone 8
+        run: bundle exec fastlane gym_lint target:all

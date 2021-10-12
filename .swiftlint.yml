@@ -13,6 +13,8 @@ identifier_name:
 included:
   - Example
   - NBus
+  - Tests
+  - Package.swift
 
 line_length:
   ignores_comments: true
