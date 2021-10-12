@@ -4,9 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "NBus",
-    platforms: [
-        .iOS(.v10),
-    ],
+    platforms: [.iOS(.v10)],
     products: [
         .library(
             name: "NBusHandlers",
@@ -27,33 +25,25 @@ let package = Package(
             name: "NBusQQHandler",
             dependencies: ["NBusCore"],
             path: "NBus/Classes/Handler",
-            sources: [
-                "QQHandler.swift",
-            ]
+            sources: ["QQHandler.swift"]
         ),
         .target(
             name: "NBusWechatHandler",
             dependencies: ["NBusCore"],
             path: "NBus/Classes/Handler",
-            sources: [
-                "WechatHandler.swift",
-            ]
+            sources: ["WechatHandler.swift"]
         ),
         .target(
             name: "NBusWeiboHandler",
             dependencies: ["NBusCore"],
             path: "NBus/Classes/Handler",
-            sources: [
-                "WeiboHandler.swift",
-            ]
+            sources: ["WeiboHandler.swift"]
         ),
         .target(
             name: "NBusSystemHandler",
             dependencies: ["NBusCore"],
             path: "NBus/Classes/Handler",
-            sources: [
-                "SystemHandler.swift",
-            ]
+            sources: ["SystemHandler.swift"]
         ),
         .testTarget(
             name: "NBusTests",
