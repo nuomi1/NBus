@@ -52,6 +52,15 @@ platform :ios do
   end
 
   lane :pod_lint do |options|
+    targets = [
+      "NBusQQSDK",
+      "NBusWechatSDK",
+      "NBusWeiboSDK",
+      "NBus",
+      "NBusBusHandlers",
+      "NBusSDKHandlers",
+    ]
+
     case options[:target]
     when "NBusQQSDK"
       pod_spec_lint(
@@ -82,18 +91,11 @@ platform :ios do
         use_libraries: true,
       )
     when "all"
-      targets = ["NBusQQSDK",
-                 "NBusWechatSDK",
-                 "NBusWeiboSDK",
-                 "NBus",
-                 "NBusBusHandlers",
-                 "NBusSDKHandlers"]
-
       targets.each do |target|
         pod_lint(target: target)
       end
     else
-      raise("never")
+      raise("use target with #{targets.join(", ")} or all")
     end
   end
 
