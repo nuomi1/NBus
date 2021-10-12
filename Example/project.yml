@@ -24,6 +24,7 @@ targets:
         SWIFT_VERSION: 5.0
     dependencies:
       - package: Logging
+    scheme: {}
   BusMockQQSDK:
     type: application
     platform: iOS
@@ -40,6 +41,7 @@ targets:
       base:
         CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/BusMock.entitlements
         SWIFT_VERSION: 5.0
+    scheme: {}
   BusMockWechatSDK:
     type: application
     platform: iOS
@@ -56,6 +58,7 @@ targets:
       base:
         CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/BusMock.entitlements
         SWIFT_VERSION: 5.0
+    scheme: {}
   BusMockWeiboSDK:
     type: application
     platform: iOS
@@ -72,6 +75,7 @@ targets:
       base:
         CODE_SIGN_ENTITLEMENTS: ${SRCROOT}/$(PROJECT_NAME)/BusMock.entitlements
         SWIFT_VERSION: 5.0
+    scheme: {}
 
 packages:
   Logging:
