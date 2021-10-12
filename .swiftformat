@@ -8,6 +8,8 @@
 
 --extensionacl on-declarations
 
+--ifdef no-indent
+
 --stripunusedargs closure-only
 --swiftversion 5.0
 
