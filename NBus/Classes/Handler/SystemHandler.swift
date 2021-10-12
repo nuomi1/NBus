@@ -11,7 +11,7 @@ import Foundation
 import UIKit
 
 #if canImport(NBusCore)
-    import NBusCore
+import NBusCore
 #endif
 
 public class SystemHandler {

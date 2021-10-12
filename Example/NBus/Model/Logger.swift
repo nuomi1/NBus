@@ -57,13 +57,13 @@ struct BusMockLogHandler: LogHandler {
         line: UInt
     ) {
         #if DEBUG
-            let prettyMetadata = metadata?.isEmpty ?? true
-                ? self.prettyMetadata
-                : prettify(self.metadata.merging(metadata!, uniquingKeysWith: { _, new in new }))
+        let prettyMetadata = metadata?.isEmpty ?? true
+            ? self.prettyMetadata
+            : prettify(self.metadata.merging(metadata!, uniquingKeysWith: { _, new in new }))
 
-            let fileName = file.split(separator: "/").last ?? ""
+        let fileName = file.split(separator: "/").last ?? ""
 
-            print("\(timestamp()) \(level) \(label) :\(prettyMetadata.map { " \($0)" } ?? "") [\(fileName):\(line)] \(function) > \(message)")
+        print("\(timestamp()) \(level) \(label) :\(prettyMetadata.map { " \($0)" } ?? "") [\(fileName):\(line)] \(function) > \(message)")
         #endif
     }
 
