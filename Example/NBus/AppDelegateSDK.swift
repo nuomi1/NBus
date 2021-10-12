@@ -1,13 +1,20 @@
 //
-//  AppDelegateWechatSDK.swift
+//  AppDelegateSDK.swift
 //  NBus
 //
-//  Created by nuomi1 on 2021/5/10.
+//  Created by nuomi1 on 2021/10/12.
 //  Copyright © 2021 nuomi1. All rights reserved.
 //
 
-import NBusWechatSDK
 import UIKit
+
+#if BusMockQQSDK
+import NBusQQSDK
+#elseif BusMockWechatSDK
+import NBusWechatSDK
+#elseif BusMockWeiboSDK
+import NBusWeiboSDK
+#endif
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,9 +35,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
 
+        #if BusMockQQSDK
+        let title = "isQQInstalled"
+        let message = "\(QQApiInterface.isQQInstalled())"
+        #elseif BusMockWechatSDK
+        let title = "isWXAppInstalled"
+        let message = "\(WXApi.isWXAppInstalled())"
+        #elseif BusMockWeiboSDK
+        let title = "isWeiboAppInstalled"
+        let message = "\(WeiboSDK.isWeiboAppInstalled())"
+        #else
+        #error("ERROR")
+        let title = "ERROR"
+        let message = "ERROR"
+        #endif
+
         let alert = UIAlertController(
-            title: "isWXAppInstalled",
-            message: "\(WXApi.isWXAppInstalled())",
+            title: title,
+            message: message,
             preferredStyle: .alert
         )
         let cancelAction = UIAlertAction(title: "OK", style: .cancel, handler: { [weak alert] _ in

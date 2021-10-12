@@ -1,30 +1,30 @@
 PODS:
-  - NBus/BusHandlers (1.2.0):
+  - NBus/BusHandlers (1.3.0):
     - NBus/QQHandler
     - NBus/SystemHandler
     - NBus/WechatHandler
     - NBus/WeiboHandler
-  - NBus/Core (1.2.0)
-  - NBus/QQHandler (1.2.0):
+  - NBus/Core (1.3.0)
+  - NBus/QQHandler (1.3.0):
     - NBus/Core
-  - NBus/QQSDKHandler (1.2.0):
+  - NBus/QQSDKHandler (1.3.0):
     - NBus/Core
     - NBusQQSDK
-  - NBus/SDKHandlers (1.2.0):
+  - NBus/SDKHandlers (1.3.0):
     - NBus/QQSDKHandler
     - NBus/SystemHandler
     - NBus/WechatSDKHandler
     - NBus/WeiboSDKHandler
-  - NBus/SystemHandler (1.2.0):
+  - NBus/SystemHandler (1.3.0):
     - NBus/Core
-  - NBus/WechatHandler (1.2.0):
+  - NBus/WechatHandler (1.3.0):
     - NBus/Core
-  - NBus/WechatSDKHandler (1.2.0):
+  - NBus/WechatSDKHandler (1.3.0):
     - NBus/Core
     - NBusWechatSDK
-  - NBus/WeiboHandler (1.2.0):
+  - NBus/WeiboHandler (1.3.0):
     - NBus/Core
-  - NBus/WeiboSDKHandler (1.2.0):
+  - NBus/WeiboSDKHandler (1.3.0):
     - NBus/Core
     - NBusWeiboSDK
   - NBusQQSDK (3.5.5)
@@ -68,7 +68,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  NBus: 4a55a119c071788957a44da94bac3c37dc894331
+  NBus: 886bd839fdc1241f2de86f0b7636540a888d12ce
   NBusQQSDK: 142d3d57365a2f95138f2eea6aabc8398abf669c
   NBusWechatSDK: b8d9c4e44232fb2a903f8be08332fbf8196541b4
   NBusWeiboSDK: bc486ada525aa8d4c12a272357c6e2e5f217f57f
