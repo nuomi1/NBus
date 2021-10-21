@@ -252,7 +252,7 @@ def make_framework(vendor, version, search_directory, sdk_directory)
   sdk_version_directory = sdk_framework_directory / "Versions" / version
   sdk_version_library = sdk_version_directory / sdk_vendor
   sdk_version_header_directory = sdk_version_directory / "Headers"
-  sdk_version_umbrella_header = sdk_version_header_directory / "#{sdk_vendor}-umbrella.h"
+  sdk_version_umbrella_header = sdk_version_header_directory / "#{sdk_vendor}.h"
   sdk_version_modulemap = sdk_framework_directory / "Modules" / "module.modulemap"
 
   make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory)
