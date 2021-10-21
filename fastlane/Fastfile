@@ -253,15 +253,15 @@ def make_framework(vendor, version, search_directory, sdk_directory)
   sdk_version_library = sdk_version_directory / sdk_vendor
   sdk_version_header_directory = sdk_version_directory / "Headers"
   sdk_version_umbrella_header = sdk_version_header_directory / "#{sdk_vendor}.h"
-  sdk_version_modulemap = sdk_framework_directory / "Modules" / "module.modulemap"
+  sdk_version_modulemap = sdk_version_directory / "Modules" / "module.modulemap"
 
   make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory)
-
-  make_framework_symlink(sdk_vendor, version, sdk_framework_directory)
 
   make_umbrella_header(sdk_vendor, sdk_version_header_directory, sdk_version_umbrella_header)
 
   make_modulemap(sdk_vendor, sdk_version_umbrella_header, sdk_version_modulemap)
+
+  make_framework_symlink(sdk_vendor, version, sdk_framework_directory)
 end
 
 def make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory)
@@ -301,6 +301,7 @@ def make_framework_symlink(sdk_vendor, version, sdk_framework_directory)
   FileUtils.cd(sdk_framework_directory)
   FileUtils.ln_s("Versions/Current/#{sdk_vendor}", sdk_vendor)
   FileUtils.ln_s("Versions/Current/Headers", "Headers")
+  FileUtils.ln_s("Versions/Current/Modules", "Modules")
 
   FileUtils.cd(pwd) # original pwd
 end
