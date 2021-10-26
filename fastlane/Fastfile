@@ -253,9 +253,10 @@ def make_framework(vendor, version, search_directory, sdk_directory)
   sdk_version_library = sdk_version_directory / sdk_vendor
   sdk_version_header_directory = sdk_version_directory / "Headers"
   sdk_version_umbrella_header = sdk_version_header_directory / "#{sdk_vendor}.h"
+  sdk_version_resource_directory = sdk_version_directory / "Resources"
   sdk_version_modulemap = sdk_version_directory / "Modules" / "module.modulemap"
 
-  make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory)
+  make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory, sdk_version_resource_directory)
 
   make_umbrella_header(sdk_vendor, sdk_version_header_directory, sdk_version_umbrella_header)
 
@@ -264,14 +265,14 @@ def make_framework(vendor, version, search_directory, sdk_directory)
   make_framework_symlink(sdk_vendor, version, sdk_framework_directory)
 end
 
-def make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory)
+def make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory, sdk_version_resource_directory)
   FileUtils.rm_rf(sdk_directory)
 
   search_directory.glob("**/*.{bundle,a,h}").each do |file|
     case file.extname
     when ".bundle"
-      FileUtils.mkdir_p(sdk_directory)
-      FileUtils.cp_r(file, sdk_directory)
+      FileUtils.mkdir_p(sdk_version_resource_directory)
+      FileUtils.cp_r(file, sdk_version_resource_directory)
     when ".a"
       FileUtils.mkdir_p(sdk_version_library.dirname)
       FileUtils.cp_r(file, sdk_version_library)
@@ -302,6 +303,10 @@ def make_framework_symlink(sdk_vendor, version, sdk_framework_directory)
   FileUtils.ln_s("Versions/Current/#{sdk_vendor}", sdk_vendor)
   FileUtils.ln_s("Versions/Current/Headers", "Headers")
   FileUtils.ln_s("Versions/Current/Modules", "Modules")
+
+  if Pathname("Versions/Current/Resources").exist?
+    FileUtils.ln_s("Versions/Current/Resources", "Resources")
+  end
 
   FileUtils.cd(pwd) # original pwd
 end
