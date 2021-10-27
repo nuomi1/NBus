@@ -176,7 +176,7 @@ platform :ios do
     case options[:target]
     when "QQ"
       vendor = "QQ"
-      vendor_version = "3.5.5"
+      vendor_version = "3.5.7"
       vendor_package = "nbusqqsdk"
 
       _upload_sdk(vendor, vendor_version, vendor_package)
@@ -188,7 +188,7 @@ platform :ios do
       _upload_sdk(vendor, vendor_version, vendor_package)
     when "Weibo"
       vendor = "Weibo"
-      vendor_version = "3.3.1"
+      vendor_version = "3.3.2"
       vendor_package = "nbusweibosdk"
 
       _upload_sdk(vendor, vendor_version, vendor_package)
