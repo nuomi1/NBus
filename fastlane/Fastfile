@@ -363,6 +363,7 @@ def _upload_sdk(vendor, vendor_version, vendor_package)
 
   vendor_sdk_directory = root / "#{vendor}SDK"
   vendor_img_directory = root / "#{vendor}IMG"
+  vendor_sdk_framework_directory = vendor_sdk_directory / "NBus#{vendor}SDK.framework"
   vendor_tar_file = vendor_img_directory / "#{vendor}SDK.tar"
   vendor_tar_gz_file = vendor_img_directory / "#{vendor}SDK.tar.gz"
 
@@ -371,16 +372,16 @@ def _upload_sdk(vendor, vendor_version, vendor_package)
 
   vendor_package_url = URI("docker://ghcr.io/#{owner}/#{repo}/#{vendor_package}:#{vendor_version}")
 
-  make_docker_container(vendor_sdk_directory, vendor_img_directory, vendor_tar_file, vendor_tar_gz_file)
+  make_docker_container(vendor_sdk_framework_directory, vendor_img_directory, vendor_tar_file, vendor_tar_gz_file)
 
   upload_github_package(vendor_img_directory, vendor_package_url)
 end
 
-def make_docker_container(sdk_directory, img_directory, tar_file, tar_gz_file)
+def make_docker_container(sdk_framework_directory, img_directory, tar_file, tar_gz_file)
   FileUtils.rm_rf(img_directory)
   FileUtils.mkdir_p(img_directory)
 
-  sh("tar", "-c", "--exclude", ".DS_Store", "-C", sdk_directory.dirname.to_s, "-f", tar_file.to_s, sdk_directory.basename.to_s)
+  sh("tar", "-c", "--exclude", ".DS_Store", "-C", sdk_framework_directory.dirname.to_s, "-f", tar_file.to_s, sdk_framework_directory.basename.to_s)
 
   platform_hash = {
     architecture: "amd64",
