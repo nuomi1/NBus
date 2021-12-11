@@ -182,7 +182,7 @@ platform :ios do
       _upload_sdk(vendor, vendor_version, vendor_package)
     when "Wechat"
       vendor = "Wechat"
-      vendor_version = "1.9.2_1"
+      vendor_version = "1.9.2_revision1"
       vendor_package = "nbuswechatsdk"
 
       _upload_sdk(vendor, vendor_version, vendor_package)
