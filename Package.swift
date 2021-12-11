@@ -7,7 +7,7 @@ let package = Package(
     platforms: [.iOS(.v10)],
     products: [
         .library(
-            name: "NBusHandlers",
+            name: "NBus",
             targets: [
                 "NBusQQHandler",
                 "NBusWechatHandler",
