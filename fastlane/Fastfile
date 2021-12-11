@@ -182,7 +182,7 @@ platform :ios do
       _upload_sdk(vendor, vendor_version, vendor_package)
     when "Wechat"
       vendor = "Wechat"
-      vendor_version = "1.9.2"
+      vendor_version = "1.9.2_1"
       vendor_package = "nbuswechatsdk"
 
       _upload_sdk(vendor, vendor_version, vendor_package)
@@ -215,6 +215,10 @@ def _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_sear
   download_file(vendor_url, vendor_file, vendor_sha256)
 
   extract_file(vendor_file, vendor_zip_directory)
+
+  if vendor == "Wechat" && vendor_version == "1.9.2"
+    vendor_version = "1.9.2_1"
+  end
 
   make_framework(vendor, vendor_version, vendor_search_directory, vendor_sdk_directory)
 end
