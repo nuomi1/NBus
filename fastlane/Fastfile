@@ -115,7 +115,7 @@ platform :ios do
     when "BusMockWeiboSDK"
       gym(scheme: "BusMockWeiboSDK")
     when "BusMock"
-      # gym(scheme: "BusMock") # build error on Xcode 11.7
+      gym(scheme: "BusMock")
     when "all"
       targets.each do |target|
         gym_lint(target: target)
