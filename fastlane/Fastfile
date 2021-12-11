@@ -20,6 +20,7 @@ platform :ios do
     ENV["FL_COCOAPODS_PODFILE"] ||= "Example/Podfile"
     ENV["FL_POD_LIB_LINT_ALLOW_WARNINGS"] ||= "true"
     ENV["FL_POD_LIB_LINT_VERBOSE"] ||= "true"
+    ENV["FL_POD_PUSH_ALLOW_WARNINGS"] ||= "true"
     ENV["FL_POD_SPEC_LINT_ALLOW_WARNINGS"] ||= "true"
     ENV["FL_POD_SPEC_LINT_VERBOSE"] ||= "true"
     ENV["GYM_CLEAN"] ||= "true"
@@ -115,10 +116,44 @@ platform :ios do
     when "BusMockWeiboSDK"
       gym(scheme: "BusMockWeiboSDK")
     when "BusMock"
-      # gym(scheme: "BusMock") # build error on Xcode 11.7
+      gym(scheme: "BusMock")
     when "all"
       targets.each do |target|
         gym_lint(target: target)
+      end
+    else
+      raise("use target with #{targets.join(", ")} or all")
+    end
+  end
+
+  lane :pod_trunk_push do |options|
+    targets = [
+      "NBusQQSDK",
+      "NBusWechatSDK",
+      "NBusWeiboSDK",
+      "NBus",
+    ]
+
+    case options[:target]
+    when "NBusQQSDK"
+      pod_push(
+        path: "NBusQQSDK.podspec",
+      )
+    when "NBusWechatSDK"
+      pod_push(
+        path: "NBusWechatSDK.podspec",
+      )
+    when "NBusWeiboSDK"
+      pod_push(
+        path: "NBusWeiboSDK.podspec",
+      )
+    when "NBus"
+      pod_push(
+        path: "NBus.podspec",
+      )
+    when "all"
+      targets.each do |target|
+        pod_trunk_push(target: target)
       end
     else
       raise("use target with #{targets.join(", ")} or all")
@@ -135,9 +170,9 @@ platform :ios do
     case options[:target]
     when "QQ"
       vendor = "QQ"
-      vendor_version = "3.5.5"
-      vendor_url = "https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V#{vendor_version}/iOS_V#{vendor_version}-Lite.zip"
-      vendor_sha256 = "94e88a9898728231b34fa01879c39b5e6bb3e116b9c9015d330f385cb03f15da"
+      vendor_version = "3.5.7"
+      vendor_url = "https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V#{vendor_version}/#{vendor_version}_lite.zip"
+      vendor_sha256 = "e751d2d5dc59de36ff75061d4cd94cdc24418b32e330af45f27868c62b104cb2"
       vendor_search = "."
 
       _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
@@ -151,11 +186,10 @@ platform :ios do
       _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
     when "Weibo"
       vendor = "Weibo"
-      vendor_version = "3.3.1"
-      vendor_commit = "c25727f89523d3785a59ddaf2cfc15606df9b391" # no tag, use master branch
-      vendor_url = "https://github.com/sinaweibosdk/weibo_ios_sdk/archive/#{vendor_commit}.zip"
-      vendor_sha256 = "df5ed2200b1bdbe3b2bb1a7ba3e2f460e8c0d774c0a96b307782521bcd2d7f5f"
-      vendor_search = "weibo_ios_sdk-#{vendor_commit}/libWeiboSDK"
+      vendor_version = "3.3.2"
+      vendor_url = "https://github.com/sinaweibosdk/weibo_ios_sdk/archive/refs/tags/#{vendor_version}.zip"
+      vendor_sha256 = "cd731502fe85d6eab4c4878940413d4826a978a4ac78f4c14cb7f12b750e3096"
+      vendor_search = "weibo_ios_sdk-#{vendor_version}/libWeiboSDK"
 
       _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
     when "all"
@@ -177,19 +211,19 @@ platform :ios do
     case options[:target]
     when "QQ"
       vendor = "QQ"
-      vendor_version = "3.5.5"
+      vendor_version = "3.5.7"
       vendor_package = "nbusqqsdk"
 
       _upload_sdk(vendor, vendor_version, vendor_package)
     when "Wechat"
       vendor = "Wechat"
-      vendor_version = "1.9.2"
+      vendor_version = "1.9.2_revision1"
       vendor_package = "nbuswechatsdk"
 
       _upload_sdk(vendor, vendor_version, vendor_package)
     when "Weibo"
       vendor = "Weibo"
-      vendor_version = "3.3.1"
+      vendor_version = "3.3.2"
       vendor_package = "nbusweibosdk"
 
       _upload_sdk(vendor, vendor_version, vendor_package)
@@ -217,6 +251,10 @@ def _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_sear
 
   extract_file(vendor_file, vendor_zip_directory)
 
+  if vendor == "Wechat" && vendor_version == "1.9.2"
+    vendor_version = "1.9.2+revision1"
+  end
+
   make_framework(vendor, vendor_version, vendor_search_directory, vendor_sdk_directory)
 end
 
@@ -240,7 +278,7 @@ def extract_file(file, zip_directory)
 
   sh("ditto", "-x", "-k", "--sequesterRsrc", "--rsrc", file.to_s, zip_directory.to_s)
 
-  qq_file = zip_directory / "TencentOpenApi(Lite)_3.5.5.121.zip"
+  qq_file = zip_directory / "3.5.7_lite" / "TencentOpenApi(Lite)_3.5.7.143.zip"
 
   if qq_file.exist?
     sh("ditto", "-x", "-k", "--sequesterRsrc", "--rsrc", qq_file.to_s, zip_directory.to_s)
@@ -253,26 +291,27 @@ def make_framework(vendor, version, search_directory, sdk_directory)
   sdk_version_directory = sdk_framework_directory / "Versions" / version
   sdk_version_library = sdk_version_directory / sdk_vendor
   sdk_version_header_directory = sdk_version_directory / "Headers"
-  sdk_version_umbrella_header = sdk_version_header_directory / "#{sdk_vendor}-umbrella.h"
-  sdk_version_modulemap = sdk_framework_directory / "Modules" / "module.modulemap"
+  sdk_version_umbrella_header = sdk_version_header_directory / "#{sdk_vendor}.h"
+  sdk_version_resource_directory = sdk_version_directory / "Resources"
+  sdk_version_modulemap = sdk_version_directory / "Modules" / "module.modulemap"
 
-  make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory)
-
-  make_framework_symlink(sdk_vendor, version, sdk_framework_directory)
+  make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory, sdk_version_resource_directory)
 
   make_umbrella_header(sdk_vendor, sdk_version_header_directory, sdk_version_umbrella_header)
 
   make_modulemap(sdk_vendor, sdk_version_umbrella_header, sdk_version_modulemap)
+
+  make_framework_symlink(sdk_vendor, version, sdk_framework_directory)
 end
 
-def make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory)
+def make_framework_container(sdk_directory, search_directory, sdk_version_library, sdk_version_header_directory, sdk_version_resource_directory)
   FileUtils.rm_rf(sdk_directory)
 
   search_directory.glob("**/*.{bundle,a,h}").each do |file|
     case file.extname
     when ".bundle"
-      FileUtils.mkdir_p(sdk_directory)
-      FileUtils.cp_r(file, sdk_directory)
+      FileUtils.mkdir_p(sdk_version_resource_directory)
+      FileUtils.cp_r(file, sdk_version_resource_directory)
     when ".a"
       FileUtils.mkdir_p(sdk_version_library.dirname)
       FileUtils.cp_r(file, sdk_version_library)
@@ -302,6 +341,11 @@ def make_framework_symlink(sdk_vendor, version, sdk_framework_directory)
   FileUtils.cd(sdk_framework_directory)
   FileUtils.ln_s("Versions/Current/#{sdk_vendor}", sdk_vendor)
   FileUtils.ln_s("Versions/Current/Headers", "Headers")
+  FileUtils.ln_s("Versions/Current/Modules", "Modules")
+
+  if Pathname("Versions/Current/Resources").exist?
+    FileUtils.ln_s("Versions/Current/Resources", "Resources")
+  end
 
   FileUtils.cd(pwd) # original pwd
 end
@@ -358,6 +402,7 @@ def _upload_sdk(vendor, vendor_version, vendor_package)
 
   vendor_sdk_directory = root / "#{vendor}SDK"
   vendor_img_directory = root / "#{vendor}IMG"
+  vendor_sdk_framework_directory = vendor_sdk_directory / "NBus#{vendor}SDK.framework"
   vendor_tar_file = vendor_img_directory / "#{vendor}SDK.tar"
   vendor_tar_gz_file = vendor_img_directory / "#{vendor}SDK.tar.gz"
 
@@ -366,16 +411,16 @@ def _upload_sdk(vendor, vendor_version, vendor_package)
 
   vendor_package_url = URI("docker://ghcr.io/#{owner}/#{repo}/#{vendor_package}:#{vendor_version}")
 
-  make_docker_container(vendor_sdk_directory, vendor_img_directory, vendor_tar_file, vendor_tar_gz_file)
+  make_docker_container(vendor_sdk_framework_directory, vendor_img_directory, vendor_tar_file, vendor_tar_gz_file)
 
   upload_github_package(vendor_img_directory, vendor_package_url)
 end
 
-def make_docker_container(sdk_directory, img_directory, tar_file, tar_gz_file)
+def make_docker_container(sdk_framework_directory, img_directory, tar_file, tar_gz_file)
   FileUtils.rm_rf(img_directory)
   FileUtils.mkdir_p(img_directory)
 
-  sh("tar", "-c", "--exclude", ".DS_Store", "-C", sdk_directory.dirname.to_s, "-f", tar_file.to_s, sdk_directory.basename.to_s)
+  sh("tar", "-c", "--exclude", ".DS_Store", "-C", sdk_framework_directory.dirname.to_s, "-f", tar_file.to_s, sdk_framework_directory.basename.to_s)
 
   platform_hash = {
     architecture: "amd64",

@@ -51,6 +51,11 @@ fastlane ios pod_lint
 fastlane ios gym_lint
 ```
 
+### ios pod_trunk_push
+```
+fastlane ios pod_trunk_push
+```
+
 ### ios download_sdk
 ```
 fastlane ios download_sdk
