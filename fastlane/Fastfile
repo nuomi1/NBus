@@ -20,6 +20,7 @@ platform :ios do
     ENV["FL_COCOAPODS_PODFILE"] ||= "Example/Podfile"
     ENV["FL_POD_LIB_LINT_ALLOW_WARNINGS"] ||= "true"
     ENV["FL_POD_LIB_LINT_VERBOSE"] ||= "true"
+    ENV["FL_POD_PUSH_ALLOW_WARNINGS"] ||= "true"
     ENV["FL_POD_SPEC_LINT_ALLOW_WARNINGS"] ||= "true"
     ENV["FL_POD_SPEC_LINT_VERBOSE"] ||= "true"
     ENV["GYM_CLEAN"] ||= "true"
@@ -119,6 +120,40 @@ platform :ios do
     when "all"
       targets.each do |target|
         gym_lint(target: target)
+      end
+    else
+      raise("use target with #{targets.join(", ")} or all")
+    end
+  end
+
+  lane :pod_trunk_push do |options|
+    targets = [
+      "NBusQQSDK",
+      "NBusWechatSDK",
+      "NBusWeiboSDK",
+      "NBus",
+    ]
+
+    case options[:target]
+    when "NBusQQSDK"
+      pod_push(
+        path: "NBusQQSDK.podspec",
+      )
+    when "NBusWechatSDK"
+      pod_push(
+        path: "NBusWechatSDK.podspec",
+      )
+    when "NBusWeiboSDK"
+      pod_push(
+        path: "NBusWeiboSDK.podspec",
+      )
+    when "NBus"
+      pod_push(
+        path: "NBus.podspec",
+      )
+    when "all"
+      targets.each do |target|
+        pod_push(target: target)
       end
     else
       raise("use target with #{targets.join(", ")} or all")
