@@ -170,9 +170,9 @@ platform :ios do
     case options[:target]
     when "QQ"
       vendor = "QQ"
-      vendor_version = "3.5.7"
-      vendor_url = "https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V#{vendor_version}/#{vendor_version}_lite.zip"
-      vendor_sha256 = "e751d2d5dc59de36ff75061d4cd94cdc24418b32e330af45f27868c62b104cb2"
+      vendor_version = "3.5.9"
+      vendor_url = "https://tangram-1251316161.file.myqcloud.com/qqconnect/OpenSDK_V3.5.9/TencentOpenApi%28Lite%29_3.5.9.167.zip"
+      vendor_sha256 = "7660824e3f86067e64f8be66f33a821b336ba3e661618ae6ae8684aa70c8feb3"
       vendor_search = "."
 
       _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
@@ -211,7 +211,7 @@ platform :ios do
     case options[:target]
     when "QQ"
       vendor = "QQ"
-      vendor_version = "3.5.7"
+      vendor_version = "3.5.9"
       vendor_package = "nbusqqsdk"
 
       _upload_sdk(vendor, vendor_version, vendor_package)
@@ -277,12 +277,6 @@ def extract_file(file, zip_directory)
   FileUtils.rm_rf(zip_directory)
 
   sh("ditto", "-x", "-k", "--sequesterRsrc", "--rsrc", file.to_s, zip_directory.to_s)
-
-  qq_file = zip_directory / "3.5.7_lite" / "TencentOpenApi(Lite)_3.5.7.143.zip"
-
-  if qq_file.exist?
-    sh("ditto", "-x", "-k", "--sequesterRsrc", "--rsrc", qq_file.to_s, zip_directory.to_s)
-  end
 end
 
 def make_framework(vendor, version, search_directory, sdk_directory)
