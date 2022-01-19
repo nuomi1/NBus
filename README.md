@@ -64,7 +64,7 @@ NBus also supports system's sharing and Sign in with Apple.
 
 1. Edit `LSApplicationQueriesSchemes` in `Info.plist`.
 
-```plist
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -85,7 +85,7 @@ NBus also supports system's sharing and Sign in with Apple.
 
 2. Edit `CFBundleURLTypes` in `Info.plist`.
 
-```plist
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -126,7 +126,7 @@ NBus also supports system's sharing and Sign in with Apple.
 
 3. Edit `com.apple.developer.associated-domains` in `TARGET.entitlements`.
 
-```plist
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
