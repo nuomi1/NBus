@@ -30,7 +30,7 @@ PODS:
   - NBusQQSDK (3.5.7)
   - "NBusWechatSDK (1.9.2+revision1)"
   - NBusWeiboSDK (3.3.2)
-  - PinLayout (1.10.0)
+  - PinLayout (1.10.2)
   - RxCocoa (6.2.0):
     - RxRelay (= 6.2.0)
     - RxSwift (= 6.2.0)
@@ -72,7 +72,7 @@ SPEC CHECKSUMS:
   NBusQQSDK: 164bd3524dad2db51050229def17821dcc2711e5
   NBusWechatSDK: efebd57656091bb33a3b54a67156bd293b37d423
   NBusWeiboSDK: 9ece35d36da59080de85d7d5e34446111648da02
-  PinLayout: e50e9a748b632905fca6e67043ea4b05d6c92186
+  PinLayout: d6b1960e4b182b4da1481b9aa6728f621e20708d
   RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
