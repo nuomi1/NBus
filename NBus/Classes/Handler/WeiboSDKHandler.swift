@@ -204,11 +204,11 @@ extension WeiboSDKHandler {
             self.owner = owner
         }
 
-        func didReceiveWeiboRequest(_ request: WBBaseRequest!) {
+        func didReceiveWeiboRequest(_ request: WBBaseRequest?) {
             busAssertionFailure("\(String(describing: request))")
         }
 
-        func didReceiveWeiboResponse(_ response: WBBaseResponse!) {
+        func didReceiveWeiboResponse(_ response: WBBaseResponse?) {
             switch response {
             case let response as WBSendMessageToWeiboResponse:
                 switch response.statusCode {
