@@ -31,12 +31,12 @@ PODS:
   - "NBusWechatSDK (1.9.2+revision1)"
   - NBusWeiboSDK (3.3.2)
   - PinLayout (1.10.2)
-  - RxCocoa (6.2.0):
-    - RxRelay (= 6.2.0)
-    - RxSwift (= 6.2.0)
-  - RxRelay (6.2.0):
-    - RxSwift (= 6.2.0)
-  - RxSwift (6.2.0)
+  - RxCocoa (6.5.0):
+    - RxRelay (= 6.5.0)
+    - RxSwift (= 6.5.0)
+  - RxRelay (6.5.0):
+    - RxSwift (= 6.5.0)
+  - RxSwift (6.5.0)
   - SwiftTrace (6.6.0)
   - WoodPeckeriOS (1.2.93)
 
@@ -73,9 +73,9 @@ SPEC CHECKSUMS:
   NBusWechatSDK: efebd57656091bb33a3b54a67156bd293b37d423
   NBusWeiboSDK: 9ece35d36da59080de85d7d5e34446111648da02
   PinLayout: d6b1960e4b182b4da1481b9aa6728f621e20708d
-  RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
-  RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
-  RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
+  RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
+  RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
+  RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   SwiftTrace: affc6601a316add7c299a3916d9f43c286a583ef
   WoodPeckeriOS: 12ec7f38c695e51cd94a476228888dfe85d9d916
 
