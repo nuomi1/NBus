@@ -173,7 +173,7 @@ extension QQSDKHandler: ShareHandlerType {
         case Endpoints.QQ.friend:
             let cflag = self.cflag(endpoint, message.identifier)
                 .reduce(0) { result, flag in result | flag.rawValue }
-            request.message?.cflag |= UInt64(cflag)
+            request.apiObject.cflag |= UInt64(cflag)
             code = QQApiInterface.send(request)
         case Endpoints.QQ.timeline:
             code = QQApiInterface.sendReq(toQZone: request)
