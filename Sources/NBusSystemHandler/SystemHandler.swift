@@ -10,7 +10,7 @@ import AuthenticationServices
 import Foundation
 import UIKit
 
-#if canImport(NBusCore)
+#if SWIFT_PACKAGE
 import NBusCore
 #endif
 
