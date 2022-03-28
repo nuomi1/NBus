@@ -240,7 +240,7 @@ end
 # download
 
 def _download_sdk(vendor, vendor_version, vendor_url, vendor_sha256, vendor_search)
-  root = (Pathname.pwd / "../NBus/Vendor").expand_path
+  root = (Pathname.pwd / "../Vendor").expand_path
 
   vendor_file = root / "Vendor_#{vendor}_#{vendor_version}.zip"
   vendor_zip_directory = root / "#{vendor}ZIP"
@@ -392,7 +392,7 @@ end
 # upload
 
 def _upload_sdk(vendor, vendor_version, vendor_package)
-  root = (Pathname.pwd / "../NBus/Vendor").expand_path
+  root = (Pathname.pwd / "../Vendor").expand_path
 
   vendor_sdk_directory = root / "#{vendor}SDK"
   vendor_img_directory = root / "#{vendor}IMG"
