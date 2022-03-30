@@ -27,6 +27,18 @@ enum MediaSource {
         )
     }()
 
+    static let qqImage: MessageType = {
+        let data = defaultJPEG.jpegData(compressionQuality: 0.5)!
+        let thumbnail = defaultJPEG.jpegData(compressionQuality: 0.2)!
+
+        return Messages.image(
+            data: data,
+            title: defaultTitle,
+            description: defaultDescription,
+            thumbnail: thumbnail
+        )
+    }()
+
     static let gif: MessageType = Messages.image(
         data: defaultGIF,
         title: defaultTitle,
