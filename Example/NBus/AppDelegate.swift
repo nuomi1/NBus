@@ -70,12 +70,10 @@ extension AppDelegate {
     // swiftlint:disable function_body_length
 
     private func pasteboardItems() -> Observable<[[String]]> {
-        NotificationCenter.default.rx
-            .notification(UIPasteboard.changedNotification)
-            .map { _ -> [[String]] in
-                let items = UIPasteboard.general.items
-
-                return items.enumerated().map { index, item -> [String] in
+        UIPasteboard.general.rx
+            .items()
+            .map { items -> [[String]] in
+                items.enumerated().map { index, item -> [String] in
                     item.map { key, value -> String in
                         let identity: String
                         let index = "(\(index + 1)/\(items.count))"
@@ -126,30 +124,6 @@ extension AppDelegate {
     }
 
     // swiftlint:enable function_body_length
-
-    private func canOpenURL() -> Observable<URL> {
-        UIApplication.shared.rx
-            .methodInvoked(#selector(UIApplication.canOpenURL(_:)))
-            .compactMap { args in
-                args[0] as? URL
-            }
-    }
-
-    private func openURL() -> Observable<URL> {
-        let oldURL = UIApplication.shared.rx
-            .methodInvoked(#selector(UIApplication.openURL(_:)))
-            .compactMap { args in
-                args[0] as? URL
-            }
-
-        let newURL = UIApplication.shared.rx
-            .methodInvoked(#selector(UIApplication.open(_:options:completionHandler:)))
-            .compactMap { args in
-                args[0] as? URL
-            }
-
-        return Observable.merge([oldURL, newURL])
-    }
 }
 
 extension AppDelegate {
@@ -161,13 +135,15 @@ extension AppDelegate {
             })
             .disposed(by: disposeBag)
 
-        canOpenURL()
+        UIApplication.shared.rx
+            .canOpenURL()
             .bind(onNext: { url in
                 logger.debug("\(url)")
             })
             .disposed(by: disposeBag)
 
-        openURL()
+        UIApplication.shared.rx
+            .openURL()
             .bind(onNext: { url in
                 logger.debug("\(url)")
             })
