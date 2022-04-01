@@ -91,9 +91,7 @@ extension QQHandlerBaseTests {
         UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
-                let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-
-                self.test_share(urlComponents: urlComponents, message, endpoint)
+                self.test_share(url: url, message, endpoint)
             })
             .disposed(by: disposeBag)
 
@@ -185,7 +183,8 @@ extension QQHandlerBaseTests {
 
 extension QQHandlerBaseTests {
 
-    func test_share(urlComponents: URLComponents, _ message: MessageType, _ endpoint: Endpoint) {
+    func test_share(url: URL, _ message: MessageType, _ endpoint: Endpoint) {
+        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         var queryItems = urlComponents.queryItems ?? []
 
         // GeneralUniversalLink
@@ -702,9 +701,7 @@ extension QQHandlerBaseTests {
         UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
-                let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-
-                self.test_oauth(urlComponents: urlComponents)
+                self.test_oauth(url: url)
             })
             .disposed(by: disposeBag)
 
@@ -733,7 +730,8 @@ extension QQHandlerBaseTests {
 
 extension QQHandlerBaseTests {
 
-    func test_oauth(urlComponents: URLComponents) {
+    func test_oauth(url: URL) {
+        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         var queryItems = urlComponents.queryItems ?? []
 
         // GeneralUniversalLink
