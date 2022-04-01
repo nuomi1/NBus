@@ -153,47 +153,10 @@ extension AppDelegate {
 
 extension AppDelegate {
 
-    private func clearKeychains() {
-        let items = [
-            kSecClassGenericPassword,
-            kSecClassInternetPassword,
-            kSecClassCertificate,
-            kSecClassKey,
-            kSecClassIdentity,
-        ]
-
-        let status = items
-            .map { [kSecClass: $0] as CFDictionary }
-            .map { SecItemDelete($0) }
-
-        assert(status.allSatisfy {
-            $0 == errSecSuccess || $0 == errSecItemNotFound
-        })
-    }
-
-    private func clearPasteboard() {
-        let pasteboard = UIPasteboard.general
-
-        pasteboard.items = []
-
-        pasteboard.string = "NBus"
-    }
-
-    private func clearUserDefaults() {
-        let defaults = UserDefaults.standard
-
-        for (key, _) in defaults.dictionaryRepresentation() {
-            defaults.removeObject(forKey: key)
-        }
-    }
-}
-
-extension AppDelegate {
-
     private func clearStorage() {
-        clearKeychains()
-        clearPasteboard()
-        clearUserDefaults()
+//        AppState.shared.clearKeychains()
+        AppState.shared.clearPasteboard(shouldSetString: true)
+//        AppState.shared.clearUserDefaults()
     }
 }
 

@@ -16,7 +16,7 @@ class QQHandlerBaseTests: HandlerBaseTests {
     override class func setUp() {
         super.setUp()
 
-        UIPasteboard.general.items = []
+        AppState.shared.clearPasteboard()
     }
 }
 
