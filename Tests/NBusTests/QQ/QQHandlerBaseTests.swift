@@ -832,3 +832,123 @@ extension QQHandlerBaseTests {
         XCTAssertNil(data)
     }
 }
+
+// MARK: - Launch
+
+extension QQHandlerBaseTests {
+
+    func test_launch() {
+        let message = MediaSource.qqMiniProgram as! MiniProgramMessage
+
+        UIApplication.shared.rx
+            .openURL()
+            .bind(onNext: { [unowned self] url in
+                self.test_launch(url: url, message)
+            })
+            .disposed(by: disposeBag)
+
+        UIPasteboard.general.rx
+            .items()
+            .bind(onNext: { [unowned self] items in
+                self.test_launch(items: items)
+            })
+            .disposed(by: disposeBag)
+
+        Bus.shared.launch(
+            program: message,
+            with: Platforms.qq,
+            completionHandler: { result in
+                switch result {
+                case .success:
+                    XCTAssertTrue(true)
+                case .failure:
+                    XCTAssertTrue(false)
+                }
+            }
+        )
+    }
+}
+
+// MARK: Launch - UniversalLink
+
+extension QQHandlerBaseTests {
+
+    func test_launch(url: URL, _ message: MessageType) {
+        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        var queryItems = urlComponents.queryItems ?? []
+
+        // GeneralUniversalLink
+
+        XCTAssertEqual(urlComponents.scheme, "https")
+        XCTAssertEqual(urlComponents.host, "qm.qq.com")
+
+        let appsign_txid = queryItems.removeFirst { $0.name == "appsign_txid" }!
+        test_appsign_txid(appsign_txid)
+
+        let bundleid = queryItems.removeFirst { $0.name == "bundleid" }!
+        test_bundleid(bundleid)
+
+        let sdkv = queryItems.removeFirst { $0.name == "sdkv" }!
+        test_sdkv(sdkv)
+
+        // LaunchUniversalLink
+
+        XCTAssertEqual(urlComponents.path, "/opensdkul/mqqapi/profile/sdk_launch_mini_app")
+
+        let appid = queryItems.removeFirst { $0.name == "appid" }!
+        test_appid(appid)
+
+        let callback_name = queryItems.removeFirst { $0.name == "callback_name" }!
+        test_callback_name(callback_name)
+
+        let callback_type = queryItems.removeFirst { $0.name == "callback_type" }!
+        test_callback_type(callback_type)
+
+        let src_type = queryItems.removeFirst { $0.name == "src_type" }!
+        test_src_type(src_type)
+
+        let thirdAppDisplayName = queryItems.removeFirst { $0.name == "thirdAppDisplayName" }!
+        test_thirdAppDisplayName(thirdAppDisplayName)
+
+        let version = queryItems.removeFirst { $0.name == "version" }!
+        test_version(version)
+
+        // launch
+
+        let mini_appid = queryItems.removeFirst { $0.name == "mini_appid" }!
+        test_mini_appid(mini_appid, message)
+
+        let mini_path = queryItems.removeFirst { $0.name == "mini_path" }!
+        test_mini_path(mini_path, message)
+
+        let mini_type = queryItems.removeFirst { $0.name == "mini_type" }!
+        test_mini_type(mini_type, message)
+
+        logger.debug("\(URLComponents.self), \(queryItems)")
+        XCTAssertTrue(queryItems.isEmpty)
+    }
+}
+
+extension QQHandlerBaseTests {
+
+    func test_appid(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, appNumber)
+    }
+}
+
+// MARK: Launch - Pasteboard
+
+extension QQHandlerBaseTests {
+
+    func test_launch(items: [[String: Any]]) {
+        if items.isEmpty {
+            XCTAssertTrue(true)
+            return
+        }
+
+        let data = items.first!["com.tencent.mqq.api.apiLargeData"]
+
+        logger.debug("\(UIPasteboard.self), \(items.map { $0.keys })")
+        XCTAssertNil(data)
+    }
+}
