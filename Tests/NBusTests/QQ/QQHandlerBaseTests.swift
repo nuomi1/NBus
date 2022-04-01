@@ -66,14 +66,14 @@ extension QQHandlerBaseTests {
             .bind(onNext: { [unowned self] url in
                 let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
 
-                self.test_share(urlComponents, message, endpoint)
+                self.test_share(urlComponents: urlComponents, message, endpoint)
             })
             .disposed(by: disposeBag)
 
         UIPasteboard.general.rx
             .items()
             .bind(onNext: { [unowned self] items in
-                self.test_share(items, message, endpoint)
+                self.test_share(items: items, message, endpoint)
             })
             .disposed(by: disposeBag)
 
@@ -158,7 +158,7 @@ extension QQHandlerBaseTests {
 
 extension QQHandlerBaseTests {
 
-    func test_share(_ urlComponents: URLComponents, _ message: MessageType, _ endpoint: Endpoint) {
+    func test_share(urlComponents: URLComponents, _ message: MessageType, _ endpoint: Endpoint) {
         var queryItems = urlComponents.queryItems ?? []
 
         // GeneralUniversalLink
@@ -612,7 +612,7 @@ extension QQHandlerBaseTests {
 
 extension QQHandlerBaseTests {
 
-    func test_share(_ items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) {
+    func test_share(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) {
         if items.isEmpty {
             XCTAssertTrue(true)
             return
