@@ -24,15 +24,19 @@ class QQHandlerBaseTests: HandlerBaseTests {
 
 extension QQHandlerBaseTests {
 
-    var appNumber: String {
+    var appID: String {
         switch Self.handler {
         case let handler as QQSDKHandler:
-            return handler.appID.trimmingCharacters(in: .letters)
+            return handler.appID
         case let handler as QQHandler:
-            return handler.appID.trimmingCharacters(in: .letters)
+            return handler.appID
         default:
             fatalError()
         }
+    }
+
+    var appNumber: String {
+        appID.trimmingCharacters(in: .letters)
     }
 
     var bundleID: String {
@@ -48,11 +52,34 @@ extension QQHandlerBaseTests {
     }
 
     var sdkVersion: String {
-        "3.5.1_lite"
+        "3.5.11_lite"
+    }
+
+    var statusMachine: String {
+        UIDevice.current.bus.machine
+    }
+
+    var statusOS: String {
+        UIDevice.current.systemVersion
+    }
+
+    var statusVersion: String {
+        "\(ProcessInfo.processInfo.operatingSystemVersion.majorVersion)"
     }
 
     var txID: String {
         "QQ\(String(format: "%08llX", (appNumber as NSString).longLongValue))"
+    }
+
+    var universalLink: URL {
+        switch Self.handler {
+        case let handler as QQSDKHandler:
+            return handler.universalLink
+        case let handler as QQHandler:
+            return handler.universalLink
+        default:
+            fatalError()
+        }
     }
 }
 
@@ -664,5 +691,146 @@ extension QQHandlerBaseTests {
         default:
             XCTAssertTrue(false)
         }
+    }
+}
+
+// MARK: - Oauth
+
+extension QQHandlerBaseTests {
+
+    func test_oauth() {
+        UIApplication.shared.rx
+            .openURL()
+            .bind(onNext: { [unowned self] url in
+                let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+
+                self.test_oauth(urlComponents: urlComponents)
+            })
+            .disposed(by: disposeBag)
+
+        UIPasteboard.general.rx
+            .items()
+            .bind(onNext: { [unowned self] items in
+                self.test_oauth(items: items)
+            })
+            .disposed(by: disposeBag)
+
+        Bus.shared.oauth(
+            with: Platforms.qq,
+            completionHandler: { result in
+                switch result {
+                case .success:
+                    XCTAssertTrue(true)
+                case .failure:
+                    XCTAssertTrue(false)
+                }
+            }
+        )
+    }
+}
+
+// MARK: Oauth - UniversalLink
+
+extension QQHandlerBaseTests {
+
+    func test_oauth(urlComponents: URLComponents) {
+        var queryItems = urlComponents.queryItems ?? []
+
+        // GeneralUniversalLink
+
+        XCTAssertEqual(urlComponents.scheme, "https")
+        XCTAssertEqual(urlComponents.host, "qm.qq.com")
+
+        let appsign_txid = queryItems.removeFirst { $0.name == "appsign_txid" }!
+        test_appsign_txid(appsign_txid)
+
+        let bundleid = queryItems.removeFirst { $0.name == "bundleid" }!
+        test_bundleid(bundleid)
+
+        let sdkv = queryItems.removeFirst { $0.name == "sdkv" }!
+        test_sdkv(sdkv)
+
+        // OauthUniversalLink
+
+        XCTAssertEqual(urlComponents.path, "/opensdkul/mqqOpensdkSSoLogin/SSoLogin/\(appID)")
+
+        let objectlocation = queryItems.removeFirst { $0.name == "objectlocation" }!
+        test_objectlocation(objectlocation)
+
+        let pasteboard = queryItems.removeFirst { $0.name == "pasteboard" }!
+        test_pasteboard(pasteboard)
+
+        logger.debug("\(URLComponents.self), \(queryItems)")
+        XCTAssertTrue(queryItems.isEmpty)
+    }
+}
+
+extension QQHandlerBaseTests {
+
+    func test_objectlocation(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value, "url")
+    }
+
+    func test_pasteboard(_ queryItem: URLQueryItem) {
+        let data = Data(base64Encoded: queryItem.value!)!
+        var object = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
+
+        let appsign_token = object.removeValue(forKey: "appsign_token") as! String
+        XCTAssertEqual(appsign_token, "")
+
+        let app_id = object.removeValue(forKey: "app_id") as! String
+        XCTAssertEqual(app_id, appNumber)
+
+        let app_name = object.removeValue(forKey: "app_name") as! String
+        XCTAssertEqual(app_name, displayName)
+
+        let bundleid = object.removeValue(forKey: "bundleid") as! String
+        XCTAssertEqual(bundleid, bundleID)
+
+        let client_id = object.removeValue(forKey: "client_id") as! String
+        XCTAssertEqual(client_id, appNumber)
+
+        let refUniversallink = object.removeValue(forKey: "refUniversallink") as! String
+        XCTAssertEqual(refUniversallink, universalLink.absoluteString)
+
+        let response_type = object.removeValue(forKey: "response_type") as! String
+        XCTAssertEqual(response_type, "token")
+
+        let scope = object.removeValue(forKey: "scope") as! String
+        XCTAssertEqual(scope, "get_user_info")
+
+        let sdkp = object.removeValue(forKey: "sdkp") as! String
+        XCTAssertEqual(sdkp, "i")
+
+        let sdkv = object.removeValue(forKey: "sdkv") as! String
+        XCTAssertEqual(sdkv, sdkVersion)
+
+        let status_machine = object.removeValue(forKey: "status_machine") as! String
+        XCTAssertEqual(status_machine, statusMachine)
+
+        let status_os = object.removeValue(forKey: "status_os") as! String
+        XCTAssertEqual(status_os, statusOS)
+
+        let status_version = object.removeValue(forKey: "status_version") as! String
+        XCTAssertEqual(status_version, statusVersion)
+
+        XCTAssertTrue(object.isEmpty)
+    }
+}
+
+// MARK: Oauth - Pasteboard
+
+extension QQHandlerBaseTests {
+
+    func test_oauth(items: [[String: Any]]) {
+        if items.isEmpty {
+            XCTAssertTrue(true)
+            return
+        }
+
+        let data = items.first!["com.tencent.mqq.api.apiLargeData"]
+
+        logger.debug("\(UIPasteboard.self), \(items.map { $0.keys })")
+        XCTAssertNil(data)
     }
 }
