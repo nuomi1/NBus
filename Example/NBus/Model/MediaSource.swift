@@ -39,6 +39,13 @@ enum MediaSource {
         )
     }()
 
+    static let wechatImage: MessageType = Messages.image(
+        data: defaultThumbnail,
+        title: defaultTitle,
+        description: defaultDescription,
+        thumbnail: defaultThumbnail
+    )
+
     static let gif: MessageType = Messages.image(
         data: defaultGIF,
         title: defaultTitle,
