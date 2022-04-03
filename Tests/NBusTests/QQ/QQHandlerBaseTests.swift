@@ -311,12 +311,12 @@ extension QQHandlerBaseTests {
             case Messages.miniProgram:
                 XCTAssertEqual(queryItem.value!, "64")
             default:
-                XCTAssertTrue(false)
+                XCTAssertTrue(false, String(describing: queryItem.value))
             }
         case Endpoints.QQ.timeline:
             XCTAssertEqual(queryItem.value!, "0")
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem.value))
         }
     }
 
@@ -337,7 +337,7 @@ extension QQHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -353,7 +353,7 @@ extension QQHandlerBaseTests {
         case let message as FileMessage:
             XCTAssertEqual(queryItem!.value!, message.fullName)
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -369,7 +369,7 @@ extension QQHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertNil(queryItem)
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -390,7 +390,7 @@ extension QQHandlerBaseTests {
         case Messages.miniProgram:
             XCTAssertEqual(queryItem.value!, "news")
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem.value))
         }
     }
 
@@ -406,7 +406,7 @@ extension QQHandlerBaseTests {
         case let message as AudioMessage:
             XCTAssertEqual(queryItem!.value!, message.dataLink?.absoluteString.bus.base64EncodedString)
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -426,7 +426,7 @@ extension QQHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(queryItem!.value!, message.miniProgramID)
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -442,7 +442,7 @@ extension QQHandlerBaseTests {
         case is MiniProgramMessage:
             XCTAssertEqual(queryItem!.value!, "1")
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -458,7 +458,7 @@ extension QQHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(queryItem!.value!, message.path.bus.base64EncodedString)
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -485,7 +485,7 @@ extension QQHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(queryItem!.value!, miniProgramType(message.miniProgramType))
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -501,7 +501,7 @@ extension QQHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(queryItem!.value!, message.link.absoluteString.bus.base64EncodedString)
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -518,7 +518,7 @@ extension QQHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertEqual(queryItem!.value!, "url")
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -541,7 +541,7 @@ extension QQHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(thumbnail(queryItem!.value!), message.thumbnail)
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -562,7 +562,7 @@ extension QQHandlerBaseTests {
                  Messages.miniProgram:
                 XCTAssertEqual(queryItem.value!, "0")
             default:
-                XCTAssertTrue(false)
+                XCTAssertTrue(false, String(describing: queryItem.value))
             }
         case Endpoints.QQ.timeline:
             switch message.identifier {
@@ -574,10 +574,10 @@ extension QQHandlerBaseTests {
                  Messages.webPage:
                 XCTAssertEqual(queryItem.value!, "1")
             default:
-                XCTAssertTrue(false)
+                XCTAssertTrue(false, String(describing: queryItem.value))
             }
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem.value))
         }
     }
 
@@ -606,7 +606,7 @@ extension QQHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -625,7 +625,7 @@ extension QQHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(queryItem!.value!, message.link.absoluteString.bus.base64EncodedString)
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -671,7 +671,7 @@ extension QQHandlerBaseTests {
         case let message as FileMessage:
             XCTAssertEqual(value!, message.data)
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: value))
         }
     }
 
@@ -688,7 +688,7 @@ extension QQHandlerBaseTests {
         case let message as FileMessage:
             XCTAssertEqual(value!, message.thumbnail)
         default:
-            XCTAssertTrue(false)
+            XCTAssertTrue(false, String(describing: value))
         }
     }
 }
