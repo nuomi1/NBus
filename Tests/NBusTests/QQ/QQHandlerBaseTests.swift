@@ -273,7 +273,7 @@ extension QQHandlerBaseTests {
         let url = queryItems.removeFirst { $0.name == "url" }
         test_url(url, message)
 
-        logger.debug("\(URLComponents.self), \(message.identifier), \(endpoint), \(queryItems)")
+        logger.debug("\(URLComponents.self), \(message.identifier), \(endpoint), \(queryItems.map(\.name).sorted())")
         XCTAssertTrue(queryItems.isEmpty)
     }
 }
@@ -653,7 +653,7 @@ extension QQHandlerBaseTests {
         let previewimagedata = dictionary.removeValue(forKey: "previewimagedata") as? Data
         test_previewimagedata(previewimagedata, message)
 
-        logger.debug("\(UIPasteboard.self), \(message.identifier), \(endpoint), \(dictionary.keys)")
+        logger.debug("\(UIPasteboard.self), \(message.identifier), \(endpoint), \(dictionary.keys.sorted())")
         XCTAssertTrue(dictionary.isEmpty)
     }
 }
@@ -758,7 +758,7 @@ extension QQHandlerBaseTests {
         let pasteboard = queryItems.removeFirst { $0.name == "pasteboard" }!
         test_pasteboard(pasteboard)
 
-        logger.debug("\(URLComponents.self), \(queryItems)")
+        logger.debug("\(URLComponents.self), \(queryItems.map(\.name).sorted())")
         XCTAssertTrue(queryItems.isEmpty)
     }
 }
@@ -812,6 +812,7 @@ extension QQHandlerBaseTests {
         let status_version = object.removeValue(forKey: "status_version") as! String
         XCTAssertEqual(status_version, statusVersion)
 
+        logger.debug("\(URLComponents.self), \(object.keys.sorted())")
         XCTAssertTrue(object.isEmpty)
     }
 }
@@ -828,7 +829,7 @@ extension QQHandlerBaseTests {
 
         let data = items.first!["com.tencent.mqq.api.apiLargeData"]
 
-        logger.debug("\(UIPasteboard.self), \(items.map { $0.keys })")
+        logger.debug("\(UIPasteboard.self), \(items.map(\.keys))")
         XCTAssertNil(data)
     }
 }
@@ -924,7 +925,7 @@ extension QQHandlerBaseTests {
         let mini_type = queryItems.removeFirst { $0.name == "mini_type" }!
         test_mini_type(mini_type, message)
 
-        logger.debug("\(URLComponents.self), \(queryItems)")
+        logger.debug("\(URLComponents.self), \(queryItems.map(\.name).sorted())")
         XCTAssertTrue(queryItems.isEmpty)
     }
 }
@@ -948,7 +949,7 @@ extension QQHandlerBaseTests {
 
         let data = items.first!["com.tencent.mqq.api.apiLargeData"]
 
-        logger.debug("\(UIPasteboard.self), \(items.map { $0.keys })")
+        logger.debug("\(UIPasteboard.self), \(items.map(\.keys))")
         XCTAssertNil(data)
     }
 }
