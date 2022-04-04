@@ -47,6 +47,8 @@ public class QQSDKHandler {
 
         coordinator = Coordinator(owner: self)
 
+        TencentOAuth.setIsUserAgreedAuthorization(true)
+
         oauthCoordinator = TencentOAuth(
             appId: appID.trimmingCharacters(in: .letters),
             enableUniveralLink: true,
