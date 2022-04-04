@@ -49,6 +49,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #elseif BusMockWeiboSDK
         let title = "isWeiboAppInstalled"
         let message = "\(WeiboSDK.isWeiboAppInstalled())"
+        #elseif BusTestsTarget
+        let title = "Empty"
+        let message = "Empty"
         #else
         #error("ERROR")
         let title = "ERROR"
