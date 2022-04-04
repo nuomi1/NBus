@@ -28,6 +28,17 @@ target "BusMockWeiboSDK" do
   pod "NBusWeiboSDK"
 end
 
+target "BusTests" do
+  pod "NBus/BusHandlers", :path => "../"
+  pod "NBus/SDKHandlers", :path => "../"
+
+  pod "NBusQQSDK"
+  pod "NBusWechatSDK"
+  pod "NBusWeiboSDK"
+
+  pod "RxCocoa"
+end
+
 post_install do |installer|
   installer.pods_project.root_object.attributes["ORGANIZATIONNAME"] = "nuomi1"
 end
