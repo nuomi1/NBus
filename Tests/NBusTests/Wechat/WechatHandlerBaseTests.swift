@@ -832,3 +832,172 @@ extension WechatHandlerBaseTests {
         XCTAssertEqual(value, "0")
     }
 }
+
+// MARK: - Launch
+
+extension WechatHandlerBaseTests {
+
+    func test_launch() {
+        let message = MediaSource.wechatMiniProgram as! MiniProgramMessage
+
+        UIApplication.shared.rx
+            .openURL()
+            .bind(onNext: { [unowned self] url in
+                self.test_launch(url: url, message)
+            })
+            .disposed(by: disposeBag)
+
+        UIPasteboard.general.rx
+            .items()
+            .bind(onNext: { [unowned self] items in
+                self.test_launch(items: items)
+            })
+            .disposed(by: disposeBag)
+
+        Bus.shared.launch(
+            program: message,
+            with: Platforms.wechat,
+            completionHandler: { result in
+                switch result {
+                case .success:
+                    XCTAssertTrue(true)
+                case .failure:
+                    XCTAssertTrue(false)
+                }
+            }
+        )
+    }
+}
+
+// MARK: Launch - UniversalLink
+
+extension WechatHandlerBaseTests {
+
+    func test_launch(url: URL, _ message: MessageType) {
+        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        var queryItems = urlComponents.queryItems ?? []
+
+        // GeneralUniversalLink
+
+        XCTAssertEqual(urlComponents.scheme, "https")
+        XCTAssertEqual(urlComponents.host, "help.wechat.com")
+
+        let wechat_app_bundleId = queryItems.removeFirst { $0.name == "wechat_app_bundleId" }!
+        test_wechat_app_bundleId(wechat_app_bundleId)
+
+        let wechat_auth_context_id = queryItems.removeFirst { $0.name == "wechat_auth_context_id" }!
+        test_wechat_auth_context_id(wechat_auth_context_id)
+
+        // LaunchUniversalLink
+
+        XCTAssertEqual(urlComponents.path, "/app/\(appID)/jumpWxa/")
+
+        let extMsg = queryItems.removeFirst { $0.name == "extMsg" }!
+        test_extMsg(extMsg)
+
+        let miniProgramType = queryItems.removeFirst { $0.name == "miniProgramType" }!
+        test_miniProgramType(miniProgramType, message)
+
+        let path = queryItems.removeFirst { $0.name == "path" }!
+        test_path(path, message)
+
+        let userName = queryItems.removeFirst { $0.name == "userName" }!
+        test_userName(userName, message)
+
+        logger.debug("\(URLComponents.self), \(message.identifier), \(queryItems.map(\.name).sorted())")
+        XCTAssertTrue(queryItems.isEmpty)
+    }
+}
+
+extension WechatHandlerBaseTests {
+
+    func test_extMsg(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, "")
+    }
+
+    func test_miniProgramType(_ queryItem: URLQueryItem, _ message: MessageType) {
+        let miniProgramType: (MiniProgramMessage.MiniProgramType) -> String = { miniProgramType in
+            switch miniProgramType {
+            case .release:
+                return "0"
+            case .test:
+                return "1"
+            case .preview:
+                return "2"
+            }
+        }
+
+        switch message {
+        case let message as MiniProgramMessage:
+            XCTAssertEqual(queryItem.value!, miniProgramType(message.miniProgramType))
+        default:
+            XCTAssertTrue(false, "\(String(describing: queryItem.value))")
+        }
+    }
+
+    func test_path(_ queryItem: URLQueryItem, _ message: MessageType) {
+        switch message {
+        case let message as MiniProgramMessage:
+            XCTAssertEqual(queryItem.value!, message.path)
+        default:
+            XCTAssertTrue(false, "\(String(describing: queryItem.value))")
+        }
+    }
+
+    func test_userName(_ queryItem: URLQueryItem, _ message: MessageType) {
+        switch message {
+        case let message as MiniProgramMessage:
+            XCTAssertEqual(queryItem.value!, message.miniProgramID)
+        default:
+            XCTAssertTrue(false, "\(String(describing: queryItem.value))")
+        }
+    }
+}
+
+// MARK: Launch - Pasteboard
+
+extension WechatHandlerBaseTests {
+
+    func test_launch(items: [[String: Any]]) {
+        if items.isEmpty {
+            XCTAssertTrue(true)
+            return
+        }
+
+        let data = items.first!["content"] as! Data
+        let plist = try! PropertyListSerialization.propertyList(from: data, format: nil) as! [String: Any]
+        var dictionary = plist[appID] as! [String: Any]
+
+        // GeneralPasteboard
+
+        let isAutoResend = dictionary.removeValue(forKey: "isAutoResend") as! Bool
+        test_isAutoResend(isAutoResend)
+
+        let result = dictionary.removeValue(forKey: "result") as! String
+        test_result(result)
+
+        let returnFromApp = dictionary.removeValue(forKey: "returnFromApp") as! String
+        test_returnFromApp(returnFromApp)
+
+        let sdkver = dictionary.removeValue(forKey: "sdkver") as! String
+        test_sdkver(sdkver)
+
+        let universalLink = dictionary.removeValue(forKey: "universalLink") as! String
+        test_universalLink(universalLink)
+
+        // oauth
+
+        let command = dictionary.removeValue(forKey: "command") as! String
+        test_oauth_command(command)
+
+        logger.debug("\(UIPasteboard.self), \(dictionary.keys.sorted())")
+        XCTAssertTrue(dictionary.isEmpty)
+    }
+}
+
+extension WechatHandlerBaseTests {
+
+    func test_oauth_command(_ value: String) {
+        XCTAssertEqual(value, "1080")
+    }
+}
