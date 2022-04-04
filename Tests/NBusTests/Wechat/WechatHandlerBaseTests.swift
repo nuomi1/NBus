@@ -706,3 +706,129 @@ extension WechatHandlerBaseTests {
         }
     }
 }
+
+// MARK: - Oauth
+
+extension WechatHandlerBaseTests {
+
+    func test_oauth() {
+        UIApplication.shared.rx
+            .openURL()
+            .bind(onNext: { [unowned self] url in
+                self.test_oauth(url: url)
+            })
+            .disposed(by: disposeBag)
+
+        UIPasteboard.general.rx
+            .items()
+            .bind(onNext: { [unowned self] items in
+                self.test_oauth(items: items)
+            })
+            .disposed(by: disposeBag)
+
+        Bus.shared.oauth(
+            with: Platforms.wechat,
+            completionHandler: { result in
+                switch result {
+                case .success:
+                    XCTAssertTrue(true)
+                case .failure:
+                    XCTAssertTrue(false)
+                }
+            }
+        )
+    }
+}
+
+// MARK: Oauth - UniversalLink
+
+extension WechatHandlerBaseTests {
+
+    func test_oauth(url: URL) {
+        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        var queryItems = urlComponents.queryItems ?? []
+
+        // GeneralUniversalLink
+
+        XCTAssertEqual(urlComponents.scheme, "https")
+        XCTAssertEqual(urlComponents.host, "help.wechat.com")
+
+        let wechat_app_bundleId = queryItems.removeFirst { $0.name == "wechat_app_bundleId" }!
+        test_wechat_app_bundleId(wechat_app_bundleId)
+
+        let wechat_auth_context_id = queryItems.removeFirst { $0.name == "wechat_auth_context_id" }!
+        test_wechat_auth_context_id(wechat_auth_context_id)
+
+        // OauthUniversalLink
+
+        XCTAssertEqual(urlComponents.path, "/app/\(appID)/auth/")
+
+        let scope = queryItems.removeFirst { $0.name == "scope" }!
+        test_scope(scope)
+
+        let state = queryItems.removeFirst { $0.name == "state" }!
+        test_state(state)
+
+        logger.debug("\(URLComponents.self), \(queryItems.map(\.name).sorted())")
+        XCTAssertTrue(queryItems.isEmpty)
+    }
+}
+
+extension WechatHandlerBaseTests {
+
+    func test_scope(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, "snsapi_userinfo")
+    }
+
+    func test_state(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, "")
+    }
+}
+
+// MARK: Oauth - Pasteboard
+
+extension WechatHandlerBaseTests {
+
+    func test_oauth(items: [[String: Any]]) {
+        if items.isEmpty {
+            XCTAssertTrue(true)
+            return
+        }
+
+        let data = items.first!["content"] as! Data
+        let plist = try! PropertyListSerialization.propertyList(from: data, format: nil) as! [String: Any]
+        var dictionary = plist[appID] as! [String: Any]
+
+        // GeneralPasteboard
+
+        let isAutoResend = dictionary.removeValue(forKey: "isAutoResend") as! Bool
+        test_isAutoResend(isAutoResend)
+
+        let result = dictionary.removeValue(forKey: "result") as! String
+        test_result(result)
+
+        let returnFromApp = dictionary.removeValue(forKey: "returnFromApp") as! String
+        test_returnFromApp(returnFromApp)
+
+        let sdkver = dictionary.removeValue(forKey: "sdkver") as! String
+        test_sdkver(sdkver)
+
+        let universalLink = dictionary.removeValue(forKey: "universalLink") as! String
+        test_universalLink(universalLink)
+
+        // oauth
+
+        let command = dictionary.removeValue(forKey: "command") as! String
+        test_command(command)
+
+        logger.debug("\(UIPasteboard.self), \(dictionary.keys.sorted())")
+        XCTAssertTrue(dictionary.isEmpty)
+    }
+}
+
+extension WechatHandlerBaseTests {
+
+    func test_command(_ value: String) {
+        XCTAssertEqual(value, "0")
+    }
+}
