@@ -8,10 +8,17 @@ configFiles:
   Release: NBus/Config.xcconfig
 
 targetTemplates:
-  BusMockTemplate:
-    type: application
+  BusTemplate:
     platform: iOS
     deploymentTarget: 10.0
+    settings:
+      base:
+        SWIFT_VERSION: 5.0
+    scheme: {}
+  BusMockTemplate:
+    templates:
+      - BusTemplate
+    type: application
     sources:
       - path: NBus
         excludes:
@@ -25,8 +32,11 @@ targetTemplates:
         OTHER_SWIFT_FLAGS:
           - "$(inherited)"
           - "-D ${target_name}"
-        SWIFT_VERSION: 5.0
-    scheme: {}
+  BusMockSDKTemplate:
+    templates:
+      - BusMockTemplate
+    sources:
+      - NBus/AppDelegateSDK.swift
 
 packages:
   Logging:
@@ -47,16 +57,32 @@ targets:
       - package: Logging
   BusMockQQSDK:
     templates:
-      - BusMockTemplate
-    sources:
-      - NBus/AppDelegateSDK.swift
+      - BusMockSDKTemplate
   BusMockWechatSDK:
     templates:
-      - BusMockTemplate
-    sources:
-      - NBus/AppDelegateSDK.swift
+      - BusMockSDKTemplate
   BusMockWeiboSDK:
     templates:
-      - BusMockTemplate
+      - BusMockSDKTemplate
+  BusTestsTarget:
+    templates:
+      - BusMockSDKTemplate
     sources:
-      - NBus/AppDelegateSDK.swift
+      - path: NBus
+        includes:
+          - Model/AppState+Notification.swift
+    scheme:
+      testTargets:
+        - BusTests
+  BusTests:
+    templates:
+      - BusTemplate
+    type: bundle.unit-test
+    sources:
+      - path: ../Tests/NBusTests
+      - path: NBus/Model
+        excludes:
+          - AppState+Setup.swift
+    dependencies:
+      - target: BusTestsTarget
+      - package: Logging
