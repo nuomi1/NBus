@@ -192,6 +192,8 @@ extension QQSDKHandler: ShareHandlerType {
             completionHandler(.failure(.invalidParameter))
         case .EQQAPIVERSIONNEEDUPDATE:
             completionHandler(.failure(.unsupportedApplication))
+        case .EQQAPI_ERROR_USER_NOT_AGREED_AUTHORIZATION:
+            completionHandler(.failure(.invalidParameter))
         default:
             busAssertionFailure()
             completionHandler(.failure(.unknown))
