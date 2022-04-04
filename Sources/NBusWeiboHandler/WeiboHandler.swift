@@ -34,7 +34,7 @@ public class WeiboHandler {
 
     public let appID: String
     public let universalLink: URL
-    private let redirectLink: URL
+    public let redirectLink: URL
 
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
