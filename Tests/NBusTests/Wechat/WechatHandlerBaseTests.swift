@@ -202,6 +202,10 @@ extension WechatHandlerBaseTests {
         let wechat_auth_context_id = queryItems.removeFirst { $0.name == "wechat_auth_context_id" }!
         test_wechat_auth_context_id(wechat_auth_context_id)
 
+        // ShareUniversalLink
+
+        XCTAssertEqual(urlComponents.path, "/app/\(appID)/sendreq/")
+
         logger.debug("\(URLComponents.self), \(message.identifier), \(endpoint), \(queryItems.map(\.name).sorted())")
         XCTAssertTrue(queryItems.isEmpty)
     }
