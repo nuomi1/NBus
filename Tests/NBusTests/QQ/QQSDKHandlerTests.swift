@@ -11,7 +11,7 @@ import Foundation
 
 class QQSDKHandlerTests: QQHandlerBaseTests {
 
-    override class var handler: HandlerType { AppState.qqSDKHandler }
+    override var handler: HandlerType { AppState.qqSDKHandler }
 
-    override class var category: AppState.PlatformItem.Category { .sdk }
+    override var category: AppState.PlatformItem.Category { .sdk }
 }

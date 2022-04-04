@@ -11,7 +11,7 @@ import Foundation
 
 class WeiboSDKHandlerTests: WeiboHandlerBaseTests {
 
-    override class var handler: HandlerType { AppState.weiboSDKHandler }
+    override var handler: HandlerType { AppState.weiboSDKHandler }
 
-    override class var category: AppState.PlatformItem.Category { .sdk }
+    override var category: AppState.PlatformItem.Category { .sdk }
 }

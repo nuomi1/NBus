@@ -13,19 +13,8 @@ import XCTest
 
 class WechatHandlerBaseTests: HandlerBaseTests {
 
-    override class func setUp() {
-        super.setUp()
-
-        AppState.shared.clearPasteboard()
-    }
-}
-
-// MARK: - Helper
-
-extension WechatHandlerBaseTests {
-
-    var appID: String {
-        switch Self.handler {
+    override var appID: String {
+        switch handler {
         case let handler as WechatSDKHandler:
             return handler.appID
         case let handler as WechatHandler:
@@ -35,16 +24,12 @@ extension WechatHandlerBaseTests {
         }
     }
 
-    var bundleID: String {
-        Bundle.main.bus.identifier!
-    }
-
-    var sdkVersion: String {
+    override var sdkVersion: String {
         "1.9.2"
     }
 
-    var universalLink: URL {
-        switch Self.handler {
+    override var universalLink: URL {
+        switch handler {
         case let handler as WechatSDKHandler:
             return handler.universalLink
         case let handler as WechatHandler:

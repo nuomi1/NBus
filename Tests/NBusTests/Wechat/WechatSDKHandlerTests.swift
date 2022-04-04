@@ -11,7 +11,7 @@ import Foundation
 
 class WechatSDKHandlerTests: WechatHandlerBaseTests {
 
-    override class var handler: HandlerType { AppState.wechatSDKHandler }
+    override var handler: HandlerType { AppState.wechatSDKHandler }
 
-    override class var category: AppState.PlatformItem.Category { .sdk }
+    override var category: AppState.PlatformItem.Category { .sdk }
 }

@@ -13,11 +13,39 @@ import XCTest
 
 class HandlerBaseTests: XCTestCase {
 
-    class var handler: HandlerType {
+    var appID: String {
         fatalError()
     }
 
-    class var category: AppState.PlatformItem.Category {
+    final var appNumber: String {
+        appID.trimmingCharacters(in: .letters)
+    }
+
+    final var bundleID: String {
+        Bundle.main.bus.identifier!
+    }
+
+    var category: AppState.PlatformItem.Category {
+        fatalError()
+    }
+
+    final var displayName: String {
+        Bundle.main.bus.displayName!
+    }
+
+    var handler: HandlerType {
+        fatalError()
+    }
+
+    var sdkShortVersion: String {
+        fatalError()
+    }
+
+    var sdkVersion: String {
+        fatalError()
+    }
+
+    var universalLink: URL {
         fatalError()
     }
 
@@ -72,8 +100,17 @@ class HandlerBaseTests: XCTestCase {
                 logger.debug("\(url)")
             })
             .disposed(by: disposeBag)
+    }
+}
+
+extension HandlerBaseTests {
+
+    override func setUp() {
+        super.setUp()
 
         Bus.shared.handlers = [handler]
+
+        AppState.shared.clearPasteboard()
     }
 
     override func tearDown() {

@@ -13,19 +13,8 @@ import XCTest
 
 class QQHandlerBaseTests: HandlerBaseTests {
 
-    override class func setUp() {
-        super.setUp()
-
-        AppState.shared.clearPasteboard()
-    }
-}
-
-// MARK: - Helper
-
-extension QQHandlerBaseTests {
-
-    var appID: String {
-        switch Self.handler {
+    override var appID: String {
+        switch handler {
         case let handler as QQSDKHandler:
             return handler.appID
         case let handler as QQHandler:
@@ -35,23 +24,11 @@ extension QQHandlerBaseTests {
         }
     }
 
-    var appNumber: String {
-        appID.trimmingCharacters(in: .letters)
-    }
-
-    var bundleID: String {
-        Bundle.main.bus.identifier!
-    }
-
-    var displayName: String {
-        Bundle.main.bus.displayName!
-    }
-
-    var sdkShortVersion: String {
+    override var sdkShortVersion: String {
         "3.5.11"
     }
 
-    var sdkVersion: String {
+    override var sdkVersion: String {
         "3.5.11_lite"
     }
 
@@ -71,8 +48,8 @@ extension QQHandlerBaseTests {
         "QQ\(String(format: "%08llX", (appNumber as NSString).longLongValue))"
     }
 
-    var universalLink: URL {
-        switch Self.handler {
+    override var universalLink: URL {
+        switch handler {
         case let handler as QQSDKHandler:
             return handler.universalLink
         case let handler as QQHandler:
