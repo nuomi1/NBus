@@ -21,6 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    #if BusTestsTarget
+    var openURLToken: NSObjectProtocol?
+    var openUserActivityToken: NSObjectProtocol?
+    #endif
+
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -64,4 +69,78 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
+
+    #if BusTestsTarget
+    func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
+        let group = DispatchGroup()
+
+        group.enter()
+
+        NotificationCenter.default.post(
+            name: AppState.OpenURL.requestName,
+            object: nil,
+            userInfo: [
+                AppState.OpenURL.requestKey: url,
+            ]
+        )
+
+        var result: Bool!
+
+        openURLToken = NotificationCenter.default.addObserver(
+            forName: AppState.OpenURL.responseName,
+            object: nil,
+            queue: nil,
+            using: { notification in
+                result = notification.userInfo?[AppState.OpenURL.responseKey] as? Bool
+
+                group.leave()
+            }
+        )
+
+        group.wait()
+        openURLToken = nil
+
+        return result
+    }
+
+    func application(
+        _ application: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
+        let group = DispatchGroup()
+
+        group.enter()
+
+        NotificationCenter.default.post(
+            name: AppState.OpenUserActivity.requestName,
+            object: nil,
+            userInfo: [
+                AppState.OpenUserActivity.requestKey: userActivity,
+            ]
+        )
+
+        var result: Bool!
+
+        openUserActivityToken = NotificationCenter.default.addObserver(
+            forName: AppState.OpenUserActivity.responseName,
+            object: nil,
+            queue: nil,
+            using: { notification in
+                result = notification.userInfo?[AppState.OpenUserActivity.responseKey] as? Bool
+
+                group.leave()
+            }
+        )
+
+        group.wait()
+        openUserActivityToken = nil
+
+        return result
+    }
+    #endif
 }

@@ -27,6 +27,38 @@ class HandlerBaseTests: XCTestCase {
     override class func setUp() {
         super.setUp()
 
+        NotificationCenter.default.rx
+            .notification(AppState.OpenURL.requestName)
+            .bind(onNext: { notification in
+                let url = notification.userInfo?[AppState.OpenURL.requestKey] as! URL
+                let result = Bus.shared.openURL(url)
+
+                NotificationCenter.default.post(
+                    name: AppState.OpenURL.responseName,
+                    object: nil,
+                    userInfo: [
+                        AppState.OpenURL.responseKey: result,
+                    ]
+                )
+            })
+            .disposed(by: disposeBag)
+
+        NotificationCenter.default.rx
+            .notification(AppState.OpenUserActivity.requestName)
+            .bind(onNext: { notification in
+                let userActivity = notification.userInfo?[AppState.OpenUserActivity.requestKey] as! NSUserActivity
+                let result = Bus.shared.openUserActivity(userActivity)
+
+                NotificationCenter.default.post(
+                    name: AppState.OpenUserActivity.responseName,
+                    object: nil,
+                    userInfo: [
+                        AppState.OpenUserActivity.responseKey: result,
+                    ]
+                )
+            })
+            .disposed(by: disposeBag)
+
         UIApplication.shared.rx
             .canOpenURL()
             .bind(onNext: { url in
