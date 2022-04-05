@@ -192,6 +192,75 @@ extension ShareURLTestCase {
     }
 }
 
+// MARK: - Share - Pasteboard
+
+extension SharePasteboardTestCase {
+
+    func test_share(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) {
+        var items = items as! [[String: Data]]
+
+        logger.debug("\(UIPasteboard.self), start, \(items.map { $0.keys.sorted() })")
+
+        test_share_major_pb(dictionary: test_share_extract_major_pb(items: &items), message, endpoint)
+
+        test_share_extra_pb(items: &items)
+
+        logger.debug("\(UIPasteboard.self), end, \(items.map { $0.keys.sorted() })")
+
+        XCTAssertTrue(items.isEmpty)
+
+        pbExpectation.fulfill()
+    }
+
+    func test_share_major_pb(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+        var dictionary = dictionary
+
+        logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
+
+        // General - Pasteboard
+
+        test_general_pb(dictionary: &dictionary)
+
+        // Share - Comon - Pasteboard
+
+        test_share_common_pb(dictionary: &dictionary)
+
+        // Share - MediaMessage - Pasteboard
+
+        test_share_media_pb(dictionary: &dictionary, message, endpoint)
+
+        // Share - Message - Pasteboard
+
+        test_share_message_pb(dictionary: &dictionary, message, endpoint)
+
+        logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
+
+        XCTAssertTrue(dictionary.isEmpty)
+    }
+
+    func test_share_extract_KeyedArchiver_pb(items: inout [[String: Data]], key: String) -> [String: Any] {
+        let item = items.removeFirst { $0.keys.contains(key) }!
+
+        precondition(item.count == 1)
+
+        let data = item[key]!
+        let dictionary = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
+
+        return dictionary
+    }
+
+    func test_share_extract_PropertyList_pb(items: inout [[String: Data]], key: String) -> [String: Any] {
+        let item = items.removeFirst { $0.keys.contains(key) }!
+
+        precondition(item.count == 1)
+
+        let data = item[key]!
+        let dictionary = try! PropertyListSerialization.propertyList(from: data, format: nil) as! [String: Any]
+
+        return dictionary
+    }
+}
+
 // MARK: - Share - Completion
 
 extension ShareCompletionTestCase {
