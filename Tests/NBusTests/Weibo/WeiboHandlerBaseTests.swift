@@ -122,6 +122,23 @@ extension WeiboHandlerBaseTests {
     }
 }
 
+// MARK: - General - Pasteboard
+
+extension WeiboHandlerBaseTests: GeneralPasteboardTestCase {
+
+    func test_general_pb(dictionary: inout [String: Any]) {
+        let requestID = dictionary.removeValue(forKey: "requestID") as! String
+        test_requestID(requestID)
+    }
+}
+
+extension WeiboHandlerBaseTests {
+
+    func test_requestID(_ value: String) {
+        XCTAssertNotNil(UUID(uuidString: value))
+    }
+}
+
 // MARK: - Share
 
 extension WeiboHandlerBaseTests: ShareTestCase {
@@ -186,38 +203,29 @@ extension WeiboHandlerBaseTests: ShareMessageUniversalLinkTestCase {
     }
 }
 
-// MARK: Share - Pasteboard
+// MARK: - Share - Pasteboard
 
 extension WeiboHandlerBaseTests {
 
-    func test_share(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) {
-        if items.isEmpty {
-            XCTAssertTrue(true)
-            return
-        }
+    func test_share_extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
+        test_share_extract_KeyedArchiver_pb(items: &items, key: "transferObject")
+    }
 
-        var items = items as! [[String: Data]]
-
+    func test_share_extra_pb(items: inout [[String: Data]]) {
         test_app(&items)
 
         test_sdkVersion(&items)
 
-        test_transferObject(&items, message, endpoint)
-
         test_userInfo(&items)
-
-        logger.debug("\(UIPasteboard.self), \(message.identifier), \(endpoint), \(items.map { $0.keys.sorted() })")
-        XCTAssertTrue(items.isEmpty)
-
-        pbExpectation.fulfill()
     }
 }
 
 extension WeiboHandlerBaseTests {
 
     func test_app(_ items: inout [[String: Data]]) {
-        let data = items.removeFirst { $0.keys.contains("app") }!["app"]!
-        var dictionary = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
+        var dictionary = test_share_extract_KeyedArchiver_pb(items: &items, key: "app")
+
+        logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
 
         let aid = dictionary.removeValue(forKey: "aid") as! String
         test_aid(aid)
@@ -231,7 +239,8 @@ extension WeiboHandlerBaseTests {
         let universalLink = dictionary.removeValue(forKey: "universalLink") as! String
         test_universalLink(universalLink)
 
-        logger.debug("\(UIPasteboard.self), \(dictionary.keys.sorted())")
+        logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
+
         XCTAssertTrue(dictionary.isEmpty)
     }
 }
@@ -266,21 +275,34 @@ extension WeiboHandlerBaseTests {
 
 extension WeiboHandlerBaseTests {
 
-    func test_transferObject(_ items: inout [[String: Data]], _ message: MessageType, _ endpoint: Endpoint) {
-        let data = items.removeFirst { $0.keys.contains("transferObject") }!["transferObject"]!
-        var dictionary = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
+    func test_userInfo(_ items: inout [[String: Data]]) {
+        var dictionary = test_share_extract_KeyedArchiver_pb(items: &items, key: "userInfo")
 
+        logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
+
+        let startTime = dictionary.removeValue(forKey: "startTime") as! String
+        test_startTime(startTime)
+
+        logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
+
+        XCTAssertTrue(dictionary.isEmpty)
+    }
+}
+
+extension WeiboHandlerBaseTests {
+
+    func test_startTime(_ value: String) {
+        XCTAssertNotNil(dateFormatter.date(from: value))
+    }
+}
+
+// MARK: - Share - Common - Pasteboard
+
+extension WeiboHandlerBaseTests: ShareCommonPasteboardTestCase {
+
+    func test_share_common_pb(dictionary: inout [String: Any]) {
         let `class` = dictionary.removeValue(forKey: "__class") as! String
         test_class_share(`class`)
-
-        let _message = dictionary.removeValue(forKey: "message") as! [String: Any]
-        test_message(_message, message, endpoint)
-
-        let requestID = dictionary.removeValue(forKey: "requestID") as! String
-        test_requestID(requestID)
-
-        logger.debug("\(UIPasteboard.self), \(message.identifier), \(endpoint), \(dictionary.keys.sorted())")
-        XCTAssertTrue(dictionary.isEmpty)
     }
 }
 
@@ -289,9 +311,33 @@ extension WeiboHandlerBaseTests {
     func test_class_share(_ value: String) {
         XCTAssertEqual(value, "WBSendMessageToWeiboRequest")
     }
+}
+
+// MARK: - Share - MediaMessage - Pasteboard
+
+extension WeiboHandlerBaseTests: ShareMediaMessagePasteboardTestCase {
+
+    func test_share_media_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+        XCTAssertTrue(true)
+    }
+}
+
+// MARK: - Share - Message - Pasteboard
+
+extension WeiboHandlerBaseTests: ShareMessagePasteboardTestCase {
+
+    func test_share_message_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+        let _message = dictionary.removeValue(forKey: "message") as! [String: Any]
+        test_message(_message, message, endpoint)
+    }
+}
+
+extension WeiboHandlerBaseTests {
 
     func test_message(_ value: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         var dictionary = value
+
+        logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
 
         let `class` = dictionary.removeValue(forKey: "__class") as! String
         test_class_message(`class`)
@@ -305,12 +351,9 @@ extension WeiboHandlerBaseTests {
         let text = dictionary.removeValue(forKey: "text") as? String
         test_text(text, message)
 
-        logger.debug("\(UIPasteboard.self), \(message.identifier), \(endpoint), \(dictionary.keys.sorted())")
-        XCTAssertTrue(dictionary.isEmpty)
-    }
+        logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
 
-    func test_requestID(_ value: String) {
-        XCTAssertNotNil(UUID(uuidString: value))
+        XCTAssertTrue(dictionary.isEmpty)
     }
 }
 
@@ -368,10 +411,13 @@ extension WeiboHandlerBaseTests {
     func test_image(_ value: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         var dictionary = value
 
+        logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
+
         let imageData = dictionary.removeValue(forKey: "imageData") as! Data
         test_imageData(imageData, message)
 
-        logger.debug("\(UIPasteboard.self), \(message.identifier), \(endpoint), \(dictionary.keys.sorted())")
+        logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
+
         XCTAssertTrue(dictionary.isEmpty)
     }
 }
@@ -393,6 +439,8 @@ extension WeiboHandlerBaseTests {
     func test_media(_ value: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         var dictionary = value
 
+        logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
+
         let `class` = dictionary.removeValue(forKey: "__class") as! String
         test_class_media(`class`)
 
@@ -411,7 +459,8 @@ extension WeiboHandlerBaseTests {
         let webpageUrl = dictionary.removeValue(forKey: "webpageUrl") as! String
         test_webpageUrl(webpageUrl, message)
 
-        logger.debug("\(UIPasteboard.self), \(message.identifier), \(endpoint), \(dictionary.keys.sorted())")
+        logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
+
         XCTAssertTrue(dictionary.isEmpty)
     }
 }
@@ -476,27 +525,6 @@ extension WeiboHandlerBaseTests {
         default:
             XCTAssertTrue(false, String(describing: value))
         }
-    }
-}
-
-extension WeiboHandlerBaseTests {
-
-    func test_userInfo(_ items: inout [[String: Data]]) {
-        let data = items.removeFirst { $0.keys.contains("userInfo") }!["userInfo"]!
-        var dictionary = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
-
-        let startTime = dictionary.removeValue(forKey: "startTime") as! String
-        test_startTime(startTime)
-
-        logger.debug("\(UIPasteboard.self), \(dictionary.keys.sorted())")
-        XCTAssertTrue(dictionary.isEmpty)
-    }
-}
-
-extension WeiboHandlerBaseTests {
-
-    func test_startTime(_ value: String) {
-        XCTAssertNotNil(dateFormatter.date(from: value))
     }
 }
 
