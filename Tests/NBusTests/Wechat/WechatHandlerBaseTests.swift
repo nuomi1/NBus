@@ -40,48 +40,41 @@ class WechatHandlerBaseTests: HandlerBaseTests {
     }
 }
 
-// MARK: - Share
+// MARK: - General - UniversalLink
+
+extension WechatHandlerBaseTests: GeneralUniversalLinkTestCase {
+
+    func test_general_ul(scheme: String) {
+        XCTAssertEqual(scheme, "https")
+    }
+
+    func test_general_ul(host: String) {
+        XCTAssertEqual(host, "help.wechat.com")
+    }
+
+    func test_general_ul(queryItems: inout [URLQueryItem]) {
+        let wechat_app_bundleId = queryItems.removeFirst { $0.name == "wechat_app_bundleId" }!
+        test_wechat_app_bundleId(wechat_app_bundleId)
+
+        let wechat_auth_context_id = queryItems.removeFirst { $0.name == "wechat_auth_context_id" }!
+        test_wechat_auth_context_id(wechat_auth_context_id)
+    }
+}
 
 extension WechatHandlerBaseTests {
 
-    func test_share(_ message: MessageType, _ endpoint: Endpoint) {
-        UIApplication.shared.rx
-            .openURL()
-            .bind(onNext: { [unowned self] url in
-                self.test_share(url: url, message, endpoint)
-            })
-            .disposed(by: disposeBag)
-
-        UIPasteboard.general.rx
-            .items()
-            .bind(onNext: { [unowned self] items in
-                self.test_share(items: items, message, endpoint)
-            })
-            .disposed(by: disposeBag)
-
-        Bus.shared.share(
-            message: message,
-            to: endpoint,
-            completionHandler: { result in
-                switch result {
-                case .success:
-                    XCTAssertTrue(true)
-                case let .failure(error):
-                    logger.error("\(error)")
-
-                    if message.identifier == Messages.file, endpoint == Endpoints.Wechat.timeline {
-                        XCTAssertTrue(true)
-                    } else if message.identifier == Messages.miniProgram, endpoint == Endpoints.Wechat.timeline {
-                        XCTAssertTrue(true)
-                    } else if message.identifier == Messages.miniProgram, endpoint == Endpoints.Wechat.favorite {
-                        XCTAssertTrue(true)
-                    } else {
-                        XCTAssertTrue(false)
-                    }
-                }
-            }
-        )
+    func test_wechat_app_bundleId(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, bundleID)
     }
+
+    func test_wechat_auth_context_id(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!.count, 64)
+    }
+}
+
+// MARK: - Share
+
+extension WechatHandlerBaseTests: ShareTestCase {
 
     func test_share_text_friend() {
         test_share(MediaSource.text, Endpoints.Wechat.friend)
@@ -168,42 +161,34 @@ extension WechatHandlerBaseTests {
     }
 }
 
-// MARK: Share - UniversalLink
+// MARK: - Share - UniversalLink
 
-extension WechatHandlerBaseTests {
+extension WechatHandlerBaseTests: ShareUniversalLinkTestCase {
 
-    func test_share(url: URL, _ message: MessageType, _ endpoint: Endpoint) {
-        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-        var queryItems = urlComponents.queryItems ?? []
+    func test_share_ul(path: String) {
+        XCTAssertEqual(path, "/app/\(appID)/sendreq/")
+    }
 
-        // GeneralUniversalLink
-
-        XCTAssertEqual(urlComponents.scheme, "https")
-        XCTAssertEqual(urlComponents.host, "help.wechat.com")
-
-        let wechat_app_bundleId = queryItems.removeFirst { $0.name == "wechat_app_bundleId" }!
-        test_wechat_app_bundleId(wechat_app_bundleId)
-
-        let wechat_auth_context_id = queryItems.removeFirst { $0.name == "wechat_auth_context_id" }!
-        test_wechat_auth_context_id(wechat_auth_context_id)
-
-        // ShareUniversalLink
-
-        XCTAssertEqual(urlComponents.path, "/app/\(appID)/sendreq/")
-
-        logger.debug("\(URLComponents.self), \(message.identifier), \(endpoint), \(queryItems.map(\.name).sorted())")
-        XCTAssertTrue(queryItems.isEmpty)
+    func test_share_ul(queryItems: inout [URLQueryItem]) {
+        XCTAssertTrue(true)
     }
 }
 
-extension WechatHandlerBaseTests {
+// MARK: - Share - MediaMessage - UniversalLink
 
-    func test_wechat_app_bundleId(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, bundleID)
+extension WechatHandlerBaseTests: ShareMediaMessageUniversalLinkTestCase {
+
+    func test_share_media_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        XCTAssertTrue(true)
     }
+}
 
-    func test_wechat_auth_context_id(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!.count, 64)
+// MARK: - Share - Message - UniversalLink
+
+extension WechatHandlerBaseTests: ShareMessageUniversalLinkTestCase {
+
+    func test_share_message_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        XCTAssertTrue(true)
     }
 }
 
@@ -309,6 +294,8 @@ extension WechatHandlerBaseTests {
 
         logger.debug("\(UIPasteboard.self), \(message.identifier), \(endpoint), \(dictionary.keys.sorted())")
         XCTAssertTrue(dictionary.isEmpty)
+
+        pbExpectation.fulfill()
     }
 }
 
@@ -689,6 +676,17 @@ extension WechatHandlerBaseTests {
         default:
             XCTAssertTrue(false, "\(String(describing: value))")
         }
+    }
+}
+
+// MARK: - Share - Completion
+
+extension WechatHandlerBaseTests: ShareCompletionTestCase {
+
+    func test_share_avoid_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool {
+        (message.identifier == Messages.file && endpoint == Endpoints.Wechat.timeline)
+            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.Wechat.timeline)
+            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.Wechat.favorite)
     }
 }
 
