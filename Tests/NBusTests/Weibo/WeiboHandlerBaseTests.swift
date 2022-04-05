@@ -155,15 +155,15 @@ extension WeiboHandlerBaseTests: ShareTestCase {
     }
 }
 
-// MARK: - Share - UniversalLink
+// MARK: - Share - Common - UniversalLink
 
-extension WeiboHandlerBaseTests: ShareUniversalLinkTestCase {
+extension WeiboHandlerBaseTests: ShareCommonUniversalLinkTestCase {
 
-    func test_share_ul(path: String) {
+    func test_share_common_ul(path: String) {
         XCTAssertEqual(path, "/weibosdk/request")
     }
 
-    func test_share_ul(queryItems: inout [URLQueryItem]) {
+    func test_share_common_ul(queryItems: inout [URLQueryItem]) {
         XCTAssertTrue(true)
     }
 }

@@ -171,10 +171,10 @@ extension ShareURLTestCase {
         test_general_ul(host: urlComponents.host!)
         test_general_ul(queryItems: &queryItems)
 
-        // Share - UniversalLink
+        // Share - Common - UniversalLink
 
-        test_share_ul(path: urlComponents.path)
-        test_share_ul(queryItems: &queryItems)
+        test_share_common_ul(path: urlComponents.path)
+        test_share_common_ul(queryItems: &queryItems)
 
         // Share - MediaMessage - UniversalLink
 

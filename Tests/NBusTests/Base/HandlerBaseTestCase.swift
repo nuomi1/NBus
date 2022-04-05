@@ -25,15 +25,15 @@ protocol GeneralUniversalLinkTestCase: XCTestCase {
     func test_general_ul(queryItems: inout [URLQueryItem])
 }
 
-// MARK: - Share - UniversalLink
+// MARK: - Share - Common - UniversalLink
 
-protocol ShareUniversalLinkTestCase: XCTestCase {
+protocol ShareCommonUniversalLinkTestCase: XCTestCase {
 
-    /// Test share universal link path
-    func test_share_ul(path: String)
+    /// Test share common universal link path
+    func test_share_common_ul(path: String)
 
-    /// Test share universal link queryItems
-    func test_share_ul(queryItems: inout [URLQueryItem])
+    /// Test share common universal link queryItems
+    func test_share_common_ul(queryItems: inout [URLQueryItem])
 }
 
 // MARK: - Share - MediaMessage - UniversalLink
@@ -54,7 +54,11 @@ protocol ShareMessageUniversalLinkTestCase: XCTestCase {
 
 // MARK: - Share - URL
 
-protocol ShareURLTestCase: GeneralUniversalLinkTestCase, ShareUniversalLinkTestCase, ShareMediaMessageUniversalLinkTestCase, ShareMessageUniversalLinkTestCase {
+protocol ShareURLTestCase:
+    GeneralUniversalLinkTestCase,
+    ShareCommonUniversalLinkTestCase,
+    ShareMediaMessageUniversalLinkTestCase,
+    ShareMessageUniversalLinkTestCase {
 
     /// Universal link expectation
     var ulExpectation: XCTestExpectation { get }

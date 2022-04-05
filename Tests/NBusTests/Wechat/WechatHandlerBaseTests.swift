@@ -161,15 +161,15 @@ extension WechatHandlerBaseTests: ShareTestCase {
     }
 }
 
-// MARK: - Share - UniversalLink
+// MARK: - Share - Common - UniversalLink
 
-extension WechatHandlerBaseTests: ShareUniversalLinkTestCase {
+extension WechatHandlerBaseTests: ShareCommonUniversalLinkTestCase {
 
-    func test_share_ul(path: String) {
+    func test_share_common_ul(path: String) {
         XCTAssertEqual(path, "/app/\(appID)/sendreq/")
     }
 
-    func test_share_ul(queryItems: inout [URLQueryItem]) {
+    func test_share_common_ul(queryItems: inout [URLQueryItem]) {
         XCTAssertTrue(true)
     }
 }
