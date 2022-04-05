@@ -60,59 +60,71 @@ class WeiboHandlerBaseTests: HandlerBaseTests {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss:SSS"
         return dateFormatter
     }()
+}
 
-    let ulExpectation = XCTestExpectation(description: "Universal Link")
-    let pbExpectation = XCTestExpectation(description: "Pasteboard")
+// MARK: - General - UniversalLink
+
+extension WeiboHandlerBaseTests: GeneralUniversalLinkTestCase {
+
+    func test_general_ul(scheme: String) {
+        XCTAssertEqual(scheme, "https")
+    }
+
+    func test_general_ul(host: String) {
+        XCTAssertEqual(host, "open.weibo.com")
+    }
+
+    func test_general_ul(queryItems: inout [URLQueryItem]) {
+        let lfid = queryItems.removeFirst { $0.name == "lfid" }!
+        test_lfid(lfid)
+
+        let luicode = queryItems.removeFirst { $0.name == "luicode" }!
+        test_luicode(luicode)
+
+        let newVersion = queryItems.removeFirst { $0.name == "newVersion" }!
+        test_newVersion(newVersion)
+
+        let objId = queryItems.removeFirst { $0.name == "objId" }!
+        test_objId(objId)
+
+        let sdkversion = queryItems.removeFirst { $0.name == "sdkversion" }!
+        test_sdkversion(sdkversion)
+
+        let urltype = queryItems.removeFirst { $0.name == "urltype" }!
+        test_urltype(urltype)
+    }
+}
+
+extension WeiboHandlerBaseTests {
+
+    func test_lfid(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, bundleID)
+    }
+
+    func test_luicode(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, "10000360")
+    }
+
+    func test_newVersion(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, sdkShortVersion)
+    }
+
+    func test_objId(_ queryItem: URLQueryItem) {
+        XCTAssertNotNil(UUID(uuidString: queryItem.value!))
+    }
+
+    func test_sdkversion(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, sdkVersion)
+    }
+
+    func test_urltype(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, "link")
+    }
 }
 
 // MARK: - Share
 
-extension WeiboHandlerBaseTests {
-
-    func test_share(_ message: MessageType, _ endpoint: Endpoint) {
-        UIApplication.shared.rx
-            .openURL()
-            .bind(onNext: { [unowned self] url in
-                self.test_share(url: url, message, endpoint)
-            })
-            .disposed(by: disposeBag)
-
-        UIPasteboard.general.rx
-            .items()
-            .bind(onNext: { [unowned self] items in
-                self.test_share(items: items, message, endpoint)
-            })
-            .disposed(by: disposeBag)
-
-        Bus.shared.share(
-            message: message,
-            to: endpoint,
-            completionHandler: { [unowned self] result in
-                switch result {
-                case .success:
-                    XCTAssertTrue(true)
-                case let .failure(error):
-                    logger.error("\(error)")
-
-                    if message.identifier == Messages.file, endpoint == Endpoints.Weibo.timeline {
-                        XCTAssertTrue(true)
-
-                        self.ulExpectation.fulfill()
-                        self.pbExpectation.fulfill()
-                    } else if message.identifier == Messages.miniProgram, endpoint == Endpoints.Weibo.timeline {
-                        XCTAssertTrue(true)
-
-                        self.ulExpectation.fulfill()
-                        self.pbExpectation.fulfill()
-                    } else {
-                        XCTAssertTrue(false)
-                    }
-                }
-            }
-        )
-
-        wait(for: [ulExpectation, pbExpectation], timeout: 5)
-    }
+extension WeiboHandlerBaseTests: ShareTestCase {
 
     func test_share_text_timeline() {
         test_share(MediaSource.text, Endpoints.Weibo.timeline)
@@ -143,70 +155,34 @@ extension WeiboHandlerBaseTests {
     }
 }
 
-// MARK: Share - UniversalLink
+// MARK: - Share - UniversalLink
 
-extension WeiboHandlerBaseTests {
+extension WeiboHandlerBaseTests: ShareUniversalLinkTestCase {
 
-    func test_share(url: URL, _ message: MessageType, _ endpoint: Endpoint) {
-        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-        var queryItems = urlComponents.queryItems ?? []
+    func test_share_ul(path: String) {
+        XCTAssertEqual(path, "/weibosdk/request")
+    }
 
-        // GeneralUniversalLink
-
-        XCTAssertEqual(urlComponents.scheme, "https")
-        XCTAssertEqual(urlComponents.host, "open.weibo.com")
-
-        XCTAssertEqual(urlComponents.path, "/weibosdk/request")
-
-        let lfid = queryItems.removeFirst { $0.name == "lfid" }!
-        test_lfid(lfid)
-
-        let luicode = queryItems.removeFirst { $0.name == "luicode" }!
-        test_luicode(luicode)
-
-        let newVersion = queryItems.removeFirst { $0.name == "newVersion" }!
-        test_newVersion(newVersion)
-
-        let objId = queryItems.removeFirst { $0.name == "objId" }!
-        test_objId(objId)
-
-        let sdkversion = queryItems.removeFirst { $0.name == "sdkversion" }!
-        test_sdkversion(sdkversion)
-
-        let urltype = queryItems.removeFirst { $0.name == "urltype" }!
-        test_urltype(urltype)
-
-        logger.debug("\(URLComponents.self), \(message.identifier), \(endpoint), \(queryItems.map(\.name).sorted())")
-        XCTAssertTrue(queryItems.isEmpty)
-
-        ulExpectation.fulfill()
+    func test_share_ul(queryItems: inout [URLQueryItem]) {
+        XCTAssertTrue(true)
     }
 }
 
-extension WeiboHandlerBaseTests {
+// MARK: - Share - MediaMessage - UniversalLink
 
-    func test_lfid(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, bundleID)
+extension WeiboHandlerBaseTests: ShareMediaMessageUniversalLinkTestCase {
+
+    func test_share_media_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        XCTAssertTrue(true)
     }
+}
 
-    func test_luicode(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "10000360")
-    }
+// MARK: - Share - Message - UniversalLink
 
-    func test_newVersion(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, sdkShortVersion)
-    }
+extension WeiboHandlerBaseTests: ShareMessageUniversalLinkTestCase {
 
-    func test_objId(_ queryItem: URLQueryItem) {
-        XCTAssertNotNil(UUID(uuidString: queryItem.value!))
-    }
-
-    func test_sdkversion(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, sdkVersion)
-    }
-
-    func test_urltype(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "link")
+    func test_share_message_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        XCTAssertTrue(true)
     }
 }
 
@@ -521,6 +497,16 @@ extension WeiboHandlerBaseTests {
 
     func test_startTime(_ value: String) {
         XCTAssertNotNil(dateFormatter.date(from: value))
+    }
+}
+
+// MARK: - Share - Completion
+
+extension WeiboHandlerBaseTests: ShareCompletionTestCase {
+
+    func test_share_avoid_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool {
+        (message.identifier == Messages.file && endpoint == Endpoints.Weibo.timeline)
+            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.Weibo.timeline)
     }
 }
 
