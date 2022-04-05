@@ -137,6 +137,16 @@ extension ShareTestCase {
 
         UIPasteboard.general.rx
             .items()
+            .do(onNext: { [unowned self] items in
+                if
+                    (message.identifier == Messages.webPage && endpoint == Endpoints.QQ.friend)
+                    || (message.identifier == Messages.webPage && endpoint == Endpoints.QQ.timeline)
+                    || (message.identifier == Messages.miniProgram && endpoint == Endpoints.QQ.friend) {
+                    precondition(items.isEmpty)
+
+                    self.pbExpectation.fulfill()
+                }
+            })
             .filter { !$0.isEmpty }
             .bind(onNext: { [unowned self] items in
                 self.test_share(items: items, message, endpoint)
