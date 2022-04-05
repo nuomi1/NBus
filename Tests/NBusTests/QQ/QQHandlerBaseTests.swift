@@ -99,6 +99,15 @@ extension QQHandlerBaseTests {
     }
 }
 
+// MARK: - General - Pasteboard
+
+extension QQHandlerBaseTests: GeneralPasteboardTestCase {
+
+    func test_general_pb(dictionary: inout [String: Any]) {
+        XCTAssertTrue(true)
+    }
+}
+
 // MARK: - Share
 
 extension QQHandlerBaseTests: ShareTestCase {
@@ -601,29 +610,65 @@ extension QQHandlerBaseTests {
     }
 }
 
-// MARK: Share - Pasteboard
+// MARK: - Share - Pasteboard
+
+extension QQHandlerBaseTests: SharePasteboardTestCase {
+
+    func test_share_extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
+        test_share_extract_KeyedArchiver_pb(items: &items, key: "com.tencent.mqq.api.apiLargeData")
+    }
+
+    func test_share_extra_pb(items: inout [[String: Data]]) {
+        XCTAssertTrue(true)
+    }
+}
+
+// MARK: - Share - Common - Pasteboard
+
+extension QQHandlerBaseTests: ShareCommonPasteboardTestCase {
+
+    func test_share_common_pb(dictionary: inout [String: Any]) {
+        XCTAssertTrue(true)
+    }
+}
+
+// MARK: - Share - MediaMessage - Pasteboard
+
+extension QQHandlerBaseTests: ShareMediaMessagePasteboardTestCase {
+
+    func test_share_media_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+        let previewimagedata = dictionary.removeValue(forKey: "previewimagedata") as? Data
+        test_previewimagedata(previewimagedata, message)
+    }
+}
 
 extension QQHandlerBaseTests {
 
-    func test_share(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) {
-        if items.isEmpty {
-            XCTAssertTrue(true)
-            return
+    func test_previewimagedata(_ value: Data?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case let message as ImageMessage:
+            XCTAssertEqual(value!, message.thumbnail)
+        case let message as AudioMessage:
+            XCTAssertEqual(value!, message.thumbnail)
+        case let message as VideoMessage:
+            XCTAssertEqual(value!, message.thumbnail)
+        case let message as FileMessage:
+            XCTAssertEqual(value!, message.thumbnail)
+        default:
+            XCTAssertTrue(false, String(describing: value))
         }
+    }
+}
 
-        let data = items.first!["com.tencent.mqq.api.apiLargeData"] as! Data
-        var dictionary = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
+// MARK: - Share - Message - Pasteboard
 
+extension QQHandlerBaseTests: ShareMessagePasteboardTestCase {
+
+    func test_share_message_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         let file_data = dictionary.removeValue(forKey: "file_data") as? Data
         test_file_data(file_data, message)
-
-        let previewimagedata = dictionary.removeValue(forKey: "previewimagedata") as? Data
-        test_previewimagedata(previewimagedata, message)
-
-        logger.debug("\(UIPasteboard.self), \(message.identifier), \(endpoint), \(dictionary.keys.sorted())")
-        XCTAssertTrue(dictionary.isEmpty)
-
-        pbExpectation.fulfill()
     }
 }
 
@@ -639,23 +684,6 @@ extension QQHandlerBaseTests {
             XCTAssertEqual(value!, message.data)
         case let message as FileMessage:
             XCTAssertEqual(value!, message.data)
-        default:
-            XCTAssertTrue(false, String(describing: value))
-        }
-    }
-
-    func test_previewimagedata(_ value: Data?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case let message as ImageMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        case let message as AudioMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        case let message as VideoMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        case let message as FileMessage:
-            XCTAssertEqual(value!, message.thumbnail)
         default:
             XCTAssertTrue(false, String(describing: value))
         }
