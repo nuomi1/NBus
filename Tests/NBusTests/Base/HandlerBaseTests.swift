@@ -313,6 +313,13 @@ extension OauthTestCase {
 
         UIPasteboard.general.rx
             .items()
+            .do(onNext: { [unowned self] items in
+                if platform == Platforms.qq {
+                    precondition(items.isEmpty)
+
+                    self.pbExpectation.fulfill()
+                }
+            })
             .filter { !$0.isEmpty }
             .bind(onNext: { [unowned self] items in
                 self.test_oauth(items: items, platform)
