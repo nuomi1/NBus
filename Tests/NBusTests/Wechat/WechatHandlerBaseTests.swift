@@ -76,6 +76,13 @@ extension WechatHandlerBaseTests {
 
 extension WechatHandlerBaseTests: GeneralPasteboardTestCase {
 
+    func test_extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
+        let plist = test_extract_PropertyList_pb(items: &items, key: "content")
+        let dictionary = plist[appID] as! [String: Any]
+
+        return dictionary
+    }
+
     func test_general_pb(dictionary: inout [String: Any]) {
         let isAutoResend = dictionary.removeValue(forKey: "isAutoResend") as! Bool
         test_isAutoResend(isAutoResend)
@@ -91,6 +98,10 @@ extension WechatHandlerBaseTests: GeneralPasteboardTestCase {
 
         let universalLink = dictionary.removeValue(forKey: "universalLink") as! String
         test_universalLink(universalLink)
+    }
+
+    func test_extra_pb(items: inout [[String: Data]]) {
+        XCTAssertTrue(true)
     }
 }
 
@@ -233,22 +244,6 @@ extension WechatHandlerBaseTests: ShareMediaMessageUniversalLinkTestCase {
 extension WechatHandlerBaseTests: ShareMessageUniversalLinkTestCase {
 
     func test_share_message_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
-        XCTAssertTrue(true)
-    }
-}
-
-// MARK: - Share - Pasteboard
-
-extension WechatHandlerBaseTests {
-
-    func test_share_extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
-        let plist = test_share_extract_PropertyList_pb(items: &items, key: "content")
-        let dictionary = plist[appID] as! [String: Any]
-
-        return dictionary
-    }
-
-    func test_share_extra_pb(items: inout [[String: Data]]) {
         XCTAssertTrue(true)
     }
 }

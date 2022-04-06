@@ -126,9 +126,21 @@ extension WeiboHandlerBaseTests {
 
 extension WeiboHandlerBaseTests: GeneralPasteboardTestCase {
 
+    func test_extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
+        test_extract_KeyedArchiver_pb(items: &items, key: "transferObject")
+    }
+
     func test_general_pb(dictionary: inout [String: Any]) {
         let requestID = dictionary.removeValue(forKey: "requestID") as! String
         test_requestID(requestID)
+    }
+
+    func test_extra_pb(items: inout [[String: Data]]) {
+        test_app(&items)
+
+        test_sdkVersion(&items)
+
+        test_userInfo(&items)
     }
 }
 
@@ -207,23 +219,8 @@ extension WeiboHandlerBaseTests: ShareMessageUniversalLinkTestCase {
 
 extension WeiboHandlerBaseTests {
 
-    func test_share_extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
-        test_share_extract_KeyedArchiver_pb(items: &items, key: "transferObject")
-    }
-
-    func test_share_extra_pb(items: inout [[String: Data]]) {
-        test_app(&items)
-
-        test_sdkVersion(&items)
-
-        test_userInfo(&items)
-    }
-}
-
-extension WeiboHandlerBaseTests {
-
     func test_app(_ items: inout [[String: Data]]) {
-        var dictionary = test_share_extract_KeyedArchiver_pb(items: &items, key: "app")
+        var dictionary = test_extract_KeyedArchiver_pb(items: &items, key: "app")
 
         logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
 
@@ -276,7 +273,7 @@ extension WeiboHandlerBaseTests {
 extension WeiboHandlerBaseTests {
 
     func test_userInfo(_ items: inout [[String: Data]]) {
-        var dictionary = test_share_extract_KeyedArchiver_pb(items: &items, key: "userInfo")
+        var dictionary = test_extract_KeyedArchiver_pb(items: &items, key: "userInfo")
 
         logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
 

@@ -29,8 +29,14 @@ protocol GeneralUniversalLinkTestCase: XCTestCase {
 
 protocol GeneralPasteboardTestCase: XCTestCase {
 
+    /// Test pasteboard extract major data
+    func test_extract_major_pb(items: inout [[String: Data]]) -> [String: Any]
+
     /// Test general pasteboard dictionary
     func test_general_pb(dictionary: inout [String: Any])
+
+    /// Test pasteboard extra data
+    func test_extra_pb(items: inout [[String: Data]])
 }
 
 // MARK: - Share - Common - UniversalLink
@@ -113,14 +119,8 @@ protocol SharePasteboardTestCase:
     /// Test share pasteboard
     func test_share(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint)
 
-    /// Test share pasteboard extract major data
-    func test_share_extract_major_pb(items: inout [[String: Data]]) -> [String: Any]
-
     /// Test share pasteboard major data
     func test_share_major_pb(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint)
-
-    /// Test share pasteboard extra data
-    func test_share_extra_pb(items: inout [[String: Data]])
 }
 
 // MARK: - Share - Completion

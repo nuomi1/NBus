@@ -103,7 +103,15 @@ extension QQHandlerBaseTests {
 
 extension QQHandlerBaseTests: GeneralPasteboardTestCase {
 
+    func test_extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
+        test_extract_KeyedArchiver_pb(items: &items, key: "com.tencent.mqq.api.apiLargeData")
+    }
+
     func test_general_pb(dictionary: inout [String: Any]) {
+        XCTAssertTrue(true)
+    }
+
+    func test_extra_pb(items: inout [[String: Data]]) {
         XCTAssertTrue(true)
     }
 }
@@ -607,19 +615,6 @@ extension QQHandlerBaseTests {
         default:
             XCTAssertTrue(false, String(describing: queryItem?.value))
         }
-    }
-}
-
-// MARK: - Share - Pasteboard
-
-extension QQHandlerBaseTests: SharePasteboardTestCase {
-
-    func test_share_extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
-        test_share_extract_KeyedArchiver_pb(items: &items, key: "com.tencent.mqq.api.apiLargeData")
-    }
-
-    func test_share_extra_pb(items: inout [[String: Data]]) {
-        XCTAssertTrue(true)
     }
 }
 
