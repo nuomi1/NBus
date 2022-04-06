@@ -696,71 +696,27 @@ extension QQHandlerBaseTests: ShareCompletionTestCase {
 
 // MARK: - Oauth
 
-extension QQHandlerBaseTests {
+extension QQHandlerBaseTests: OauthTestCase {
 
     func test_oauth() {
-        UIApplication.shared.rx
-            .openURL()
-            .bind(onNext: { [unowned self] url in
-                self.test_oauth(url: url)
-            })
-            .disposed(by: disposeBag)
-
-        UIPasteboard.general.rx
-            .items()
-            .bind(onNext: { [unowned self] items in
-                self.test_oauth(items: items)
-            })
-            .disposed(by: disposeBag)
-
-        Bus.shared.oauth(
-            with: Platforms.qq,
-            completionHandler: { result in
-                switch result {
-                case .success:
-                    XCTAssertTrue(true)
-                case .failure:
-                    XCTAssertTrue(false)
-                }
-            }
-        )
+        test_oauth(Platforms.qq)
     }
 }
 
-// MARK: Oauth - UniversalLink
+// MARK: Oauth - Platform - UniversalLink
 
-extension QQHandlerBaseTests {
+extension QQHandlerBaseTests: OauthPlatformUniversalLinkTestCase {
 
-    func test_oauth(url: URL) {
-        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-        var queryItems = urlComponents.queryItems ?? []
+    func test_oauth_ul(path: String) {
+        XCTAssertEqual(path, "/opensdkul/mqqOpensdkSSoLogin/SSoLogin/\(appID)")
+    }
 
-        // GeneralUniversalLink
-
-        XCTAssertEqual(urlComponents.scheme, "https")
-        XCTAssertEqual(urlComponents.host, "qm.qq.com")
-
-        let appsign_txid = queryItems.removeFirst { $0.name == "appsign_txid" }!
-        test_appsign_txid(appsign_txid)
-
-        let bundleid = queryItems.removeFirst { $0.name == "bundleid" }!
-        test_bundleid(bundleid)
-
-        let sdkv = queryItems.removeFirst { $0.name == "sdkv" }!
-        test_sdkv(sdkv)
-
-        // OauthUniversalLink
-
-        XCTAssertEqual(urlComponents.path, "/opensdkul/mqqOpensdkSSoLogin/SSoLogin/\(appID)")
-
+    func test_oauth_ul(queryItems: inout [URLQueryItem], _ platform: Platform) {
         let objectlocation = queryItems.removeFirst { $0.name == "objectlocation" }!
         test_objectlocation(objectlocation)
 
         let pasteboard = queryItems.removeFirst { $0.name == "pasteboard" }!
         test_pasteboard(pasteboard)
-
-        logger.debug("\(URLComponents.self), \(queryItems.map(\.name).sorted())")
-        XCTAssertTrue(queryItems.isEmpty)
     }
 }
 
@@ -818,20 +774,12 @@ extension QQHandlerBaseTests {
     }
 }
 
-// MARK: Oauth - Pasteboard
+// MARK: - Oauth - Platform - Pasteboard
 
-extension QQHandlerBaseTests {
+extension QQHandlerBaseTests: OauthPlatformPasteboardTestCase {
 
-    func test_oauth(items: [[String: Any]]) {
-        if items.isEmpty {
-            XCTAssertTrue(true)
-            return
-        }
-
-        let data = items.first!["com.tencent.mqq.api.apiLargeData"]
-
-        logger.debug("\(UIPasteboard.self), \(items.map(\.keys))")
-        XCTAssertNil(data)
+    func test_oauth_pb(dictionary: inout [String: Any], _ platform: Platform) {
+        XCTAssertTrue(true)
     }
 }
 
