@@ -535,123 +535,36 @@ extension WeiboHandlerBaseTests: ShareCompletionTestCase {
 
 // MARK: - Oauth
 
-extension WeiboHandlerBaseTests {
+extension WeiboHandlerBaseTests: OauthTestCase {
 
     func test_oauth() {
-        UIApplication.shared.rx
-            .openURL()
-            .bind(onNext: { [unowned self] url in
-                self.test_oauth(url: url)
-            })
-            .disposed(by: disposeBag)
-
-        UIPasteboard.general.rx
-            .items()
-            .bind(onNext: { [unowned self] items in
-                self.test_oauth(items: items)
-            })
-            .disposed(by: disposeBag)
-
-        Bus.shared.oauth(
-            with: Platforms.weibo,
-            completionHandler: { result in
-                switch result {
-                case .success:
-                    XCTAssertTrue(true)
-                case .failure:
-                    XCTAssertTrue(false)
-                }
-            }
-        )
-
-        wait(for: [ulExpectation, pbExpectation], timeout: 5)
+        test_oauth(Platforms.weibo)
     }
 }
 
-// MARK: Oauth - UniversalLink
+// MARK: - Oauth - Platform -UniversalLink
 
-extension WeiboHandlerBaseTests {
+extension WeiboHandlerBaseTests: OauthPlatformUniversalLinkTestCase {
 
-    func test_oauth(url: URL) {
-        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-        var queryItems = urlComponents.queryItems ?? []
+    func test_oauth_ul(path: String) {
+        test_share_common_ul(path: path)
+    }
 
-        // GeneralUniversalLink
-
-        XCTAssertEqual(urlComponents.scheme, "https")
-        XCTAssertEqual(urlComponents.host, "open.weibo.com")
-
-        XCTAssertEqual(urlComponents.path, "/weibosdk/request")
-
-        let lfid = queryItems.removeFirst { $0.name == "lfid" }!
-        test_lfid(lfid)
-
-        let luicode = queryItems.removeFirst { $0.name == "luicode" }!
-        test_luicode(luicode)
-
-        let newVersion = queryItems.removeFirst { $0.name == "newVersion" }!
-        test_newVersion(newVersion)
-
-        let objId = queryItems.removeFirst { $0.name == "objId" }!
-        test_objId(objId)
-
-        let sdkversion = queryItems.removeFirst { $0.name == "sdkversion" }!
-        test_sdkversion(sdkversion)
-
-        let urltype = queryItems.removeFirst { $0.name == "urltype" }!
-        test_urltype(urltype)
-
-        logger.debug("\(URLComponents.self), \(queryItems.map(\.name).sorted())")
-        XCTAssertTrue(queryItems.isEmpty)
-
-        ulExpectation.fulfill()
+    func test_oauth_ul(queryItems: inout [URLQueryItem], _ platform: Platform) {
+        XCTAssertTrue(true)
     }
 }
 
-// MARK: Oauth - Pasteboard
+// MARK: - Oauth - Platform - Pasteboard
 
-extension WeiboHandlerBaseTests {
+extension WeiboHandlerBaseTests: OauthPlatformPasteboardTestCase {
 
-    func test_oauth(items: [[String: Any]]) {
-        if items.isEmpty {
-            XCTAssertTrue(true)
-            return
-        }
-
-        var items = items as! [[String: Data]]
-
-        test_app(&items)
-
-        test_sdkVersion(&items)
-
-        test_transferObject(&items)
-
-        test_userInfo(&items)
-
-        logger.debug("\(UIPasteboard.self), \(items.map { $0.keys.sorted() })")
-        XCTAssertTrue(items.isEmpty)
-
-        pbExpectation.fulfill()
-    }
-}
-
-extension WeiboHandlerBaseTests {
-
-    func test_transferObject(_ items: inout [[String: Data]]) {
-        let data = items.removeFirst { $0.keys.contains("transferObject") }!["transferObject"]!
-        var dictionary = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
-
+    func test_oauth_pb(dictionary: inout [String: Any], _ platform: Platform) {
         let `class` = dictionary.removeValue(forKey: "__class") as! String
         test_class_oauth(`class`)
 
         let redirectURI = dictionary.removeValue(forKey: "redirectURI") as! String
         test_redirectURI(redirectURI)
-
-        let requestID = dictionary.removeValue(forKey: "requestID") as! String
-        test_requestID(requestID)
-
-        logger.debug("\(UIPasteboard.self), \(dictionary.keys.sorted())")
-        XCTAssertTrue(dictionary.isEmpty)
     }
 }
 
