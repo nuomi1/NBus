@@ -151,72 +151,6 @@ extension WeiboHandlerBaseTests {
     }
 }
 
-// MARK: - Share
-
-extension WeiboHandlerBaseTests: ShareTestCase {
-
-    func test_share_text_timeline() {
-        test_share(MediaSource.text, Endpoints.Weibo.timeline)
-    }
-
-    func test_share_image_timeline() {
-        test_share(MediaSource.image, Endpoints.Weibo.timeline)
-    }
-
-    func test_share_audio_timeline() {
-        test_share(MediaSource.audio, Endpoints.Weibo.timeline)
-    }
-
-    func test_share_video_timeline() {
-        test_share(MediaSource.video, Endpoints.Weibo.timeline)
-    }
-
-    func test_share_webPage_timeline() {
-        test_share(MediaSource.webPage, Endpoints.Weibo.timeline)
-    }
-
-    func test_share_file_timeline() {
-        test_share(MediaSource.file, Endpoints.Weibo.timeline)
-    }
-
-    func test_share_miniProgram_timeline() {
-        test_share(MediaSource.wechatMiniProgram, Endpoints.Weibo.timeline)
-    }
-}
-
-// MARK: - Share - Common - UniversalLink
-
-extension WeiboHandlerBaseTests: ShareCommonUniversalLinkTestCase {
-
-    func test_share_common_ul(path: String) {
-        XCTAssertEqual(path, "/weibosdk/request")
-    }
-
-    func test_share_common_ul(queryItems: inout [URLQueryItem]) {
-        XCTAssertTrue(true)
-    }
-}
-
-// MARK: - Share - MediaMessage - UniversalLink
-
-extension WeiboHandlerBaseTests: ShareMediaMessageUniversalLinkTestCase {
-
-    func test_share_media_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
-        XCTAssertTrue(true)
-    }
-}
-
-// MARK: - Share - Message - UniversalLink
-
-extension WeiboHandlerBaseTests: ShareMessageUniversalLinkTestCase {
-
-    func test_share_message_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
-        XCTAssertTrue(true)
-    }
-}
-
-// MARK: - Share - Pasteboard
-
 extension WeiboHandlerBaseTests {
 
     func test_app(_ items: inout [[String: Data]]) {
@@ -290,6 +224,70 @@ extension WeiboHandlerBaseTests {
 
     func test_startTime(_ value: String) {
         XCTAssertNotNil(dateFormatter.date(from: value))
+    }
+}
+
+// MARK: - Share
+
+extension WeiboHandlerBaseTests: ShareTestCase {
+
+    func test_share_text_timeline() {
+        test_share(MediaSource.text, Endpoints.Weibo.timeline)
+    }
+
+    func test_share_image_timeline() {
+        test_share(MediaSource.image, Endpoints.Weibo.timeline)
+    }
+
+    func test_share_audio_timeline() {
+        test_share(MediaSource.audio, Endpoints.Weibo.timeline)
+    }
+
+    func test_share_video_timeline() {
+        test_share(MediaSource.video, Endpoints.Weibo.timeline)
+    }
+
+    func test_share_webPage_timeline() {
+        test_share(MediaSource.webPage, Endpoints.Weibo.timeline)
+    }
+
+    func test_share_file_timeline() {
+        test_share(MediaSource.file, Endpoints.Weibo.timeline)
+    }
+
+    func test_share_miniProgram_timeline() {
+        test_share(MediaSource.wechatMiniProgram, Endpoints.Weibo.timeline)
+    }
+}
+
+// MARK: - Share - Common - UniversalLink
+
+extension WeiboHandlerBaseTests: ShareCommonUniversalLinkTestCase {
+
+    func test_share_common_ul(path: String) {
+        XCTAssertEqual(path, "/weibosdk/request")
+    }
+
+    func test_share_common_ul(queryItems: inout [URLQueryItem]) {
+        XCTAssertTrue(true)
+    }
+}
+
+// MARK: - Share - MediaMessage - UniversalLink
+
+extension WeiboHandlerBaseTests: ShareMediaMessageUniversalLinkTestCase {
+
+    func test_share_media_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        XCTAssertTrue(true)
+    }
+}
+
+// MARK: - Share - Message - UniversalLink
+
+extension WeiboHandlerBaseTests: ShareMessageUniversalLinkTestCase {
+
+    func test_share_message_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        XCTAssertTrue(true)
     }
 }
 
