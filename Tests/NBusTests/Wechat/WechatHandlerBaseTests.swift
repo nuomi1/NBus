@@ -986,10 +986,10 @@ extension WechatHandlerBaseTests {
         let universalLink = dictionary.removeValue(forKey: "universalLink") as! String
         test_universalLink(universalLink)
 
-        // oauth
+        // launch
 
         let command = dictionary.removeValue(forKey: "command") as! String
-        test_oauth_command(command)
+        test_command_launch(command)
 
         logger.debug("\(UIPasteboard.self), \(dictionary.keys.sorted())")
         XCTAssertTrue(dictionary.isEmpty)
@@ -998,7 +998,7 @@ extension WechatHandlerBaseTests {
 
 extension WechatHandlerBaseTests {
 
-    func test_oauth_command(_ value: String) {
+    func test_command_launch(_ value: String) {
         XCTAssertEqual(value, "1080")
     }
 }
