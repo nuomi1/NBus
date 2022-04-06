@@ -710,68 +710,27 @@ extension WechatHandlerBaseTests: ShareCompletionTestCase {
 
 // MARK: - Oauth
 
-extension WechatHandlerBaseTests {
+extension WechatHandlerBaseTests: OauthTestCase {
 
     func test_oauth() {
-        UIApplication.shared.rx
-            .openURL()
-            .bind(onNext: { [unowned self] url in
-                self.test_oauth(url: url)
-            })
-            .disposed(by: disposeBag)
-
-        UIPasteboard.general.rx
-            .items()
-            .bind(onNext: { [unowned self] items in
-                self.test_oauth(items: items)
-            })
-            .disposed(by: disposeBag)
-
-        Bus.shared.oauth(
-            with: Platforms.wechat,
-            completionHandler: { result in
-                switch result {
-                case .success:
-                    XCTAssertTrue(true)
-                case .failure:
-                    XCTAssertTrue(false)
-                }
-            }
-        )
+        test_oauth(Platforms.wechat)
     }
 }
 
-// MARK: Oauth - UniversalLink
+// MARK: - Oauth - Platform - UniversalLink
 
-extension WechatHandlerBaseTests {
+extension WechatHandlerBaseTests: OauthPlatformUniversalLinkTestCase {
 
-    func test_oauth(url: URL) {
-        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-        var queryItems = urlComponents.queryItems ?? []
+    func test_oauth_ul(path: String) {
+        XCTAssertEqual(path, "/app/\(appID)/auth/")
+    }
 
-        // GeneralUniversalLink
-
-        XCTAssertEqual(urlComponents.scheme, "https")
-        XCTAssertEqual(urlComponents.host, "help.wechat.com")
-
-        let wechat_app_bundleId = queryItems.removeFirst { $0.name == "wechat_app_bundleId" }!
-        test_wechat_app_bundleId(wechat_app_bundleId)
-
-        let wechat_auth_context_id = queryItems.removeFirst { $0.name == "wechat_auth_context_id" }!
-        test_wechat_auth_context_id(wechat_auth_context_id)
-
-        // OauthUniversalLink
-
-        XCTAssertEqual(urlComponents.path, "/app/\(appID)/auth/")
-
+    func test_oauth_ul(queryItems: inout [URLQueryItem], _ platform: Platform) {
         let scope = queryItems.removeFirst { $0.name == "scope" }!
         test_scope(scope)
 
         let state = queryItems.removeFirst { $0.name == "state" }!
         test_state(state)
-
-        logger.debug("\(URLComponents.self), \(queryItems.map(\.name).sorted())")
-        XCTAssertTrue(queryItems.isEmpty)
     }
 }
 
@@ -786,50 +745,19 @@ extension WechatHandlerBaseTests {
     }
 }
 
-// MARK: Oauth - Pasteboard
+// MARK: - Oauth - Platform - Pasteboard
 
-extension WechatHandlerBaseTests {
+extension WechatHandlerBaseTests: OauthPlatformPasteboardTestCase {
 
-    func test_oauth(items: [[String: Any]]) {
-        if items.isEmpty {
-            XCTAssertTrue(true)
-            return
-        }
-
-        let data = items.first!["content"] as! Data
-        let plist = try! PropertyListSerialization.propertyList(from: data, format: nil) as! [String: Any]
-        var dictionary = plist[appID] as! [String: Any]
-
-        // GeneralPasteboard
-
-        let isAutoResend = dictionary.removeValue(forKey: "isAutoResend") as! Bool
-        test_isAutoResend(isAutoResend)
-
-        let result = dictionary.removeValue(forKey: "result") as! String
-        test_result(result)
-
-        let returnFromApp = dictionary.removeValue(forKey: "returnFromApp") as! String
-        test_returnFromApp(returnFromApp)
-
-        let sdkver = dictionary.removeValue(forKey: "sdkver") as! String
-        test_sdkver(sdkver)
-
-        let universalLink = dictionary.removeValue(forKey: "universalLink") as! String
-        test_universalLink(universalLink)
-
-        // oauth
-
+    func test_oauth_pb(dictionary: inout [String: Any], _ platform: Platform) {
         let command = dictionary.removeValue(forKey: "command") as! String
-        test_command(command)
-
-        logger.debug("\(UIPasteboard.self), \(dictionary.keys.sorted())")
-        XCTAssertTrue(dictionary.isEmpty)
+        test_command_oauth(command)
     }
 }
 
 extension WechatHandlerBaseTests {
 
-    func test_command(_ value: String) {
+    func test_command_oauth(_ value: String) {
         XCTAssertEqual(value, "0")
     }
 }
