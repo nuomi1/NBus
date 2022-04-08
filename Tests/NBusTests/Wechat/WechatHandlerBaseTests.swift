@@ -764,77 +764,33 @@ extension WechatHandlerBaseTests {
 
 // MARK: - Launch
 
-extension WechatHandlerBaseTests {
+extension WechatHandlerBaseTests: LaunchTestCase {
 
     func test_launch() {
-        let message = MediaSource.wechatMiniProgram as! MiniProgramMessage
-
-        UIApplication.shared.rx
-            .openURL()
-            .bind(onNext: { [unowned self] url in
-                self.test_launch(url: url, message)
-            })
-            .disposed(by: disposeBag)
-
-        UIPasteboard.general.rx
-            .items()
-            .bind(onNext: { [unowned self] items in
-                self.test_launch(items: items)
-            })
-            .disposed(by: disposeBag)
-
-        Bus.shared.launch(
-            program: message,
-            with: Platforms.wechat,
-            completionHandler: { result in
-                switch result {
-                case .success:
-                    XCTAssertTrue(true)
-                case .failure:
-                    XCTAssertTrue(false)
-                }
-            }
-        )
+        test_launch(Platforms.wechat, MediaSource.wechatMiniProgram as! MiniProgramMessage)
     }
 }
 
-// MARK: Launch - UniversalLink
+// MARK: - Launch - URL
 
-extension WechatHandlerBaseTests {
+extension WechatHandlerBaseTests: LaunchURLTestCase {
 
-    func test_launch(url: URL, _ message: MessageType) {
-        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-        var queryItems = urlComponents.queryItems ?? []
+    func test_launch_ul(path: String) {
+        XCTAssertEqual(path, "/app/\(appID)/jumpWxa/")
+    }
 
-        // GeneralUniversalLink
-
-        XCTAssertEqual(urlComponents.scheme, "https")
-        XCTAssertEqual(urlComponents.host, "help.wechat.com")
-
-        let wechat_app_bundleId = queryItems.removeFirst { $0.name == "wechat_app_bundleId" }!
-        test_wechat_app_bundleId(wechat_app_bundleId)
-
-        let wechat_auth_context_id = queryItems.removeFirst { $0.name == "wechat_auth_context_id" }!
-        test_wechat_auth_context_id(wechat_auth_context_id)
-
-        // LaunchUniversalLink
-
-        XCTAssertEqual(urlComponents.path, "/app/\(appID)/jumpWxa/")
-
+    func test_launch_ul(queryItems: inout [URLQueryItem], _ platform: Platform, _ program: MiniProgramMessage) {
         let extMsg = queryItems.removeFirst { $0.name == "extMsg" }!
         test_extMsg(extMsg)
 
         let miniProgramType = queryItems.removeFirst { $0.name == "miniProgramType" }!
-        test_miniProgramType(miniProgramType, message)
+        test_miniProgramType(miniProgramType, program)
 
         let path = queryItems.removeFirst { $0.name == "path" }!
-        test_path(path, message)
+        test_path(path, program)
 
         let userName = queryItems.removeFirst { $0.name == "userName" }!
-        test_userName(userName, message)
-
-        logger.debug("\(URLComponents.self), \(message.identifier), \(queryItems.map(\.name).sorted())")
-        XCTAssertTrue(queryItems.isEmpty)
+        test_userName(userName, program)
     }
 }
 
@@ -883,44 +839,13 @@ extension WechatHandlerBaseTests {
     }
 }
 
-// MARK: Launch - Pasteboard
+// MARK: - Launch - Pasteboard
 
-extension WechatHandlerBaseTests {
+extension WechatHandlerBaseTests: LaunchPasteboardTestCase {
 
-    func test_launch(items: [[String: Any]]) {
-        if items.isEmpty {
-            XCTAssertTrue(true)
-            return
-        }
-
-        let data = items.first!["content"] as! Data
-        let plist = try! PropertyListSerialization.propertyList(from: data, format: nil) as! [String: Any]
-        var dictionary = plist[appID] as! [String: Any]
-
-        // GeneralPasteboard
-
-        let isAutoResend = dictionary.removeValue(forKey: "isAutoResend") as! Bool
-        test_isAutoResend(isAutoResend)
-
-        let result = dictionary.removeValue(forKey: "result") as! String
-        test_result(result)
-
-        let returnFromApp = dictionary.removeValue(forKey: "returnFromApp") as! String
-        test_returnFromApp(returnFromApp)
-
-        let sdkver = dictionary.removeValue(forKey: "sdkver") as! String
-        test_sdkver(sdkver)
-
-        let universalLink = dictionary.removeValue(forKey: "universalLink") as! String
-        test_universalLink(universalLink)
-
-        // launch
-
+    func test_launch_pb(dictionary: inout [String: Any], _ platform: Platform, _ program: MiniProgramMessage) {
         let command = dictionary.removeValue(forKey: "command") as! String
         test_command_launch(command)
-
-        logger.debug("\(UIPasteboard.self), \(dictionary.keys.sorted())")
-        XCTAssertTrue(dictionary.isEmpty)
     }
 }
 
