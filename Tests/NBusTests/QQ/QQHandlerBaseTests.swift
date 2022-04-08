@@ -785,66 +785,22 @@ extension QQHandlerBaseTests: OauthPlatformPasteboardTestCase {
 
 // MARK: - Launch
 
-extension QQHandlerBaseTests {
+extension QQHandlerBaseTests: LaunchTestCase {
 
     func test_launch() {
-        let message = MediaSource.qqMiniProgram as! MiniProgramMessage
-
-        UIApplication.shared.rx
-            .openURL()
-            .bind(onNext: { [unowned self] url in
-                self.test_launch(url: url, message)
-            })
-            .disposed(by: disposeBag)
-
-        UIPasteboard.general.rx
-            .items()
-            .bind(onNext: { [unowned self] items in
-                self.test_launch(items: items)
-            })
-            .disposed(by: disposeBag)
-
-        Bus.shared.launch(
-            program: message,
-            with: Platforms.qq,
-            completionHandler: { result in
-                switch result {
-                case .success:
-                    XCTAssertTrue(true)
-                case .failure:
-                    XCTAssertTrue(false)
-                }
-            }
-        )
+        test_launch(Platforms.qq, MediaSource.qqMiniProgram as! MiniProgramMessage)
     }
 }
 
-// MARK: Launch - UniversalLink
+// MARK: - Launch - URL
 
-extension QQHandlerBaseTests {
+extension QQHandlerBaseTests: LaunchURLTestCase {
 
-    func test_launch(url: URL, _ message: MessageType) {
-        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-        var queryItems = urlComponents.queryItems ?? []
+    func test_launch_ul(path: String) {
+        XCTAssertEqual(path, "/opensdkul/mqqapi/profile/sdk_launch_mini_app")
+    }
 
-        // GeneralUniversalLink
-
-        XCTAssertEqual(urlComponents.scheme, "https")
-        XCTAssertEqual(urlComponents.host, "qm.qq.com")
-
-        let appsign_txid = queryItems.removeFirst { $0.name == "appsign_txid" }!
-        test_appsign_txid(appsign_txid)
-
-        let bundleid = queryItems.removeFirst { $0.name == "bundleid" }!
-        test_bundleid(bundleid)
-
-        let sdkv = queryItems.removeFirst { $0.name == "sdkv" }!
-        test_sdkv(sdkv)
-
-        // LaunchUniversalLink
-
-        XCTAssertEqual(urlComponents.path, "/opensdkul/mqqapi/profile/sdk_launch_mini_app")
-
+    func test_launch_ul(queryItems: inout [URLQueryItem], _ platform: Platform, _ program: MiniProgramMessage) {
         let appid = queryItems.removeFirst { $0.name == "appid" }!
         test_appid(appid)
 
@@ -863,19 +819,14 @@ extension QQHandlerBaseTests {
         let version = queryItems.removeFirst { $0.name == "version" }!
         test_version(version)
 
-        // launch
-
         let mini_appid = queryItems.removeFirst { $0.name == "mini_appid" }!
-        test_mini_appid(mini_appid, message)
+        test_mini_appid(mini_appid, program)
 
         let mini_path = queryItems.removeFirst { $0.name == "mini_path" }!
-        test_mini_path(mini_path, message)
+        test_mini_path(mini_path, program)
 
         let mini_type = queryItems.removeFirst { $0.name == "mini_type" }!
-        test_mini_type(mini_type, message)
-
-        logger.debug("\(URLComponents.self), \(queryItems.map(\.name).sorted())")
-        XCTAssertTrue(queryItems.isEmpty)
+        test_mini_type(mini_type, program)
     }
 }
 
@@ -886,19 +837,11 @@ extension QQHandlerBaseTests {
     }
 }
 
-// MARK: Launch - Pasteboard
+// MARK: - Launch - Pasteboard
 
-extension QQHandlerBaseTests {
+extension QQHandlerBaseTests: LaunchPasteboardTestCase {
 
-    func test_launch(items: [[String: Any]]) {
-        if items.isEmpty {
-            XCTAssertTrue(true)
-            return
-        }
-
-        let data = items.first!["com.tencent.mqq.api.apiLargeData"]
-
-        logger.debug("\(UIPasteboard.self), \(items.map(\.keys))")
-        XCTAssertNil(data)
+    func test_launch_pb(dictionary: inout [String: Any], _ platform: Platform, _ program: MiniProgramMessage) {
+        XCTAssertTrue(true)
     }
 }
