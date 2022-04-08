@@ -337,6 +337,8 @@ extension OauthTestCase {
     }
 }
 
+// MARK: - Oauth - URL
+
 extension OauthURLTestCase {
 
     func test_oauth(url: URL, _ platform: Platform) {
@@ -363,6 +365,8 @@ extension OauthURLTestCase {
         ulExpectation.fulfill()
     }
 }
+
+// MARK: - Oauth - Pasteboard
 
 extension OauthPasteboardTestCase {
 
