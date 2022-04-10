@@ -123,33 +123,6 @@ extension HandlerBaseTests {
     }
 }
 
-// MARK: - General - Pasteboard
-
-extension GeneralPasteboardTestCase {
-
-    func test_extract_KeyedArchiver_pb(items: inout [[String: Data]], key: String) -> [String: Any] {
-        let item = items.removeFirst { $0.keys.contains(key) }!
-
-        precondition(item.count == 1)
-
-        let data = item[key]!
-        let dictionary = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
-
-        return dictionary
-    }
-
-    func test_extract_PropertyList_pb(items: inout [[String: Data]], key: String) -> [String: Any] {
-        let item = items.removeFirst { $0.keys.contains(key) }!
-
-        precondition(item.count == 1)
-
-        let data = item[key]!
-        let dictionary = try! PropertyListSerialization.propertyList(from: data, format: nil) as! [String: Any]
-
-        return dictionary
-    }
-}
-
 // MARK: - Share
 
 extension ShareTestCase {
