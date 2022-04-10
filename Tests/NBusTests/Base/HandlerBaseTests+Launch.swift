@@ -8,6 +8,7 @@
 
 import Foundation
 @testable import NBus
+import RxCocoa
 import RxSwift
 import XCTest
 
