@@ -34,7 +34,7 @@ extension OauthTestCase {
         UIPasteboard.general.rx
             .items()
             .do(onNext: { [unowned self] items in
-                if platform == Platforms.qq {
+                if self._avoid_oauth_pb_error(items, platform) {
                     precondition(items.isEmpty)
 
                     self.pbExpectation.fulfill()
@@ -135,6 +135,10 @@ extension _OauthPasteboardTestCase {
         logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
 
         XCTAssertTrue(dictionary.isEmpty)
+    }
+
+    func _avoid_oauth_pb_error(_ items: [[String: Any]], _ platform: Platform) -> Bool {
+        platform == Platforms.qq
     }
 }
 

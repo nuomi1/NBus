@@ -75,6 +75,9 @@ protocol _OauthPasteboardTestCase:
 
     /// Test oauth pasteboard dictionary
     func _test_oauth_pb(dictionary: [String: Any], _ platform: Platform)
+
+    /// Avoid oauth pasteboard error
+    func _avoid_oauth_pb_error(_ items: [[String: Any]], _ platform: Platform) -> Bool
 }
 
 // MARK: - Oauth - Completion

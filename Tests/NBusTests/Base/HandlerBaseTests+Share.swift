@@ -34,10 +34,7 @@ extension ShareTestCase {
         UIPasteboard.general.rx
             .items()
             .do(onNext: { [unowned self] items in
-                if
-                    (message.identifier == Messages.webPage && endpoint == Endpoints.QQ.friend)
-                    || (message.identifier == Messages.webPage && endpoint == Endpoints.QQ.timeline)
-                    || (message.identifier == Messages.miniProgram && endpoint == Endpoints.QQ.friend) {
+                if self._avoid_share_pb_error(items, message, endpoint) {
                     precondition(items.isEmpty)
 
                     self.pbExpectation.fulfill()
@@ -155,6 +152,12 @@ extension _SharePasteboardTestCase {
         logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
 
         XCTAssertTrue(dictionary.isEmpty)
+    }
+
+    func _avoid_share_pb_error(_ items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) -> Bool {
+        (message.identifier == Messages.webPage && endpoint == Endpoints.QQ.friend)
+            || (message.identifier == Messages.webPage && endpoint == Endpoints.QQ.timeline)
+            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.QQ.friend)
     }
 }
 

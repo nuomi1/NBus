@@ -111,6 +111,9 @@ protocol _SharePasteboardTestCase:
 
     /// Test share pasteboard dictionary
     func _test_share_pb(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint)
+
+    /// Avoid share pasteboard error
+    func _avoid_share_pb_error(_ items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) -> Bool
 }
 
 // MARK: - Share - Completion
