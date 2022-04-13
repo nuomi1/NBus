@@ -11,6 +11,24 @@ import Foundation
 import RxSwift
 import XCTest
 
+// MARK: - Launch - Program - Scheme
+
+protocol LaunchProgramSchemeTestCase: XCTestCase {
+
+    /// Report launch scheme
+    func report_launch_scheme(_ platform: Platform, _ program: MiniProgramMessage) -> Set<String>
+}
+
+// MARK: - Launch - Scheme
+
+protocol _LaunchSchemeTestCase:
+    GeneralSchemeTestCase,
+    LaunchProgramSchemeTestCase {
+
+    /// Test launch scheme
+    func _test_launch(scheme: URL, _ platform: Platform, _ program: MiniProgramMessage)
+}
+
 // MARK: - Launch - Program - UniversalLink
 
 protocol LaunchProgramUniversalLinkTestCase: XCTestCase {
@@ -75,7 +93,11 @@ protocol _LaunchCompletionTestCase: XCTestCase {
 
 // MARK: - Launch
 
-protocol LaunchTestCase: _LaunchUniversalLinkTestCase, _LaunchPasteboardTestCase, _LaunchCompletionTestCase {
+protocol LaunchTestCase:
+    _LaunchSchemeTestCase,
+    _LaunchUniversalLinkTestCase,
+    _LaunchPasteboardTestCase,
+    _LaunchCompletionTestCase {
 
     var disposeBag: DisposeBag { get }
 }

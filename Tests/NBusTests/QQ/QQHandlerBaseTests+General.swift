@@ -9,6 +9,18 @@
 import Foundation
 import XCTest
 
+// MARK: - General - Scheme
+
+extension QQHandlerBaseTests: GeneralSchemeTestCase {
+
+    func report_general_scheme() -> Set<String> {
+        [
+            "mqq",
+            "mqqopensdkapiV2",
+        ]
+    }
+}
+
 // MARK: - General - UniversalLink
 
 extension QQHandlerBaseTests: GeneralUniversalLinkTestCase {

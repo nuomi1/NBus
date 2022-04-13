@@ -9,6 +9,19 @@
 import Foundation
 import XCTest
 
+// MARK: - General - Scheme
+
+extension WeiboHandlerBaseTests: GeneralSchemeTestCase {
+
+    func report_general_scheme() -> Set<String> {
+        [
+            "sinaweibo",
+            "weibosdk",
+            "weibosdk3.3",
+        ]
+    }
+}
+
 // MARK: - General - UniversalLink
 
 extension WeiboHandlerBaseTests: GeneralUniversalLinkTestCase {

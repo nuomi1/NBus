@@ -9,6 +9,18 @@
 import Foundation
 import XCTest
 
+// MARK: - General - Scheme
+
+extension WechatHandlerBaseTests: GeneralSchemeTestCase {
+
+    func report_general_scheme() -> Set<String> {
+        [
+            "weixin",
+            "weixinULAPI",
+        ]
+    }
+}
+
 // MARK: - General - UniversalLink
 
 extension WechatHandlerBaseTests: GeneralUniversalLinkTestCase {

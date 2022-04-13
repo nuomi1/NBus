@@ -18,6 +18,13 @@ extension OauthTestCase {
 
     func test_oauth(_ platform: Platform) {
         UIApplication.shared.rx
+            .canOpenURL()
+            .bind(onNext: { [unowned self] url in
+                self._test_oauth(scheme: url, platform)
+            })
+            .disposed(by: disposeBag)
+
+        UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
                 self._test_oauth(url: url, platform)
@@ -47,6 +54,19 @@ extension OauthTestCase {
         )
 
         wait(for: [ulExpectation, pbExpectation], timeout: 5)
+    }
+}
+
+// MARK: - Oauth - Scheme
+
+extension _OauthSchemeTestCase {
+
+    func _test_oauth(scheme: URL, _ platform: Platform) {
+        var schemeList: Set<String> = []
+        schemeList.formUnion(report_general_scheme())
+        schemeList.formUnion(report_oauth_scheme(platform))
+
+        XCTAssertTrue(schemeList.contains(scheme.scheme!))
     }
 }
 

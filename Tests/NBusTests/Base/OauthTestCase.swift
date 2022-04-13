@@ -11,6 +11,24 @@ import Foundation
 import RxSwift
 import XCTest
 
+// MARK: - Oauth - Platform - Scheme
+
+protocol OauthPlatformSchemeTestCase: XCTestCase {
+
+    /// Report oauth scheme
+    func report_oauth_scheme(_ platform: Platform) -> Set<String>
+}
+
+// MARK: - Oauth - Scheme
+
+protocol _OauthSchemeTestCase:
+    GeneralSchemeTestCase,
+    OauthPlatformSchemeTestCase {
+
+    /// Test oauth scheme
+    func _test_oauth(scheme: URL, _ platform: Platform)
+}
+
 // MARK: - Oauth - Platform - UniversalLink
 
 protocol OauthPlatformUniversalLinkTestCase: XCTestCase {
@@ -75,7 +93,11 @@ protocol _OauthCompletionTestCase: XCTestCase {
 
 // MARK: - Oauth
 
-protocol OauthTestCase: _OauthUniversalLinkTestCase, _OauthPasteboardTestCase, _OauthCompletionTestCase {
+protocol OauthTestCase:
+    _OauthSchemeTestCase,
+    _OauthUniversalLinkTestCase,
+    _OauthPasteboardTestCase,
+    _OauthCompletionTestCase {
 
     var disposeBag: DisposeBag { get }
 }

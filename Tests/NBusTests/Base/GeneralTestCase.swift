@@ -9,6 +9,14 @@
 import Foundation
 import XCTest
 
+// MARK: - General - Scheme
+
+protocol GeneralSchemeTestCase: XCTestCase {
+
+    /// Report general scheme
+    func report_general_scheme() -> Set<String>
+}
+
 // MARK: - General - UniversalLink
 
 protocol GeneralUniversalLinkTestCase: XCTestCase {

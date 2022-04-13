@@ -19,6 +19,15 @@ extension WeiboHandlerBaseTests: OauthTestCase {
     }
 }
 
+// MARK: - Oauth - Platform - Scheme
+
+extension WeiboHandlerBaseTests: OauthPlatformSchemeTestCase {
+
+    func report_oauth_scheme(_ platform: Platform) -> Set<String> {
+        []
+    }
+}
+
 // MARK: - Oauth - Platform - UniversalLink
 
 extension WeiboHandlerBaseTests: OauthPlatformUniversalLinkTestCase {

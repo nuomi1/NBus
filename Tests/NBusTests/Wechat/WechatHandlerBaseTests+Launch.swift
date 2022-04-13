@@ -19,6 +19,15 @@ extension WechatHandlerBaseTests: LaunchTestCase {
     }
 }
 
+// MARK: - Launch - Program - Scheme
+
+extension WechatHandlerBaseTests: LaunchProgramSchemeTestCase {
+
+    func report_launch_scheme(_ platform: Platform, _ program: MiniProgramMessage) -> Set<String> {
+        []
+    }
+}
+
 // MARK: - Launch - Program - UniversalLink
 
 extension WechatHandlerBaseTests: LaunchProgramUniversalLinkTestCase {

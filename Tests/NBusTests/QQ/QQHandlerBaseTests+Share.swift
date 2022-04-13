@@ -71,6 +71,34 @@ extension QQHandlerBaseTests: ShareTestCase {
     }
 }
 
+// MARK: - Share - Message - Scheme
+
+extension QQHandlerBaseTests: ShareMessageSchemeTestCase {
+
+    func report_share_scheme(_ message: MessageType, _ endpoint: Endpoint) -> Set<String> {
+        switch message {
+        case is TextMessage,
+             is ImageMessage,
+             is AudioMessage,
+             is VideoMessage,
+             is FileMessage:
+            return []
+        case is WebPageMessage:
+            return [
+                "mqqopensdknopasteboard",
+            ]
+        case is MiniProgramMessage:
+            return [
+                "mqqopensdkminiapp",
+                "mqqopensdknopasteboard",
+            ]
+        default:
+            XCTAssertTrue(false)
+            return []
+        }
+    }
+}
+
 // MARK: - Share - Common - UniversalLink
 
 extension QQHandlerBaseTests: ShareCommonUniversalLinkTestCase {

@@ -43,6 +43,27 @@ extension WeiboHandlerBaseTests: ShareTestCase {
     }
 }
 
+// MARK: - Share - Message - Scheme
+
+extension WeiboHandlerBaseTests: ShareMessageSchemeTestCase {
+
+    func report_share_scheme(_ message: MessageType, _ endpoint: Endpoint) -> Set<String> {
+        switch message {
+        case is TextMessage,
+             is ImageMessage,
+             is AudioMessage,
+             is VideoMessage,
+             is WebPageMessage,
+             is FileMessage,
+             is MiniProgramMessage:
+            return []
+        default:
+            XCTAssertTrue(false)
+            return []
+        }
+    }
+}
+
 // MARK: - Share - Common - UniversalLink
 
 extension WeiboHandlerBaseTests: ShareCommonUniversalLinkTestCase {

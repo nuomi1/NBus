@@ -18,6 +18,13 @@ extension LaunchTestCase {
 
     func test_launch(_ platform: Platform, _ program: MiniProgramMessage) {
         UIApplication.shared.rx
+            .canOpenURL()
+            .bind(onNext: { [unowned self] url in
+                self._test_launch(scheme: url, platform, program)
+            })
+            .disposed(by: disposeBag)
+
+        UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
                 self._test_launch(url: url, platform, program)
@@ -39,6 +46,19 @@ extension LaunchTestCase {
                 self._test_launch(result: result, platform, program)
             }
         )
+    }
+}
+
+// MARK: - Launch - Scheme
+
+extension _LaunchSchemeTestCase {
+
+    func _test_launch(scheme: URL, _ platform: Platform, _ program: MiniProgramMessage) {
+        var schemeList: Set<String> = []
+        schemeList.formUnion(report_general_scheme())
+        schemeList.formUnion(report_launch_scheme(platform, program))
+
+        XCTAssertTrue(schemeList.contains(scheme.scheme!))
     }
 }
 

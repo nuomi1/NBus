@@ -19,6 +19,17 @@ extension QQHandlerBaseTests: LaunchTestCase {
     }
 }
 
+// MARK: - Launch - Program - Scheme
+
+extension QQHandlerBaseTests: LaunchProgramSchemeTestCase {
+
+    func report_launch_scheme(_ platform: Platform, _ program: MiniProgramMessage) -> Set<String> {
+        [
+            "mqqopensdklaunchminiapp",
+        ]
+    }
+}
+
 // MARK: - Launch - Program - UniversalLink
 
 extension QQHandlerBaseTests: LaunchProgramUniversalLinkTestCase {

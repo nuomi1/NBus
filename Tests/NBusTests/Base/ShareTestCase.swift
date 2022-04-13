@@ -11,6 +11,24 @@ import Foundation
 import RxSwift
 import XCTest
 
+// MARK: - Share - Message - Scheme
+
+protocol ShareMessageSchemeTestCase: XCTestCase {
+
+    /// Report share scheme
+    func report_share_scheme(_ message: MessageType, _ endpoint: Endpoint) -> Set<String>
+}
+
+// MARK: - Share - Scheme
+
+protocol _ShareSchemeTestCase:
+    GeneralSchemeTestCase,
+    ShareMessageSchemeTestCase {
+
+    /// Test share scheme
+    func _test_share(scheme: URL, _ message: MessageType, _ endpoint: Endpoint)
+}
+
 // MARK: - Share - Common - UniversalLink
 
 protocol ShareCommonUniversalLinkTestCase: XCTestCase {
@@ -114,7 +132,11 @@ protocol _ShareCompletionTestCase: XCTestCase {
 
 // MARK: - Share
 
-protocol ShareTestCase: _ShareUniversalLinkTestCase, _SharePasteboardTestCase, _ShareCompletionTestCase {
+protocol ShareTestCase:
+    _ShareSchemeTestCase,
+    _ShareUniversalLinkTestCase,
+    _SharePasteboardTestCase,
+    _ShareCompletionTestCase {
 
     var disposeBag: DisposeBag { get }
 }

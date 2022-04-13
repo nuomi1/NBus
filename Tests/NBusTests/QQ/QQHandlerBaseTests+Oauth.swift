@@ -19,6 +19,17 @@ extension QQHandlerBaseTests: OauthTestCase {
     }
 }
 
+// MARK: - Oauth - Platform - Scheme
+
+extension QQHandlerBaseTests: OauthPlatformSchemeTestCase {
+
+    func report_oauth_scheme(_ platform: Platform) -> Set<String> {
+        [
+            "mqqopensdknopasteboard",
+        ]
+    }
+}
+
 // MARK: - Oauth - Platform - UniversalLink
 
 extension QQHandlerBaseTests: OauthPlatformUniversalLinkTestCase {

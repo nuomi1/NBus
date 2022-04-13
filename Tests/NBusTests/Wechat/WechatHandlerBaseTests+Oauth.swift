@@ -19,6 +19,15 @@ extension WechatHandlerBaseTests: OauthTestCase {
     }
 }
 
+// MARK: - Oauth - Platform - Scheme
+
+extension WechatHandlerBaseTests: OauthPlatformSchemeTestCase {
+
+    func report_oauth_scheme(_ platform: Platform) -> Set<String> {
+        []
+    }
+}
+
 // MARK: - Oauth - Platform - UniversalLink
 
 extension WechatHandlerBaseTests: OauthPlatformUniversalLinkTestCase {

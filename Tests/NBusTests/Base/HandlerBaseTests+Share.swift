@@ -18,6 +18,13 @@ extension ShareTestCase {
 
     func test_share(_ message: MessageType, _ endpoint: Endpoint) {
         UIApplication.shared.rx
+            .canOpenURL()
+            .bind(onNext: { [unowned self] url in
+                self._test_share(scheme: url, message, endpoint)
+            })
+            .disposed(by: disposeBag)
+
+        UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
                 self._test_share(url: url, message, endpoint)
@@ -51,6 +58,19 @@ extension ShareTestCase {
         )
 
         wait(for: [ulExpectation, pbExpectation], timeout: 5)
+    }
+}
+
+// MARK: - Share - Scheme
+
+extension _ShareSchemeTestCase {
+
+    func _test_share(scheme: URL, _ message: MessageType, _ endpoint: Endpoint) {
+        var schemeList: Set<String> = []
+        schemeList.formUnion(report_general_scheme())
+        schemeList.formUnion(report_share_scheme(message, endpoint))
+
+        XCTAssertTrue(schemeList.contains(scheme.scheme!))
     }
 }
 
