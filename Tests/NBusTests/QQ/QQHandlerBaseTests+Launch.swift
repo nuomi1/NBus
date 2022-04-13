@@ -19,9 +19,9 @@ extension QQHandlerBaseTests: LaunchTestCase {
     }
 }
 
-// MARK: - Launch - URL
+// MARK: - Launch - Program - UniversalLink
 
-extension QQHandlerBaseTests: LaunchURLTestCase {
+extension QQHandlerBaseTests: LaunchProgramUniversalLinkTestCase {
 
     func test_launch_ul(path: String) {
         XCTAssertEqual(path, "/opensdkul/mqqapi/profile/sdk_launch_mini_app")
@@ -64,9 +64,9 @@ extension QQHandlerBaseTests {
     }
 }
 
-// MARK: - Launch - Pasteboard
+// MARK: - Launch - Program - Pasteboard
 
-extension QQHandlerBaseTests: LaunchPasteboardTestCase {
+extension QQHandlerBaseTests: LaunchProgramPasteboardTestCase {
 
     func test_launch_pb(dictionary: inout [String: Any], _ platform: Platform, _ program: MiniProgramMessage) {
         XCTAssertTrue(true)

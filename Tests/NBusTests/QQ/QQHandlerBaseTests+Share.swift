@@ -578,12 +578,3 @@ extension QQHandlerBaseTests {
         }
     }
 }
-
-// MARK: - Share - Completion
-
-extension QQHandlerBaseTests: ShareCompletionTestCase {
-
-    func test_share_avoid_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool {
-        message.identifier == Messages.file && endpoint == Endpoints.QQ.timeline
-    }
-}

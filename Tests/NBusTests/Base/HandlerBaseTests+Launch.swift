@@ -20,7 +20,7 @@ extension LaunchTestCase {
         UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
-                self.test_launch(url: url, platform, program)
+                self._test_launch(url: url, platform, program)
             })
             .disposed(by: disposeBag)
 
@@ -28,7 +28,7 @@ extension LaunchTestCase {
             .items()
             .filter { !$0.isEmpty }
             .bind(onNext: { [unowned self] items in
-                self.test_launch(items: items, platform, program)
+                self._test_launch(items: items, platform, program)
             })
             .disposed(by: disposeBag)
 
@@ -36,17 +36,17 @@ extension LaunchTestCase {
             program: program,
             with: platform,
             completionHandler: { [unowned self] result in
-                self.test_launch(result: result, platform, program)
+                self._test_launch(result: result, platform, program)
             }
         )
     }
 }
 
-// MARK: - Launch - URL
+// MARK: - Launch - UniversalLink
 
-extension LaunchURLTestCase {
+extension _LaunchUniversalLinkTestCase {
 
-    func test_launch(url: URL, _ platform: Platform, _ program: MiniProgramMessage) {
+    func _test_launch(url: URL, _ platform: Platform, _ program: MiniProgramMessage) {
         let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         var queryItems = urlComponents.queryItems ?? []
 
@@ -58,7 +58,7 @@ extension LaunchURLTestCase {
         test_general_ul(host: urlComponents.host!)
         test_general_ul(queryItems: &queryItems)
 
-        // Launch - UniversalLink
+        // Launch - Program - UniversalLink
 
         test_launch_ul(path: urlComponents.path)
         test_launch_ul(queryItems: &queryItems, platform, program)
@@ -73,14 +73,14 @@ extension LaunchURLTestCase {
 
 // MARK: - Launch - Pasteboard
 
-extension LaunchPasteboardTestCase {
+extension _LaunchPasteboardTestCase {
 
-    func test_launch(items: [[String: Any]], _ platform: Platform, _ program: MiniProgramMessage) {
+    func _test_launch(items: [[String: Any]], _ platform: Platform, _ program: MiniProgramMessage) {
         var items = items as! [[String: Data]]
 
         logger.debug("\(UIPasteboard.self), start, \(items.map { $0.keys.sorted() })")
 
-        test_launch_major_pb(dictionary: test_extract_major_pb(items: &items), platform, program)
+        _test_launch_pb(dictionary: test_extract_major_pb(items: &items), platform, program)
 
         test_extra_pb(items: &items)
 
@@ -91,7 +91,7 @@ extension LaunchPasteboardTestCase {
         pbExpectation.fulfill()
     }
 
-    func test_launch_major_pb(dictionary: [String: Any], _ platform: Platform, _ program: MiniProgramMessage) {
+    func _test_launch_pb(dictionary: [String: Any], _ platform: Platform, _ program: MiniProgramMessage) {
         var dictionary = dictionary
 
         logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
@@ -112,9 +112,9 @@ extension LaunchPasteboardTestCase {
 
 // MARK: - Launch - Completion
 
-extension LaunchCompletionTestCase {
+extension _LaunchCompletionTestCase {
 
-    func test_launch(result: Result<Void, Bus.Error>, _ platform: Platform, _ program: MiniProgramMessage) {
+    func _test_launch(result: Result<Void, Bus.Error>, _ platform: Platform, _ program: MiniProgramMessage) {
         switch result {
         case .success:
             XCTAssertTrue(true)

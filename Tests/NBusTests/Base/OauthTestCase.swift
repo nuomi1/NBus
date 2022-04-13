@@ -22,9 +22,9 @@ protocol OauthPlatformUniversalLinkTestCase: XCTestCase {
     func test_oauth_ul(queryItems: inout [URLQueryItem], _ platform: Platform)
 }
 
-// MARK: - Oauth - URL
+// MARK: - Oauth - UniversalLink
 
-protocol OauthURLTestCase:
+protocol _OauthUniversalLinkTestCase:
     GeneralUniversalLinkTestCase,
     OauthPlatformUniversalLinkTestCase {
 
@@ -32,7 +32,7 @@ protocol OauthURLTestCase:
     var ulExpectation: XCTestExpectation { get }
 
     /// Test oauth universal link
-    func test_oauth(url: URL, _ platform: Platform)
+    func _test_oauth(url: URL, _ platform: Platform)
 }
 
 // MARK: - Oauth - Platform - Pasteboard
@@ -45,7 +45,7 @@ protocol OauthPlatformPasteboardTestCase: XCTestCase {
 
 // MARK: - Oauth - Pasteboard
 
-protocol OauthPasteboardTestCase:
+protocol _OauthPasteboardTestCase:
     GeneralPasteboardTestCase,
     OauthPlatformPasteboardTestCase {
 
@@ -53,15 +53,15 @@ protocol OauthPasteboardTestCase:
     var pbExpectation: XCTestExpectation { get }
 
     /// Test oauth pasteboard
-    func test_oauth(items: [[String: Any]], _ platform: Platform)
+    func _test_oauth(items: [[String: Any]], _ platform: Platform)
 
-    /// Test oauth pasteboard major data
-    func test_oauth_major_pb(dictionary: [String: Any], _ platform: Platform)
+    /// Test oauth pasteboard dictionary
+    func _test_oauth_pb(dictionary: [String: Any], _ platform: Platform)
 }
 
 // MARK: - Oauth - Completion
 
-protocol OauthCompletionTestCase: XCTestCase {
+protocol _OauthCompletionTestCase: XCTestCase {
 
     /// Universal link expectation
     var ulExpectation: XCTestExpectation { get }
@@ -70,12 +70,12 @@ protocol OauthCompletionTestCase: XCTestCase {
     var pbExpectation: XCTestExpectation { get }
 
     /// Test oauth completion
-    func test_oauth(result: Result<[Bus.OauthInfoKey: String], Bus.Error>, _ platform: Platform)
+    func _test_oauth(result: Result<[Bus.OauthInfoKey: String], Bus.Error>, _ platform: Platform)
 }
 
 // MARK: - Oauth
 
-protocol OauthTestCase: OauthURLTestCase, OauthPasteboardTestCase, OauthCompletionTestCase {
+protocol OauthTestCase: _OauthUniversalLinkTestCase, _OauthPasteboardTestCase, _OauthCompletionTestCase {
 
     var disposeBag: DisposeBag { get }
 }

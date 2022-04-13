@@ -38,9 +38,9 @@ protocol ShareMessageUniversalLinkTestCase: XCTestCase {
     func test_share_message_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint)
 }
 
-// MARK: - Share - URL
+// MARK: - Share - UniversalLink
 
-protocol ShareURLTestCase:
+protocol _ShareUniversalLinkTestCase:
     GeneralUniversalLinkTestCase,
     ShareCommonUniversalLinkTestCase,
     ShareMediaMessageUniversalLinkTestCase,
@@ -50,7 +50,7 @@ protocol ShareURLTestCase:
     var ulExpectation: XCTestExpectation { get }
 
     /// Test share universal link
-    func test_share(url: URL, _ message: MessageType, _ endpoint: Endpoint)
+    func _test_share(url: URL, _ message: MessageType, _ endpoint: Endpoint)
 }
 
 // MARK: - Share - Common - Pasteboard
@@ -79,7 +79,7 @@ protocol ShareMessagePasteboardTestCase: XCTestCase {
 
 // MARK: - Share - Pasteboard
 
-protocol SharePasteboardTestCase:
+protocol _SharePasteboardTestCase:
     GeneralPasteboardTestCase,
     ShareCommonPasteboardTestCase,
     ShareMediaMessagePasteboardTestCase,
@@ -89,15 +89,15 @@ protocol SharePasteboardTestCase:
     var pbExpectation: XCTestExpectation { get }
 
     /// Test share pasteboard
-    func test_share(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint)
+    func _test_share(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint)
 
-    /// Test share pasteboard major data
-    func test_share_major_pb(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint)
+    /// Test share pasteboard dictionary
+    func _test_share_pb(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint)
 }
 
 // MARK: - Share - Completion
 
-protocol ShareCompletionTestCase: XCTestCase {
+protocol _ShareCompletionTestCase: XCTestCase {
 
     /// Universal link expectation
     var ulExpectation: XCTestExpectation { get }
@@ -106,15 +106,15 @@ protocol ShareCompletionTestCase: XCTestCase {
     var pbExpectation: XCTestExpectation { get }
 
     /// Test share completion
-    func test_share(result: Result<Void, Bus.Error>, _ message: MessageType, _ endpoint: Endpoint)
+    func _test_share(result: Result<Void, Bus.Error>, _ message: MessageType, _ endpoint: Endpoint)
 
     /// Test share avoid error
-    func test_share_avoid_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool
+    func _test_share_avoid_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool
 }
 
 // MARK: - Share
 
-protocol ShareTestCase: ShareURLTestCase, SharePasteboardTestCase, ShareCompletionTestCase {
+protocol ShareTestCase: _ShareUniversalLinkTestCase, _SharePasteboardTestCase, _ShareCompletionTestCase {
 
     var disposeBag: DisposeBag { get }
 }

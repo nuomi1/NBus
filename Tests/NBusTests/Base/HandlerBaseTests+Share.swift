@@ -20,7 +20,7 @@ extension ShareTestCase {
         UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
-                self.test_share(url: url, message, endpoint)
+                self._test_share(url: url, message, endpoint)
             })
             .disposed(by: disposeBag)
 
@@ -38,7 +38,7 @@ extension ShareTestCase {
             })
             .filter { !$0.isEmpty }
             .bind(onNext: { [unowned self] items in
-                self.test_share(items: items, message, endpoint)
+                self._test_share(items: items, message, endpoint)
             })
             .disposed(by: disposeBag)
 
@@ -46,7 +46,7 @@ extension ShareTestCase {
             message: message,
             to: endpoint,
             completionHandler: { [unowned self] result in
-                self.test_share(result: result, message, endpoint)
+                self._test_share(result: result, message, endpoint)
             }
         )
 
@@ -54,11 +54,11 @@ extension ShareTestCase {
     }
 }
 
-// MARK: - Share - URL
+// MARK: - Share - UniversalLink
 
-extension ShareURLTestCase {
+extension _ShareUniversalLinkTestCase {
 
-    func test_share(url: URL, _ message: MessageType, _ endpoint: Endpoint) {
+    func _test_share(url: URL, _ message: MessageType, _ endpoint: Endpoint) {
         let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         var queryItems = urlComponents.queryItems ?? []
 
@@ -93,14 +93,14 @@ extension ShareURLTestCase {
 
 // MARK: - Share - Pasteboard
 
-extension SharePasteboardTestCase {
+extension _SharePasteboardTestCase {
 
-    func test_share(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) {
+    func _test_share(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) {
         var items = items as! [[String: Data]]
 
         logger.debug("\(UIPasteboard.self), start, \(items.map { $0.keys.sorted() })")
 
-        test_share_major_pb(dictionary: test_extract_major_pb(items: &items), message, endpoint)
+        _test_share_pb(dictionary: test_extract_major_pb(items: &items), message, endpoint)
 
         test_extra_pb(items: &items)
 
@@ -111,7 +111,7 @@ extension SharePasteboardTestCase {
         pbExpectation.fulfill()
     }
 
-    func test_share_major_pb(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+    func _test_share_pb(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         var dictionary = dictionary
 
         logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
@@ -120,7 +120,7 @@ extension SharePasteboardTestCase {
 
         test_general_pb(dictionary: &dictionary)
 
-        // Share - Comon - Pasteboard
+        // Share - Common - Pasteboard
 
         test_share_common_pb(dictionary: &dictionary)
 
@@ -140,16 +140,16 @@ extension SharePasteboardTestCase {
 
 // MARK: - Share - Completion
 
-extension ShareCompletionTestCase {
+extension _ShareCompletionTestCase {
 
-    func test_share(result: Result<Void, Bus.Error>, _ message: MessageType, _ endpoint: Endpoint) {
+    func _test_share(result: Result<Void, Bus.Error>, _ message: MessageType, _ endpoint: Endpoint) {
         switch result {
         case .success:
             XCTAssertTrue(true)
         case let .failure(error):
             logger.error("\(error)")
 
-            if test_share_avoid_error(error, message, endpoint) {
+            if _test_share_avoid_error(error, message, endpoint) {
                 XCTAssertTrue(true)
 
                 ulExpectation.fulfill()
@@ -158,5 +158,14 @@ extension ShareCompletionTestCase {
                 XCTAssertTrue(false)
             }
         }
+    }
+
+    func _test_share_avoid_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool {
+        (message.identifier == Messages.file && endpoint == Endpoints.QQ.timeline)
+            || (message.identifier == Messages.file && endpoint == Endpoints.Wechat.timeline)
+            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.Wechat.timeline)
+            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.Wechat.favorite)
+            || (message.identifier == Messages.file && endpoint == Endpoints.Weibo.timeline)
+            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.Weibo.timeline)
     }
 }

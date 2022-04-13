@@ -20,7 +20,7 @@ extension OauthTestCase {
         UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
-                self.test_oauth(url: url, platform)
+                self._test_oauth(url: url, platform)
             })
             .disposed(by: disposeBag)
 
@@ -35,14 +35,14 @@ extension OauthTestCase {
             })
             .filter { !$0.isEmpty }
             .bind(onNext: { [unowned self] items in
-                self.test_oauth(items: items, platform)
+                self._test_oauth(items: items, platform)
             })
             .disposed(by: disposeBag)
 
         Bus.shared.oauth(
             with: platform,
             completionHandler: { [unowned self] result in
-                self.test_oauth(result: result, platform)
+                self._test_oauth(result: result, platform)
             }
         )
 
@@ -50,11 +50,11 @@ extension OauthTestCase {
     }
 }
 
-// MARK: - Oauth - URL
+// MARK: - Oauth - UniversalLink
 
-extension OauthURLTestCase {
+extension _OauthUniversalLinkTestCase {
 
-    func test_oauth(url: URL, _ platform: Platform) {
+    func _test_oauth(url: URL, _ platform: Platform) {
         let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         var queryItems = urlComponents.queryItems ?? []
 
@@ -66,7 +66,7 @@ extension OauthURLTestCase {
         test_general_ul(host: urlComponents.host!)
         test_general_ul(queryItems: &queryItems)
 
-        // Oauth - UniversalLink
+        // Oauth - Platform - UniversalLink
 
         test_oauth_ul(path: urlComponents.path)
         test_oauth_ul(queryItems: &queryItems, platform)
@@ -81,14 +81,14 @@ extension OauthURLTestCase {
 
 // MARK: - Oauth - Pasteboard
 
-extension OauthPasteboardTestCase {
+extension _OauthPasteboardTestCase {
 
-    func test_oauth(items: [[String: Any]], _ platform: Platform) {
+    func _test_oauth(items: [[String: Any]], _ platform: Platform) {
         var items = items as! [[String: Data]]
 
         logger.debug("\(UIPasteboard.self), start, \(items.map { $0.keys.sorted() })")
 
-        test_oauth_major_pb(dictionary: test_extract_major_pb(items: &items), platform)
+        _test_oauth_pb(dictionary: test_extract_major_pb(items: &items), platform)
 
         test_extra_pb(items: &items)
 
@@ -99,7 +99,7 @@ extension OauthPasteboardTestCase {
         pbExpectation.fulfill()
     }
 
-    func test_oauth_major_pb(dictionary: [String: Any], _ platform: Platform) {
+    func _test_oauth_pb(dictionary: [String: Any], _ platform: Platform) {
         var dictionary = dictionary
 
         logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
@@ -120,9 +120,9 @@ extension OauthPasteboardTestCase {
 
 // MARK: - Oauth - Completion
 
-extension OauthCompletionTestCase {
+extension _OauthCompletionTestCase {
 
-    func test_oauth(result: Result<[Bus.OauthInfoKey: String], Bus.Error>, _ platform: Platform) {
+    func _test_oauth(result: Result<[Bus.OauthInfoKey: String], Bus.Error>, _ platform: Platform) {
         switch result {
         case .success:
             XCTAssertTrue(true)

@@ -22,9 +22,9 @@ protocol LaunchProgramUniversalLinkTestCase: XCTestCase {
     func test_launch_ul(queryItems: inout [URLQueryItem], _ platform: Platform, _ program: MiniProgramMessage)
 }
 
-// MARK: - Launch - URL
+// MARK: - Launch - UniversalLink
 
-protocol LaunchURLTestCase:
+protocol _LaunchUniversalLinkTestCase:
     GeneralUniversalLinkTestCase,
     LaunchProgramUniversalLinkTestCase {
 
@@ -32,7 +32,7 @@ protocol LaunchURLTestCase:
     var ulExpectation: XCTestExpectation { get }
 
     /// Test launch universal link
-    func test_launch(url: URL, _ platform: Platform, _ program: MiniProgramMessage)
+    func _test_launch(url: URL, _ platform: Platform, _ program: MiniProgramMessage)
 }
 
 // MARK: - Launch - Platform - Pasteboard
@@ -45,7 +45,7 @@ protocol LaunchProgramPasteboardTestCase: XCTestCase {
 
 // MARK: - Launch - Pasteboard
 
-protocol LaunchPasteboardTestCase:
+protocol _LaunchPasteboardTestCase:
     GeneralPasteboardTestCase,
     LaunchProgramPasteboardTestCase {
 
@@ -53,15 +53,15 @@ protocol LaunchPasteboardTestCase:
     var pbExpectation: XCTestExpectation { get }
 
     /// Test launch pasteboard
-    func test_launch(items: [[String: Any]], _ platform: Platform, _ program: MiniProgramMessage)
+    func _test_launch(items: [[String: Any]], _ platform: Platform, _ program: MiniProgramMessage)
 
-    /// Test launch pasteboard major data
-    func test_launch_major_pb(dictionary: [String: Any], _ platform: Platform, _ program: MiniProgramMessage)
+    /// Test launch pasteboard dictionary
+    func _test_launch_pb(dictionary: [String: Any], _ platform: Platform, _ program: MiniProgramMessage)
 }
 
 // MARK: - Launch - Completion
 
-protocol LaunchCompletionTestCase: XCTestCase {
+protocol _LaunchCompletionTestCase: XCTestCase {
 
     /// Universal link expectation
     var ulExpectation: XCTestExpectation { get }
@@ -70,12 +70,12 @@ protocol LaunchCompletionTestCase: XCTestCase {
     var pbExpectation: XCTestExpectation { get }
 
     /// Test launch completion
-    func test_launch(result: Result<Void, Bus.Error>, _ platform: Platform, _ program: MiniProgramMessage)
+    func _test_launch(result: Result<Void, Bus.Error>, _ platform: Platform, _ program: MiniProgramMessage)
 }
 
 // MARK: - Launch
 
-protocol LaunchTestCase: LaunchURLTestCase, LaunchPasteboardTestCase, LaunchCompletionTestCase {
+protocol LaunchTestCase: _LaunchUniversalLinkTestCase, _LaunchPasteboardTestCase, _LaunchCompletionTestCase {
 
     var disposeBag: DisposeBag { get }
 }

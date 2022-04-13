@@ -19,7 +19,7 @@ extension QQHandlerBaseTests: OauthTestCase {
     }
 }
 
-// MARK: Oauth - Platform - UniversalLink
+// MARK: - Oauth - Platform - UniversalLink
 
 extension QQHandlerBaseTests: OauthPlatformUniversalLinkTestCase {
 

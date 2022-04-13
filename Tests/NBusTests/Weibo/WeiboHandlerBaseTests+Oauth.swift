@@ -19,7 +19,7 @@ extension WeiboHandlerBaseTests: OauthTestCase {
     }
 }
 
-// MARK: - Oauth - Platform -UniversalLink
+// MARK: - Oauth - Platform - UniversalLink
 
 extension WeiboHandlerBaseTests: OauthPlatformUniversalLinkTestCase {
 

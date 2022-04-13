@@ -578,14 +578,3 @@ extension WechatHandlerBaseTests {
         }
     }
 }
-
-// MARK: - Share - Completion
-
-extension WechatHandlerBaseTests: ShareCompletionTestCase {
-
-    func test_share_avoid_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool {
-        (message.identifier == Messages.file && endpoint == Endpoints.Wechat.timeline)
-            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.Wechat.timeline)
-            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.Wechat.favorite)
-    }
-}
