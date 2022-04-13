@@ -108,7 +108,7 @@ extension _OauthPasteboardTestCase {
 
         logger.debug("\(UIPasteboard.self), start, \(items.map { $0.keys.sorted() })")
 
-        _test_oauth_pb(dictionary: test_extract_major_pb(items: &items), platform)
+        _test_oauth_pb(dictionary: extract_major_pb(items: &items), platform)
 
         test_extra_pb(items: &items)
 

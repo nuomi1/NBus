@@ -126,8 +126,8 @@ protocol _ShareCompletionTestCase: XCTestCase {
     /// Test share completion
     func _test_share(result: Result<Void, Bus.Error>, _ message: MessageType, _ endpoint: Endpoint)
 
-    /// Test share avoid error
-    func _test_share_avoid_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool
+    /// Avoid share completion error
+    func _avoid_share_completion_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool
 }
 
 // MARK: - Share

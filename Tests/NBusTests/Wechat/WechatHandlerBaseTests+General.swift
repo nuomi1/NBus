@@ -57,8 +57,8 @@ extension WechatHandlerBaseTests {
 
 extension WechatHandlerBaseTests: GeneralPasteboardTestCase {
 
-    func test_extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
-        let plist = test_extract_PropertyList_pb(items: &items, key: "content")
+    func extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
+        let plist = extract_PropertyList_pb(items: &items, key: "content")
         let dictionary = plist[appID] as! [String: Any]
 
         return dictionary

@@ -35,8 +35,8 @@ protocol GeneralUniversalLinkTestCase: XCTestCase {
 
 protocol GeneralPasteboardTestCase: XCTestCase {
 
-    /// Test pasteboard extract major data
-    func test_extract_major_pb(items: inout [[String: Data]]) -> [String: Any]
+    /// Extract pasteboard major data
+    func extract_major_pb(items: inout [[String: Data]]) -> [String: Any]
 
     /// Test general pasteboard dictionary
     func test_general_pb(dictionary: inout [String: Any])

@@ -64,8 +64,8 @@ extension QQHandlerBaseTests {
 
 extension QQHandlerBaseTests: GeneralPasteboardTestCase {
 
-    func test_extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
-        test_extract_KeyedArchiver_pb(items: &items, key: "com.tencent.mqq.api.apiLargeData")
+    func extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
+        extract_KeyedArchiver_pb(items: &items, key: "com.tencent.mqq.api.apiLargeData")
     }
 
     func test_general_pb(dictionary: inout [String: Any]) {

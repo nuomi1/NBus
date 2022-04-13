@@ -100,7 +100,7 @@ extension _LaunchPasteboardTestCase {
 
         logger.debug("\(UIPasteboard.self), start, \(items.map { $0.keys.sorted() })")
 
-        _test_launch_pb(dictionary: test_extract_major_pb(items: &items), platform, program)
+        _test_launch_pb(dictionary: extract_major_pb(items: &items), platform, program)
 
         test_extra_pb(items: &items)
 

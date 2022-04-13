@@ -12,7 +12,8 @@ import Foundation
 
 extension GeneralPasteboardTestCase {
 
-    func test_extract_KeyedArchiver_pb(items: inout [[String: Data]], key: String) -> [String: Any] {
+    /// Extract pasteboard using KeyedArchiver
+    func extract_KeyedArchiver_pb(items: inout [[String: Data]], key: String) -> [String: Any] {
         let item = items.removeFirst { $0.keys.contains(key) }!
 
         precondition(item.count == 1)
@@ -23,7 +24,8 @@ extension GeneralPasteboardTestCase {
         return dictionary
     }
 
-    func test_extract_PropertyList_pb(items: inout [[String: Data]], key: String) -> [String: Any] {
+    /// Extract pasteboard using PropertyList
+    func extract_PropertyList_pb(items: inout [[String: Data]], key: String) -> [String: Any] {
         let item = items.removeFirst { $0.keys.contains(key) }!
 
         precondition(item.count == 1)

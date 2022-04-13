@@ -86,8 +86,8 @@ extension WeiboHandlerBaseTests {
 
 extension WeiboHandlerBaseTests: GeneralPasteboardTestCase {
 
-    func test_extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
-        test_extract_KeyedArchiver_pb(items: &items, key: "transferObject")
+    func extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
+        extract_KeyedArchiver_pb(items: &items, key: "transferObject")
     }
 
     func test_general_pb(dictionary: inout [String: Any]) {
@@ -114,7 +114,7 @@ extension WeiboHandlerBaseTests {
 extension WeiboHandlerBaseTests {
 
     func test_app(_ items: inout [[String: Data]]) {
-        var dictionary = test_extract_KeyedArchiver_pb(items: &items, key: "app")
+        var dictionary = extract_KeyedArchiver_pb(items: &items, key: "app")
 
         logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
 
@@ -167,7 +167,7 @@ extension WeiboHandlerBaseTests {
 extension WeiboHandlerBaseTests {
 
     func test_userInfo(_ items: inout [[String: Data]]) {
-        var dictionary = test_extract_KeyedArchiver_pb(items: &items, key: "userInfo")
+        var dictionary = extract_KeyedArchiver_pb(items: &items, key: "userInfo")
 
         logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
 

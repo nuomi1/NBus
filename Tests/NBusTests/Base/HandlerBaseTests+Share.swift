@@ -120,7 +120,7 @@ extension _SharePasteboardTestCase {
 
         logger.debug("\(UIPasteboard.self), start, \(items.map { $0.keys.sorted() })")
 
-        _test_share_pb(dictionary: test_extract_major_pb(items: &items), message, endpoint)
+        _test_share_pb(dictionary: extract_major_pb(items: &items), message, endpoint)
 
         test_extra_pb(items: &items)
 
@@ -169,7 +169,7 @@ extension _ShareCompletionTestCase {
         case let .failure(error):
             logger.error("\(error)")
 
-            if _test_share_avoid_error(error, message, endpoint) {
+            if _avoid_share_completion_error(error, message, endpoint) {
                 XCTAssertTrue(true)
 
                 ulExpectation.fulfill()
@@ -180,7 +180,7 @@ extension _ShareCompletionTestCase {
         }
     }
 
-    func _test_share_avoid_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool {
+    func _avoid_share_completion_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool {
         (message.identifier == Messages.file && endpoint == Endpoints.QQ.timeline)
             || (message.identifier == Messages.file && endpoint == Endpoints.Wechat.timeline)
             || (message.identifier == Messages.miniProgram && endpoint == Endpoints.Wechat.timeline)
