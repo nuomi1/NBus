@@ -16,6 +16,8 @@ class AppState {
 
     static let shared = AppState()
 
+    static let defaultPasteboardString = "NBus"
+
     private init() {}
 }
 

@@ -35,7 +35,7 @@ extension AppState {
         pasteboard.items = []
 
         if shouldSetString {
-            pasteboard.string = "NBus"
+            pasteboard.string = Self.defaultPasteboardString
         }
     }
 
