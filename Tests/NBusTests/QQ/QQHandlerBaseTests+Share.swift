@@ -468,8 +468,10 @@ extension QQHandlerBaseTests {
     func test_pasteboard(_ queryItem: URLQueryItem?, _ message: MessageType) {
         let thumbnail: (String) -> Data = { value in
             let data = Data(base64Encoded: value)!
-            let object = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
-            return object["previewimagedata"] as! Data
+            var object = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
+            let thumbnail = object.removeValue(forKey: "previewimagedata") as! Data
+            XCTAssertTrue(object.isEmpty)
+            return thumbnail
         }
 
         switch message {

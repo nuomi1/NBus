@@ -58,8 +58,20 @@ extension WechatHandlerBaseTests {
 extension WechatHandlerBaseTests: GeneralPasteboardTestCase {
 
     func extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
-        let plist = extract_PropertyList_pb(items: &items, key: "content")
-        let dictionary = plist[appID] as! [String: Any]
+        var plist = extract_PropertyList_pb(items: &items, key: "content")
+
+        logger.debug("\(UIPasteboard.self), start, \(plist.keys.sorted())")
+
+        let dictionary = plist.removeValue(forKey: appID) as! [String: Any]
+
+        if context.setPasteboardString {
+            let old_text = plist.removeValue(forKey: "old_text") as! String
+            test_old_text(old_text)
+        }
+
+        logger.debug("\(UIPasteboard.self), end, \(plist.keys.sorted())")
+
+        XCTAssertTrue(plist.isEmpty)
 
         return dictionary
     }
@@ -83,6 +95,13 @@ extension WechatHandlerBaseTests: GeneralPasteboardTestCase {
 
     func test_extra_pb(items: inout [[String: Data]]) {
         XCTAssertTrue(true)
+    }
+}
+
+extension WechatHandlerBaseTests {
+
+    func test_old_text(_ value: String) {
+        XCTAssertEqual(value, AppState.defaultPasteboardString)
     }
 }
 

@@ -33,14 +33,22 @@ extension ShareTestCase {
 
         UIPasteboard.general.rx
             .items()
-            .do(onNext: { [unowned self] items in
+            .skip(while: { [unowned self] items in
                 if self._avoid_share_pb_error(items, message, endpoint) {
-                    precondition(items.isEmpty)
+                    precondition(items.pasteboardString() == AppState.defaultPasteboardString)
 
                     self.pbExpectation.fulfill()
+
+                    return true
                 }
+
+                if self.context.setPasteboardString {
+                    return items.pasteboardString() == AppState.defaultPasteboardString
+                }
+
+                return false
             })
-            .filter { !$0.isEmpty }
+            .filter { !$0.allSatisfy { $0.isEmpty } }
             .bind(onNext: { [unowned self] items in
                 self._test_share(items: items, message, endpoint)
             })

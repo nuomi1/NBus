@@ -33,7 +33,7 @@ extension LaunchTestCase {
 
         UIPasteboard.general.rx
             .items()
-            .filter { !$0.isEmpty }
+            .filter { !$0.allSatisfy { $0.isEmpty } }
             .bind(onNext: { [unowned self] items in
                 self._test_launch(items: items, platform, program)
             })

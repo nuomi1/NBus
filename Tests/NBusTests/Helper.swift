@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension Array {
 
@@ -14,4 +15,26 @@ extension Array {
         guard let index = try firstIndex(where: shouldBeRemoved) else { return nil }
         return remove(at: index)
     }
+}
+
+extension Array where Element == [String: Any] {
+
+    func pasteboardString() -> String? {
+        let typeListString = UIPasteboard.typeListString as! [String]
+
+        let strings = flatMap { dictionary in
+            typeListString.compactMap { key in
+                dictionary[key] as? String
+            }
+        }
+
+        precondition(strings.count <= 1)
+
+        return strings.first
+    }
+}
+
+struct HandlerTestContext {
+
+    var setPasteboardString = false
 }

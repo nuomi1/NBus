@@ -103,4 +103,6 @@ protocol OauthTestCase:
     _OauthCompletionTestCase {
 
     var disposeBag: DisposeBag { get }
+
+    var context: HandlerTestContext { get }
 }

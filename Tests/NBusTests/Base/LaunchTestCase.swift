@@ -100,4 +100,6 @@ protocol LaunchTestCase:
     _LaunchCompletionTestCase {
 
     var disposeBag: DisposeBag { get }
+
+    var context: HandlerTestContext { get }
 }

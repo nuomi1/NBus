@@ -53,6 +53,8 @@ class HandlerBaseTests: XCTestCase {
     static var disposeBag = DisposeBag()
     var disposeBag = DisposeBag()
 
+    var context = HandlerTestContext()
+
     let ulExpectation = XCTestExpectation(description: "UniversalLink")
     let pbExpectation = XCTestExpectation(description: "Pasteboard")
 
@@ -112,9 +114,11 @@ extension HandlerBaseTests {
     override func setUp() {
         super.setUp()
 
-        Bus.shared.handlers = [handler]
+        context.setPasteboardString = true
 
-        AppState.shared.clearPasteboard()
+        AppState.shared.clearPasteboard(shouldSetString: context.setPasteboardString)
+
+        Bus.shared.handlers = [handler]
     }
 
     override func tearDown() {

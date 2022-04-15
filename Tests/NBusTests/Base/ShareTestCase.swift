@@ -142,4 +142,6 @@ protocol ShareTestCase:
     _ShareCompletionTestCase {
 
     var disposeBag: DisposeBag { get }
+
+    var context: HandlerTestContext { get }
 }

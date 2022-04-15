@@ -69,10 +69,20 @@ extension QQHandlerBaseTests: GeneralPasteboardTestCase {
     }
 
     func test_general_pb(dictionary: inout [String: Any]) {
-        XCTAssertTrue(true)
+        if context.setPasteboardString {
+            let pasted_string = dictionary.removeValue(forKey: "pasted_string") as! String
+            test_pasted_string(pasted_string)
+        }
     }
 
     func test_extra_pb(items: inout [[String: Data]]) {
         XCTAssertTrue(true)
+    }
+}
+
+extension QQHandlerBaseTests {
+
+    func test_pasted_string(_ value: String) {
+        XCTAssertEqual(value, AppState.defaultPasteboardString)
     }
 }
