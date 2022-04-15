@@ -67,6 +67,8 @@ class HandlerBaseTests: XCTestCase {
                 let url = notification.userInfo?[AppState.OpenURL.requestKey] as! URL
                 let result = Bus.shared.openURL(url)
 
+                logger.debug("\(url)")
+
                 NotificationCenter.default.post(
                     name: AppState.OpenURL.responseName,
                     object: nil,
@@ -82,6 +84,8 @@ class HandlerBaseTests: XCTestCase {
             .bind(onNext: { notification in
                 let userActivity = notification.userInfo?[AppState.OpenUserActivity.requestKey] as! NSUserActivity
                 let result = Bus.shared.openUserActivity(userActivity)
+
+                logger.debug("\(String(describing: userActivity.webpageURL))")
 
                 NotificationCenter.default.post(
                     name: AppState.OpenUserActivity.responseName,
