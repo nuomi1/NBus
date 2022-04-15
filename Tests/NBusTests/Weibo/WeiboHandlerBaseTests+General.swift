@@ -118,7 +118,7 @@ extension WeiboHandlerBaseTests {
 
         logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
 
-        let aid = dictionary.removeValue(forKey: "aid") as! String
+        let aid = dictionary.removeValue(forKey: "aid") as? String
         test_aid(aid)
 
         let appKey = dictionary.removeValue(forKey: "appKey") as! String
@@ -138,8 +138,10 @@ extension WeiboHandlerBaseTests {
 
 extension WeiboHandlerBaseTests {
 
-    func test_aid(_ value: String) {
-        XCTAssertEqual(value.count, 50)
+    func test_aid(_ value: String?) {
+        let isNil = value == nil
+        let isCountFifty = value?.count == 50
+        XCTAssertTrue(isNil || isCountFifty)
     }
 
     func test_appKey(_ value: String) {
