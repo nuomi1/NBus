@@ -81,16 +81,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         let group = DispatchGroup()
 
-        group.enter()
-
-        NotificationCenter.default.post(
-            name: AppState.OpenURL.requestName,
-            object: nil,
-            userInfo: [
-                AppState.OpenURL.requestKey: url,
-            ]
-        )
-
         var result: Bool!
 
         openURLToken = NotificationCenter.default.addObserver(
@@ -102,6 +92,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                 group.leave()
             }
+        )
+
+        group.enter()
+
+        NotificationCenter.default.post(
+            name: AppState.OpenURL.requestName,
+            object: nil,
+            userInfo: [
+                AppState.OpenURL.requestKey: url,
+            ]
         )
 
         group.wait()
@@ -117,16 +117,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         let group = DispatchGroup()
 
-        group.enter()
-
-        NotificationCenter.default.post(
-            name: AppState.OpenUserActivity.requestName,
-            object: nil,
-            userInfo: [
-                AppState.OpenUserActivity.requestKey: userActivity,
-            ]
-        )
-
         var result: Bool!
 
         openUserActivityToken = NotificationCenter.default.addObserver(
@@ -138,6 +128,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                 group.leave()
             }
+        )
+
+        group.enter()
+
+        NotificationCenter.default.post(
+            name: AppState.OpenUserActivity.requestName,
+            object: nil,
+            userInfo: [
+                AppState.OpenUserActivity.requestKey: userActivity,
+            ]
         )
 
         group.wait()
