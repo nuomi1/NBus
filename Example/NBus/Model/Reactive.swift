@@ -39,6 +39,7 @@ extension Reactive where Base: UIPasteboard {
     func items() -> Observable<[[String: Any]]> {
         NotificationCenter.default.rx
             .notification(UIPasteboard.changedNotification)
+            .observe(on: MainScheduler.asyncInstance)
             .map { _ in base.items }
     }
 }
