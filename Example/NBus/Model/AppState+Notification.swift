@@ -23,6 +23,7 @@ extension AppState {
         static let requestName = Notification.Name("Bus.OpenURL")
         static let responseName = Notification.Name("Bus.OpenURL.Result")
         static let requestURLKey = "url"
+        static let requestPasteboardKey = "pasteboard"
         static let responseResultKey = "result"
     }
 
@@ -30,6 +31,7 @@ extension AppState {
         static let requestName = Notification.Name("Bus.OpenUserActivity")
         static let responseName = Notification.Name("Bus.OpenUserActivity.Result")
         static let requestUserActivityKey = "userActivity"
+        static let requestPasteboardKey = "pasteboard"
         static let responseResultKey = "result"
     }
 }

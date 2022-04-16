@@ -101,6 +101,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             object: nil,
             userInfo: [
                 AppState.OpenURL.requestURLKey: url,
+                AppState.OpenURL.requestPasteboardKey: UIPasteboard.general.items,
             ]
         )
 
@@ -137,6 +138,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             object: nil,
             userInfo: [
                 AppState.OpenUserActivity.requestUserActivityKey: userActivity,
+                AppState.OpenUserActivity.requestPasteboardKey: UIPasteboard.general.items,
             ]
         )
 
