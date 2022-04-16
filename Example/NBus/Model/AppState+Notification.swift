@@ -22,14 +22,14 @@ extension AppState {
     enum OpenURL {
         static let requestName = Notification.Name("Bus.OpenURL")
         static let responseName = Notification.Name("Bus.OpenURL.Result")
-        static let requestKey = "url"
-        static let responseKey = "result"
+        static let requestURLKey = "url"
+        static let responseResultKey = "result"
     }
 
     enum OpenUserActivity {
         static let requestName = Notification.Name("Bus.OpenUserActivity")
         static let responseName = Notification.Name("Bus.OpenUserActivity.Result")
-        static let requestKey = "userActivity"
-        static let responseKey = "result"
+        static let requestUserActivityKey = "userActivity"
+        static let responseResultKey = "result"
     }
 }

@@ -64,7 +64,7 @@ class HandlerBaseTests: XCTestCase {
         NotificationCenter.default.rx
             .notification(AppState.OpenURL.requestName)
             .bind(onNext: { notification in
-                let url = notification.userInfo?[AppState.OpenURL.requestKey] as! URL
+                let url = notification.userInfo?[AppState.OpenURL.requestURLKey] as! URL
                 let result = Bus.shared.openURL(url)
 
                 logger.debug("\(url)")
@@ -73,7 +73,7 @@ class HandlerBaseTests: XCTestCase {
                     name: AppState.OpenURL.responseName,
                     object: nil,
                     userInfo: [
-                        AppState.OpenURL.responseKey: result,
+                        AppState.OpenURL.responseResultKey: result,
                     ]
                 )
             })
@@ -82,7 +82,7 @@ class HandlerBaseTests: XCTestCase {
         NotificationCenter.default.rx
             .notification(AppState.OpenUserActivity.requestName)
             .bind(onNext: { notification in
-                let userActivity = notification.userInfo?[AppState.OpenUserActivity.requestKey] as! NSUserActivity
+                let userActivity = notification.userInfo?[AppState.OpenUserActivity.requestUserActivityKey] as! NSUserActivity
                 let result = Bus.shared.openUserActivity(userActivity)
 
                 logger.debug("\(String(describing: userActivity.webpageURL))")
@@ -91,7 +91,7 @@ class HandlerBaseTests: XCTestCase {
                     name: AppState.OpenUserActivity.responseName,
                     object: nil,
                     userInfo: [
-                        AppState.OpenUserActivity.responseKey: result,
+                        AppState.OpenUserActivity.responseResultKey: result,
                     ]
                 )
             })

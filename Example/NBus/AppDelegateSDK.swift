@@ -88,7 +88,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             object: nil,
             queue: nil,
             using: { notification in
-                result = notification.userInfo?[AppState.OpenURL.responseKey] as? Bool
+                result = notification.userInfo?[AppState.OpenURL.responseResultKey] as? Bool
 
                 group.leave()
             }
@@ -100,7 +100,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             name: AppState.OpenURL.requestName,
             object: nil,
             userInfo: [
-                AppState.OpenURL.requestKey: url,
+                AppState.OpenURL.requestURLKey: url,
             ]
         )
 
@@ -124,7 +124,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             object: nil,
             queue: nil,
             using: { notification in
-                result = notification.userInfo?[AppState.OpenUserActivity.responseKey] as? Bool
+                result = notification.userInfo?[AppState.OpenUserActivity.responseResultKey] as? Bool
 
                 group.leave()
             }
@@ -136,7 +136,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             name: AppState.OpenUserActivity.requestName,
             object: nil,
             userInfo: [
-                AppState.OpenUserActivity.requestKey: userActivity,
+                AppState.OpenUserActivity.requestUserActivityKey: userActivity,
             ]
         )
 
