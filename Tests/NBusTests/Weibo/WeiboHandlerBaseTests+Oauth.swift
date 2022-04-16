@@ -33,7 +33,7 @@ extension WeiboHandlerBaseTests: OauthPlatformSchemeTestCase {
 extension WeiboHandlerBaseTests: OauthPlatformUniversalLinkTestCase {
 
     func test_oauth_ul(path: String) {
-        test_share_common_ul(path: path)
+        test_share_ul(path: path)
     }
 
     func test_oauth_ul(queryItems: inout [URLQueryItem], _ platform: Platform) {

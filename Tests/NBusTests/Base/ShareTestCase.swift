@@ -29,39 +29,21 @@ protocol _ShareSchemeTestCase:
     func _test_share(scheme: URL, _ message: MessageType, _ endpoint: Endpoint)
 }
 
-// MARK: - Share - Common - UniversalLink
-
-protocol ShareCommonUniversalLinkTestCase: XCTestCase {
-
-    /// Test share common universal link path
-    func test_share_common_ul(path: String)
-
-    /// Test share common universal link queryItems
-    func test_share_common_ul(queryItems: inout [URLQueryItem])
-}
-
-// MARK: - Share - MediaMessage - UniversalLink
-
-protocol ShareMediaMessageUniversalLinkTestCase: XCTestCase {
-
-    /// Test share media message universal link queryItems
-    func test_share_media_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint)
-}
-
 // MARK: - Share - Message - UniversalLink
 
 protocol ShareMessageUniversalLinkTestCase: XCTestCase {
 
-    /// Test share message universal link queryItems
-    func test_share_message_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint)
+    /// Test share universal link path
+    func test_share_ul(path: String)
+
+    /// Test share universal link queryItems
+    func test_share_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint)
 }
 
 // MARK: - Share - UniversalLink
 
 protocol _ShareUniversalLinkTestCase:
     GeneralUniversalLinkTestCase,
-    ShareCommonUniversalLinkTestCase,
-    ShareMediaMessageUniversalLinkTestCase,
     ShareMessageUniversalLinkTestCase {
 
     /// Universal link expectation

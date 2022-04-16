@@ -99,120 +99,26 @@ extension QQHandlerBaseTests: ShareMessageSchemeTestCase {
     }
 }
 
-// MARK: - Share - Common - UniversalLink
+// MARK: - Share - Message - UniversalLink
 
-extension QQHandlerBaseTests: ShareCommonUniversalLinkTestCase {
+extension QQHandlerBaseTests: ShareMessageUniversalLinkTestCase {
 
-    func test_share_common_ul(path: String) {
+    func test_share_ul(path: String) {
         XCTAssertEqual(path, "/opensdkul/mqqapi/share/to_fri")
     }
 
-    func test_share_common_ul(queryItems: inout [URLQueryItem]) {
+    func test_share_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
         let callback_name = queryItems.removeFirst { $0.name == "callback_name" }!
         test_callback_name(callback_name)
 
         let callback_type = queryItems.removeFirst { $0.name == "callback_type" }!
         test_callback_type(callback_type)
 
-        let src_type = queryItems.removeFirst { $0.name == "src_type" }!
-        test_src_type(src_type)
-
-        let thirdAppDisplayName = queryItems.removeFirst { $0.name == "thirdAppDisplayName" }!
-        test_thirdAppDisplayName(thirdAppDisplayName)
-
-        let version = queryItems.removeFirst { $0.name == "version" }!
-        test_version(version)
-    }
-}
-
-extension QQHandlerBaseTests {
-
-    func test_callback_name(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, txID)
-    }
-
-    func test_callback_type(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "scheme")
-    }
-
-    func test_src_type(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "app")
-    }
-
-    func test_thirdAppDisplayName(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, displayName.bus.base64EncodedString)
-    }
-
-    func test_version(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "1")
-    }
-}
-
-// MARK: - Share - MediaMessage - UniversalLink
-
-extension QQHandlerBaseTests: ShareMediaMessageUniversalLinkTestCase {
-
-    func test_share_media_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
-        let description = queryItems.removeFirst { $0.name == "description" }
-        test_description(description, message)
-
-        let title = queryItems.removeFirst { $0.name == "title" }
-        test_title(title, message)
-    }
-}
-
-extension QQHandlerBaseTests {
-
-    func test_description(_ queryItem: URLQueryItem?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(queryItem)
-        case let message as ImageMessage:
-            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
-        case let message as AudioMessage:
-            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
-        case let message as VideoMessage:
-            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
-        case let message as WebPageMessage:
-            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
-        case let message as FileMessage:
-            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
-        case let message as MiniProgramMessage:
-            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
-        default:
-            XCTAssertTrue(false, String(describing: queryItem?.value))
-        }
-    }
-
-    func test_title(_ queryItem: URLQueryItem?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(queryItem)
-        case let message as ImageMessage:
-            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
-        case let message as AudioMessage:
-            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
-        case let message as VideoMessage:
-            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
-        case let message as WebPageMessage:
-            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
-        case let message as FileMessage:
-            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
-        case let message as MiniProgramMessage:
-            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
-        default:
-            XCTAssertTrue(false, String(describing: queryItem?.value))
-        }
-    }
-}
-
-// MARK: - Share - Message - UniversalLink
-
-extension QQHandlerBaseTests: ShareMessageUniversalLinkTestCase {
-
-    func test_share_message_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
         let cflag = queryItems.removeFirst { $0.name == "cflag" }!
         test_cflag(cflag, message, endpoint)
+
+        let description = queryItems.removeFirst { $0.name == "description" }
+        test_description(description, message)
 
         let fileName = queryItems.removeFirst { $0.name == "fileName" }
         test_fileName(fileName, message)
@@ -253,12 +159,32 @@ extension QQHandlerBaseTests: ShareMessageUniversalLinkTestCase {
         let shareType = queryItems.removeFirst { $0.name == "shareType" }!
         test_shareType(shareType, message, endpoint)
 
+        let src_type = queryItems.removeFirst { $0.name == "src_type" }!
+        test_src_type(src_type)
+
+        let thirdAppDisplayName = queryItems.removeFirst { $0.name == "thirdAppDisplayName" }!
+        test_thirdAppDisplayName(thirdAppDisplayName)
+
+        let title = queryItems.removeFirst { $0.name == "title" }
+        test_title(title, message)
+
         let url = queryItems.removeFirst { $0.name == "url" }
         test_url(url, message)
+
+        let version = queryItems.removeFirst { $0.name == "version" }!
+        test_version(version)
     }
 }
 
 extension QQHandlerBaseTests {
+
+    func test_callback_name(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, txID)
+    }
+
+    func test_callback_type(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, "scheme")
+    }
 
     func test_cflag(_ queryItem: URLQueryItem, _ message: MessageType, _ endpoint: Endpoint) {
         switch endpoint {
@@ -281,6 +207,27 @@ extension QQHandlerBaseTests {
             XCTAssertEqual(queryItem.value!, "0")
         default:
             XCTAssertTrue(false, String(describing: queryItem.value))
+        }
+    }
+
+    func test_description(_ queryItem: URLQueryItem?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(queryItem)
+        case let message as ImageMessage:
+            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
+        case let message as AudioMessage:
+            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
+        case let message as VideoMessage:
+            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
+        case let message as WebPageMessage:
+            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
+        case let message as FileMessage:
+            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
+        case let message as MiniProgramMessage:
+            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
+        default:
+            XCTAssertTrue(false, String(describing: queryItem?.value))
         }
     }
 
@@ -522,6 +469,35 @@ extension QQHandlerBaseTests {
         }
     }
 
+    func test_src_type(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, "app")
+    }
+
+    func test_thirdAppDisplayName(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, displayName.bus.base64EncodedString)
+    }
+
+    func test_title(_ queryItem: URLQueryItem?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(queryItem)
+        case let message as ImageMessage:
+            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
+        case let message as AudioMessage:
+            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
+        case let message as VideoMessage:
+            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
+        case let message as WebPageMessage:
+            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
+        case let message as FileMessage:
+            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
+        case let message as MiniProgramMessage:
+            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
+        default:
+            XCTAssertTrue(false, String(describing: queryItem?.value))
+        }
+    }
+
     func test_url(_ queryItem: URLQueryItem?, _ message: MessageType) {
         switch message {
         case is TextMessage,
@@ -539,6 +515,10 @@ extension QQHandlerBaseTests {
         default:
             XCTAssertTrue(false, String(describing: queryItem?.value))
         }
+    }
+
+    func test_version(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(queryItem.value!, "1")
     }
 }
 

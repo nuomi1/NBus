@@ -95,18 +95,10 @@ extension _ShareUniversalLinkTestCase {
         test_general_ul(host: urlComponents.host!)
         test_general_ul(queryItems: &queryItems)
 
-        // Share - Common - UniversalLink
-
-        test_share_common_ul(path: urlComponents.path)
-        test_share_common_ul(queryItems: &queryItems)
-
-        // Share - MediaMessage - UniversalLink
-
-        test_share_media_ul(queryItems: &queryItems, message, endpoint)
-
         // Share - Message - UniversalLink
 
-        test_share_message_ul(queryItems: &queryItems, message, endpoint)
+        test_share_ul(path: urlComponents.path)
+        test_share_ul(queryItems: &queryItems, message, endpoint)
 
         logger.debug("\(URLComponents.self), end, \(queryItems.map(\.name).sorted())")
 

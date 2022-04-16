@@ -64,33 +64,15 @@ extension WeiboHandlerBaseTests: ShareMessageSchemeTestCase {
     }
 }
 
-// MARK: - Share - Common - UniversalLink
-
-extension WeiboHandlerBaseTests: ShareCommonUniversalLinkTestCase {
-
-    func test_share_common_ul(path: String) {
-        XCTAssertEqual(path, "/weibosdk/request")
-    }
-
-    func test_share_common_ul(queryItems: inout [URLQueryItem]) {
-        XCTAssertTrue(true)
-    }
-}
-
-// MARK: - Share - MediaMessage - UniversalLink
-
-extension WeiboHandlerBaseTests: ShareMediaMessageUniversalLinkTestCase {
-
-    func test_share_media_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
-        XCTAssertTrue(true)
-    }
-}
-
 // MARK: - Share - Message - UniversalLink
 
 extension WeiboHandlerBaseTests: ShareMessageUniversalLinkTestCase {
 
-    func test_share_message_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+    func test_share_ul(path: String) {
+        XCTAssertEqual(path, "/weibosdk/request")
+    }
+
+    func test_share_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
         XCTAssertTrue(true)
     }
 }
