@@ -110,6 +110,13 @@ class HandlerBaseTests: XCTestCase {
                 logger.debug("\(url)")
             })
             .disposed(by: disposeBag)
+
+        UIPasteboard.general.rx
+            .items()
+            .bind(onNext: { items in
+                logger.debug("\(items.map { $0.keys.sorted() })")
+            })
+            .disposed(by: disposeBag)
     }
 }
 
