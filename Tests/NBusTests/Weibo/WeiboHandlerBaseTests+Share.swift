@@ -77,13 +77,16 @@ extension WeiboHandlerBaseTests: ShareMessageUniversalLinkTestCase {
     }
 }
 
-// MARK: - Share - Common - Pasteboard
+// MARK: - Share - Message - Pasteboard
 
-extension WeiboHandlerBaseTests: ShareCommonPasteboardTestCase {
+extension WeiboHandlerBaseTests: ShareMessagePasteboardTestCase {
 
-    func test_share_common_pb(dictionary: inout [String: Any]) {
+    func test_share_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         let `class` = dictionary.removeValue(forKey: "__class") as! String
         test_class_share(`class`)
+
+        let _message = dictionary.removeValue(forKey: "message") as! [String: Any]
+        test_message(_message, message, endpoint)
     }
 }
 
@@ -92,28 +95,6 @@ extension WeiboHandlerBaseTests {
     func test_class_share(_ value: String) {
         XCTAssertEqual(value, "WBSendMessageToWeiboRequest")
     }
-}
-
-// MARK: - Share - MediaMessage - Pasteboard
-
-extension WeiboHandlerBaseTests: ShareMediaMessagePasteboardTestCase {
-
-    func test_share_media_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
-        XCTAssertTrue(true)
-    }
-}
-
-// MARK: - Share - Message - Pasteboard
-
-extension WeiboHandlerBaseTests: ShareMessagePasteboardTestCase {
-
-    func test_share_message_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
-        let _message = dictionary.removeValue(forKey: "message") as! [String: Any]
-        test_message(_message, message, endpoint)
-    }
-}
-
-extension WeiboHandlerBaseTests {
 
     func test_message(_ value: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         var dictionary = value

@@ -137,17 +137,9 @@ extension _SharePasteboardTestCase {
 
         test_general_pb(dictionary: &dictionary)
 
-        // Share - Common - Pasteboard
-
-        test_share_common_pb(dictionary: &dictionary)
-
-        // Share - MediaMessage - Pasteboard
-
-        test_share_media_pb(dictionary: &dictionary, message, endpoint)
-
         // Share - Message - Pasteboard
 
-        test_share_message_pb(dictionary: &dictionary, message, endpoint)
+        test_share_pb(dictionary: &dictionary, message, endpoint)
 
         logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
 

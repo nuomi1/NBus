@@ -133,262 +133,31 @@ extension WechatHandlerBaseTests: ShareMessageUniversalLinkTestCase {
     }
 }
 
-// MARK: - Share - Common - Pasteboard
-
-extension WechatHandlerBaseTests: ShareCommonPasteboardTestCase {
-
-    func test_share_common_pb(dictionary: inout [String: Any]) {
-        XCTAssertTrue(true)
-    }
-}
-
-// MARK: - Share - MediaMessage - Pasteboard
-
-extension WechatHandlerBaseTests: ShareMediaMessagePasteboardTestCase {
-
-    func test_share_media_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
-        let appbrandissecrectmessage = dictionary.removeValue(forKey: "appbrandissecrectmessage") as? Bool
-        test_appbrandissecrectmessage(appbrandissecrectmessage, message)
-
-        let appbrandisupdatablemessage = dictionary.removeValue(forKey: "appbrandisupdatablemessage") as? Bool
-        test_appbrandisupdatablemessage(appbrandisupdatablemessage, message)
-
-        let description = dictionary.removeValue(forKey: "description") as? String
-        test_description(description, message)
-
-        let disableForward = dictionary.removeValue(forKey: "disableForward") as? Bool
-        test_disableForward(disableForward, message)
-
-        let miniprogramType = dictionary.removeValue(forKey: "miniprogramType") as? Int
-        test_miniprogramType(miniprogramType, message)
-
-        let musicVideoDuration = dictionary.removeValue(forKey: "musicVideoDuration") as? String
-        test_musicVideoDuration(musicVideoDuration, message)
-
-        let musicVideoIssueData = dictionary.removeValue(forKey: "musicVideoIssueData") as? String
-        test_musicVideoIssueData(musicVideoIssueData, message)
-
-        let objectType = dictionary.removeValue(forKey: "objectType") as? String
-        test_objectType(objectType, message)
-
-        let thumbData = dictionary.removeValue(forKey: "thumbData") as? Data
-        test_thumbData(thumbData, message)
-
-        let weworkObjectSubType = dictionary.removeValue(forKey: "weworkObjectSubType") as? String
-        test_weworkObjectSubType(weworkObjectSubType, message)
-
-        let withShareTicket = dictionary.removeValue(forKey: "withShareTicket") as? Bool
-        test_withShareTicket(withShareTicket, message)
-    }
-}
-
-extension WechatHandlerBaseTests {
-
-    func test_appbrandissecrectmessage(_ value: Bool?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case is ImageMessage,
-             is AudioMessage,
-             is VideoMessage,
-             is WebPageMessage,
-             is FileMessage,
-             is MiniProgramMessage:
-            XCTAssertEqual(value!, false)
-        default:
-            XCTAssertTrue(false, "\(String(describing: value))")
-        }
-    }
-
-    func test_appbrandisupdatablemessage(_ value: Bool?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case is ImageMessage,
-             is AudioMessage,
-             is VideoMessage,
-             is WebPageMessage,
-             is FileMessage,
-             is MiniProgramMessage:
-            XCTAssertEqual(value!, false)
-        default:
-            XCTAssertTrue(false, "\(String(describing: value))")
-        }
-    }
-
-    func test_description(_ value: String?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case let message as ImageMessage:
-            XCTAssertEqual(value!, message.description)
-        case let message as AudioMessage:
-            XCTAssertEqual(value!, message.description)
-        case let message as VideoMessage:
-            XCTAssertEqual(value!, message.description)
-        case let message as WebPageMessage:
-            XCTAssertEqual(value!, message.description)
-        case let message as FileMessage:
-            XCTAssertEqual(value!, message.description)
-        case let message as MiniProgramMessage:
-            XCTAssertEqual(value!, message.description)
-        default:
-            XCTAssertTrue(false, "\(String(describing: value))")
-        }
-    }
-
-    func test_disableForward(_ value: Bool?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case is ImageMessage,
-             is AudioMessage,
-             is VideoMessage,
-             is WebPageMessage,
-             is FileMessage,
-             is MiniProgramMessage:
-            XCTAssertEqual(value!, false)
-        default:
-            XCTAssertTrue(false, "\(String(describing: value))")
-        }
-    }
-
-    func test_miniprogramType(_ value: Int?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case is ImageMessage,
-             is AudioMessage,
-             is VideoMessage,
-             is WebPageMessage,
-             is FileMessage,
-             is MiniProgramMessage:
-            XCTAssertEqual(value!, 0)
-        default:
-            XCTAssertTrue(false, "\(String(describing: value))")
-        }
-    }
-
-    func test_musicVideoDuration(_ value: String?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case is ImageMessage,
-             is AudioMessage,
-             is VideoMessage,
-             is WebPageMessage,
-             is FileMessage,
-             is MiniProgramMessage:
-            XCTAssertEqual(value!, "0")
-        default:
-            XCTAssertTrue(false, "\(String(describing: value))")
-        }
-    }
-
-    func test_musicVideoIssueData(_ value: String?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case is ImageMessage,
-             is AudioMessage,
-             is VideoMessage,
-             is WebPageMessage,
-             is FileMessage,
-             is MiniProgramMessage:
-            XCTAssertEqual(value!, "0")
-        default:
-            XCTAssertTrue(false, "\(String(describing: value))")
-        }
-    }
-
-    func test_objectType(_ value: String?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case is ImageMessage:
-            XCTAssertEqual(value!, "2")
-        case is AudioMessage:
-            XCTAssertEqual(value!, "3")
-        case is VideoMessage:
-            XCTAssertEqual(value!, "4")
-        case is WebPageMessage:
-            XCTAssertEqual(value!, "5")
-        case is FileMessage:
-            XCTAssertEqual(value!, "6")
-        case is MiniProgramMessage:
-            XCTAssertEqual(value!, "36")
-        default:
-            XCTAssertTrue(false, "\(String(describing: value))")
-        }
-    }
-
-    func test_thumbData(_ value: Data?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case let message as ImageMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        case let message as AudioMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        case let message as VideoMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        case let message as WebPageMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        case let message as FileMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        case let message as MiniProgramMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        default:
-            XCTAssertTrue(false, "\(String(describing: value))")
-        }
-    }
-
-    func test_weworkObjectSubType(_ value: String?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case is ImageMessage,
-             is AudioMessage,
-             is VideoMessage,
-             is WebPageMessage,
-             is FileMessage,
-             is MiniProgramMessage:
-            XCTAssertEqual(value!, "0")
-        default:
-            XCTAssertTrue(false, "\(String(describing: value))")
-        }
-    }
-
-    func test_withShareTicket(_ value: Bool?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case is ImageMessage,
-             is AudioMessage,
-             is VideoMessage,
-             is WebPageMessage,
-             is FileMessage,
-             is MiniProgramMessage:
-            XCTAssertEqual(value!, false)
-        default:
-            XCTAssertTrue(false, "\(String(describing: value))")
-        }
-    }
-}
-
 // MARK: - Share - Message - Pasteboard
 
 extension WechatHandlerBaseTests: ShareMessagePasteboardTestCase {
 
-    func test_share_message_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+    func test_share_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         let appBrandPath = dictionary.removeValue(forKey: "appBrandPath") as? String
         test_appBrandPath(appBrandPath, message)
 
         let appBrandUserName = dictionary.removeValue(forKey: "appBrandUserName") as? String
         test_appBrandUserName(appBrandUserName, message)
 
+        let appbrandissecrectmessage = dictionary.removeValue(forKey: "appbrandissecrectmessage") as? Bool
+        test_appbrandissecrectmessage(appbrandissecrectmessage, message)
+
+        let appbrandisupdatablemessage = dictionary.removeValue(forKey: "appbrandisupdatablemessage") as? Bool
+        test_appbrandisupdatablemessage(appbrandisupdatablemessage, message)
+
         let command = dictionary.removeValue(forKey: "command") as! String
         test_command(command, message)
+
+        let description = dictionary.removeValue(forKey: "description") as? String
+        test_description(description, message)
+
+        let disableForward = dictionary.removeValue(forKey: "disableForward") as? Bool
+        test_disableForward(disableForward, message)
 
         let fileData = dictionary.removeValue(forKey: "fileData") as? Data
         test_fileData(fileData, message)
@@ -405,11 +174,32 @@ extension WechatHandlerBaseTests: ShareMessagePasteboardTestCase {
         let mediaUrl = dictionary.removeValue(forKey: "mediaUrl") as? String
         test_mediaUrl(mediaUrl, message)
 
+        let miniprogramType = dictionary.removeValue(forKey: "miniprogramType") as? Int
+        test_miniprogramType(miniprogramType, message)
+
+        let musicVideoDuration = dictionary.removeValue(forKey: "musicVideoDuration") as? String
+        test_musicVideoDuration(musicVideoDuration, message)
+
+        let musicVideoIssueData = dictionary.removeValue(forKey: "musicVideoIssueData") as? String
+        test_musicVideoIssueData(musicVideoIssueData, message)
+
+        let objectType = dictionary.removeValue(forKey: "objectType") as? String
+        test_objectType(objectType, message)
+
         let scene = dictionary.removeValue(forKey: "scene") as! String
         test_scene(scene, endpoint)
 
+        let thumbData = dictionary.removeValue(forKey: "thumbData") as? Data
+        test_thumbData(thumbData, message)
+
         let title = dictionary.removeValue(forKey: "title") as! String
         test_title(title, message)
+
+        let weworkObjectSubType = dictionary.removeValue(forKey: "weworkObjectSubType") as? String
+        test_weworkObjectSubType(weworkObjectSubType, message)
+
+        let withShareTicket = dictionary.removeValue(forKey: "withShareTicket") as? Bool
+        test_withShareTicket(withShareTicket, message)
     }
 }
 
@@ -447,6 +237,38 @@ extension WechatHandlerBaseTests {
         }
     }
 
+    func test_appbrandissecrectmessage(_ value: Bool?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case is ImageMessage,
+             is AudioMessage,
+             is VideoMessage,
+             is WebPageMessage,
+             is FileMessage,
+             is MiniProgramMessage:
+            XCTAssertEqual(value!, false)
+        default:
+            XCTAssertTrue(false, "\(String(describing: value))")
+        }
+    }
+
+    func test_appbrandisupdatablemessage(_ value: Bool?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case is ImageMessage,
+             is AudioMessage,
+             is VideoMessage,
+             is WebPageMessage,
+             is FileMessage,
+             is MiniProgramMessage:
+            XCTAssertEqual(value!, false)
+        default:
+            XCTAssertTrue(false, "\(String(describing: value))")
+        }
+    }
+
     func test_command(_ value: String, _ message: MessageType) {
         switch message.identifier {
         case Messages.text:
@@ -458,6 +280,43 @@ extension WechatHandlerBaseTests {
              Messages.file,
              Messages.miniProgram:
             XCTAssertEqual(value, "1010")
+        default:
+            XCTAssertTrue(false, "\(String(describing: value))")
+        }
+    }
+
+    func test_description(_ value: String?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case let message as ImageMessage:
+            XCTAssertEqual(value!, message.description)
+        case let message as AudioMessage:
+            XCTAssertEqual(value!, message.description)
+        case let message as VideoMessage:
+            XCTAssertEqual(value!, message.description)
+        case let message as WebPageMessage:
+            XCTAssertEqual(value!, message.description)
+        case let message as FileMessage:
+            XCTAssertEqual(value!, message.description)
+        case let message as MiniProgramMessage:
+            XCTAssertEqual(value!, message.description)
+        default:
+            XCTAssertTrue(false, "\(String(describing: value))")
+        }
+    }
+
+    func test_disableForward(_ value: Bool?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case is ImageMessage,
+             is AudioMessage,
+             is VideoMessage,
+             is WebPageMessage,
+             is FileMessage,
+             is MiniProgramMessage:
+            XCTAssertEqual(value!, false)
         default:
             XCTAssertTrue(false, "\(String(describing: value))")
         }
@@ -547,6 +406,75 @@ extension WechatHandlerBaseTests {
         }
     }
 
+    func test_miniprogramType(_ value: Int?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case is ImageMessage,
+             is AudioMessage,
+             is VideoMessage,
+             is WebPageMessage,
+             is FileMessage,
+             is MiniProgramMessage:
+            XCTAssertEqual(value!, 0)
+        default:
+            XCTAssertTrue(false, "\(String(describing: value))")
+        }
+    }
+
+    func test_musicVideoDuration(_ value: String?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case is ImageMessage,
+             is AudioMessage,
+             is VideoMessage,
+             is WebPageMessage,
+             is FileMessage,
+             is MiniProgramMessage:
+            XCTAssertEqual(value!, "0")
+        default:
+            XCTAssertTrue(false, "\(String(describing: value))")
+        }
+    }
+
+    func test_musicVideoIssueData(_ value: String?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case is ImageMessage,
+             is AudioMessage,
+             is VideoMessage,
+             is WebPageMessage,
+             is FileMessage,
+             is MiniProgramMessage:
+            XCTAssertEqual(value!, "0")
+        default:
+            XCTAssertTrue(false, "\(String(describing: value))")
+        }
+    }
+
+    func test_objectType(_ value: String?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case is ImageMessage:
+            XCTAssertEqual(value!, "2")
+        case is AudioMessage:
+            XCTAssertEqual(value!, "3")
+        case is VideoMessage:
+            XCTAssertEqual(value!, "4")
+        case is WebPageMessage:
+            XCTAssertEqual(value!, "5")
+        case is FileMessage:
+            XCTAssertEqual(value!, "6")
+        case is MiniProgramMessage:
+            XCTAssertEqual(value!, "36")
+        default:
+            XCTAssertTrue(false, "\(String(describing: value))")
+        }
+    }
+
     func test_scene(_ value: String, _ endpoint: Endpoint) {
         switch endpoint {
         case Endpoints.Wechat.friend:
@@ -555,6 +483,27 @@ extension WechatHandlerBaseTests {
             XCTAssertEqual(value, "1")
         case Endpoints.Wechat.favorite:
             XCTAssertEqual(value, "2")
+        default:
+            XCTAssertTrue(false, "\(String(describing: value))")
+        }
+    }
+
+    func test_thumbData(_ value: Data?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case let message as ImageMessage:
+            XCTAssertEqual(value!, message.thumbnail)
+        case let message as AudioMessage:
+            XCTAssertEqual(value!, message.thumbnail)
+        case let message as VideoMessage:
+            XCTAssertEqual(value!, message.thumbnail)
+        case let message as WebPageMessage:
+            XCTAssertEqual(value!, message.thumbnail)
+        case let message as FileMessage:
+            XCTAssertEqual(value!, message.thumbnail)
+        case let message as MiniProgramMessage:
+            XCTAssertEqual(value!, message.thumbnail)
         default:
             XCTAssertTrue(false, "\(String(describing: value))")
         }
@@ -576,6 +525,38 @@ extension WechatHandlerBaseTests {
             XCTAssertEqual(value, message.title)
         case let message as MiniProgramMessage:
             XCTAssertEqual(value, message.title)
+        default:
+            XCTAssertTrue(false, "\(String(describing: value))")
+        }
+    }
+
+    func test_weworkObjectSubType(_ value: String?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case is ImageMessage,
+             is AudioMessage,
+             is VideoMessage,
+             is WebPageMessage,
+             is FileMessage,
+             is MiniProgramMessage:
+            XCTAssertEqual(value!, "0")
+        default:
+            XCTAssertTrue(false, "\(String(describing: value))")
+        }
+    }
+
+    func test_withShareTicket(_ value: Bool?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case is ImageMessage,
+             is AudioMessage,
+             is VideoMessage,
+             is WebPageMessage,
+             is FileMessage,
+             is MiniProgramMessage:
+            XCTAssertEqual(value!, false)
         default:
             XCTAssertTrue(false, "\(String(describing: value))")
         }

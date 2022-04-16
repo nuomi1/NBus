@@ -522,52 +522,16 @@ extension QQHandlerBaseTests {
     }
 }
 
-// MARK: - Share - Common - Pasteboard
-
-extension QQHandlerBaseTests: ShareCommonPasteboardTestCase {
-
-    func test_share_common_pb(dictionary: inout [String: Any]) {
-        XCTAssertTrue(true)
-    }
-}
-
-// MARK: - Share - MediaMessage - Pasteboard
-
-extension QQHandlerBaseTests: ShareMediaMessagePasteboardTestCase {
-
-    func test_share_media_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
-        let previewimagedata = dictionary.removeValue(forKey: "previewimagedata") as? Data
-        test_previewimagedata(previewimagedata, message)
-    }
-}
-
-extension QQHandlerBaseTests {
-
-    func test_previewimagedata(_ value: Data?, _ message: MessageType) {
-        switch message {
-        case is TextMessage:
-            XCTAssertNil(value)
-        case let message as ImageMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        case let message as AudioMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        case let message as VideoMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        case let message as FileMessage:
-            XCTAssertEqual(value!, message.thumbnail)
-        default:
-            XCTAssertTrue(false, String(describing: value))
-        }
-    }
-}
-
 // MARK: - Share - Message - Pasteboard
 
 extension QQHandlerBaseTests: ShareMessagePasteboardTestCase {
 
-    func test_share_message_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+    func test_share_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         let file_data = dictionary.removeValue(forKey: "file_data") as? Data
         test_file_data(file_data, message)
+
+        let previewimagedata = dictionary.removeValue(forKey: "previewimagedata") as? Data
+        test_previewimagedata(previewimagedata, message)
     }
 }
 
@@ -583,6 +547,23 @@ extension QQHandlerBaseTests {
             XCTAssertEqual(value!, message.data)
         case let message as FileMessage:
             XCTAssertEqual(value!, message.data)
+        default:
+            XCTAssertTrue(false, String(describing: value))
+        }
+    }
+
+    func test_previewimagedata(_ value: Data?, _ message: MessageType) {
+        switch message {
+        case is TextMessage:
+            XCTAssertNil(value)
+        case let message as ImageMessage:
+            XCTAssertEqual(value!, message.thumbnail)
+        case let message as AudioMessage:
+            XCTAssertEqual(value!, message.thumbnail)
+        case let message as VideoMessage:
+            XCTAssertEqual(value!, message.thumbnail)
+        case let message as FileMessage:
+            XCTAssertEqual(value!, message.thumbnail)
         default:
             XCTAssertTrue(false, String(describing: value))
         }

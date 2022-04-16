@@ -53,36 +53,18 @@ protocol _ShareUniversalLinkTestCase:
     func _test_share(url: URL, _ message: MessageType, _ endpoint: Endpoint)
 }
 
-// MARK: - Share - Common - Pasteboard
-
-protocol ShareCommonPasteboardTestCase: XCTestCase {
-
-    /// Test share common pasteboard dictionary
-    func test_share_common_pb(dictionary: inout [String: Any])
-}
-
-// MARK: - Share - MediaMessage - Pasteboard
-
-protocol ShareMediaMessagePasteboardTestCase: XCTestCase {
-
-    /// Test share media message pasteboard dictionary
-    func test_share_media_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint)
-}
-
 // MARK: - Share - Message - Pasteboard
 
 protocol ShareMessagePasteboardTestCase: XCTestCase {
 
-    /// Test share message pasteboard dictionary
-    func test_share_message_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint)
+    /// Test share pasteboard dictionary
+    func test_share_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint)
 }
 
 // MARK: - Share - Pasteboard
 
 protocol _SharePasteboardTestCase:
     GeneralPasteboardTestCase,
-    ShareCommonPasteboardTestCase,
-    ShareMediaMessagePasteboardTestCase,
     ShareMessagePasteboardTestCase {
 
     /// Pasteboard expectation
