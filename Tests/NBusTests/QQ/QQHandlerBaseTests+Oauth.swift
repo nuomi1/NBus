@@ -57,47 +57,105 @@ extension QQHandlerBaseTests {
         let data = Data(base64Encoded: queryItem.value!)!
         var object = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
 
+        logger.debug("\(URLComponents.self), start, \(object.keys.sorted())")
+
         let appsign_token = object.removeValue(forKey: "appsign_token") as! String
-        XCTAssertEqual(appsign_token, "")
+        test_appsign_token(appsign_token)
 
         let app_id = object.removeValue(forKey: "app_id") as! String
-        XCTAssertEqual(app_id, appNumber)
+        test_app_id(app_id)
 
         let app_name = object.removeValue(forKey: "app_name") as! String
-        XCTAssertEqual(app_name, displayName)
+        test_app_name(app_name)
 
         let bundleid = object.removeValue(forKey: "bundleid") as! String
-        XCTAssertEqual(bundleid, bundleID)
+        test_bundleid(bundleid)
 
         let client_id = object.removeValue(forKey: "client_id") as! String
-        XCTAssertEqual(client_id, appNumber)
+        test_client_id(client_id)
 
         let refUniversallink = object.removeValue(forKey: "refUniversallink") as! String
-        XCTAssertEqual(refUniversallink, universalLink.absoluteString)
+        test_refUniversallink(refUniversallink)
 
         let response_type = object.removeValue(forKey: "response_type") as! String
-        XCTAssertEqual(response_type, "token")
+        test_response_type(response_type)
 
         let scope = object.removeValue(forKey: "scope") as! String
-        XCTAssertEqual(scope, "get_user_info")
+        test_scope(scope)
 
         let sdkp = object.removeValue(forKey: "sdkp") as! String
-        XCTAssertEqual(sdkp, "i")
+        test_sdkp(sdkp)
 
         let sdkv = object.removeValue(forKey: "sdkv") as! String
-        XCTAssertEqual(sdkv, sdkVersion)
+        test_sdkv(sdkv)
 
         let status_machine = object.removeValue(forKey: "status_machine") as! String
-        XCTAssertEqual(status_machine, statusMachine)
+        test_status_machine(status_machine)
 
         let status_os = object.removeValue(forKey: "status_os") as! String
-        XCTAssertEqual(status_os, statusOS)
+        test_status_os(status_os)
 
         let status_version = object.removeValue(forKey: "status_version") as! String
-        XCTAssertEqual(status_version, statusVersion)
+        test_status_version(status_version)
 
-        logger.debug("\(URLComponents.self), \(object.keys.sorted())")
+        logger.debug("\(URLComponents.self), end, \(object.keys.sorted())")
+
         XCTAssertTrue(object.isEmpty)
+    }
+}
+
+extension QQHandlerBaseTests {
+
+    func test_appsign_token(_ value: String) {
+        XCTAssertEqual(value, "")
+    }
+
+    func test_app_id(_ value: String) {
+        XCTAssertEqual(value, appNumber)
+    }
+
+    func test_app_name(_ value: String) {
+        XCTAssertEqual(value, displayName)
+    }
+
+    func test_bundleid(_ value: String) {
+        XCTAssertEqual(value, bundleID)
+    }
+
+    func test_client_id(_ value: String) {
+        test_app_id(value)
+    }
+
+    func test_refUniversallink(_ value: String) {
+        XCTAssertEqual(value, universalLink.absoluteString)
+    }
+
+    func test_response_type(_ value: String) {
+        XCTAssertEqual(value, "token")
+    }
+
+    func test_scope(_ value: String) {
+        XCTAssertEqual(value, "get_user_info")
+    }
+
+    func test_sdkp(_ value: String) {
+        XCTAssertEqual(value, "i")
+    }
+
+    func test_sdkv(_ value: String) {
+        XCTAssertEqual(value, sdkVersion)
+    }
+
+    func test_status_machine(_ value: String) {
+        XCTAssertEqual(value, statusMachine)
+    }
+
+    func test_status_os(_ value: String) {
+        XCTAssertEqual(value, statusOS)
+    }
+
+    func test_status_version(_ value: String) {
+        XCTAssertEqual(value, statusVersion)
     }
 }
 
