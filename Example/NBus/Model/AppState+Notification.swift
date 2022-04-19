@@ -8,7 +8,7 @@
 
 import Foundation
 
-#if BusTestsTarget
+#if BusMockTestSDK
 class AppState {
 
     static let shared = AppState()

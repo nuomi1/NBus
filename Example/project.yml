@@ -64,13 +64,11 @@ targets:
   BusMockWeiboSDK:
     templates:
       - BusMockSDKTemplate
-  BusTestsTarget:
+  BusMockTestSDK:
     templates:
       - BusMockSDKTemplate
     sources:
-      - path: NBus
-        includes:
-          - Model/AppState+Notification.swift
+      - path: NBus/Model/AppState+Notification.swift
     postBuildScripts:
       - script: |
           find "${PROJECT_DIR}" -name "WeiboSDK.bundle" -exec cp -R "{}" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/" \;
@@ -87,5 +85,5 @@ targets:
         excludes:
           - AppState+Setup.swift
     dependencies:
-      - target: BusTestsTarget
+      - target: BusMockTestSDK
       - package: Logging

@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    #if BusTestsTarget
+    #if BusMockTestSDK
     var openURLToken: NSObjectProtocol?
     var openUserActivityToken: NSObjectProtocol?
     #endif
@@ -49,7 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #elseif BusMockWeiboSDK
         let title = "isWeiboAppInstalled"
         let message = "\(WeiboSDK.isWeiboAppInstalled())"
-        #elseif BusTestsTarget
+        #elseif BusMockTestSDK
         let title = "Empty"
         let message = "Empty"
         #else
@@ -73,7 +73,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    #if BusTestsTarget
+    #if BusMockTestSDK
     func application(
         _ app: UIApplication,
         open url: URL,
