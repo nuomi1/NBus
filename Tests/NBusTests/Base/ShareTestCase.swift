@@ -29,52 +29,52 @@ protocol _ShareSchemeTestCase:
     func _test_share(scheme: URL, _ message: MessageType, _ endpoint: Endpoint)
 }
 
-// MARK: - Share - Message - UniversalLink
+// MARK: - Share - Message - UniversalLink - Request
 
-protocol ShareMessageUniversalLinkTestCase: XCTestCase {
+protocol ShareMessageUniversalLinkRequestTestCase: XCTestCase {
 
-    /// Test share universal link path
-    func test_share_ul(path: String)
+    /// Test share universal link request path
+    func test_share_ul_request(path: String)
 
-    /// Test share universal link queryItems
-    func test_share_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint)
+    /// Test share universal link request queryItems
+    func test_share_ul_request(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint)
 }
 
-// MARK: - Share - UniversalLink
+// MARK: - Share - UniversalLink - Request
 
-protocol _ShareUniversalLinkTestCase:
-    GeneralUniversalLinkTestCase,
-    ShareMessageUniversalLinkTestCase {
+protocol _ShareUniversalLinkRequestTestCase:
+    GeneralUniversalLinkRequestTestCase,
+    ShareMessageUniversalLinkRequestTestCase {
 
     /// Universal link expectation
     var ulExpectation: XCTestExpectation { get }
 
-    /// Test share universal link
-    func _test_share(url: URL, _ message: MessageType, _ endpoint: Endpoint)
+    /// Test share universal link request
+    func _test_share_request(url: URL, _ message: MessageType, _ endpoint: Endpoint)
 }
 
-// MARK: - Share - Message - Pasteboard
+// MARK: - Share - Message - Pasteboard - Request
 
-protocol ShareMessagePasteboardTestCase: XCTestCase {
+protocol ShareMessagePasteboardRequestTestCase: XCTestCase {
 
-    /// Test share pasteboard dictionary
-    func test_share_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint)
+    /// Test share pasteboard request dictionary
+    func test_share_pb_request(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint)
 }
 
-// MARK: - Share - Pasteboard
+// MARK: - Share - Pasteboard - Request
 
-protocol _SharePasteboardTestCase:
-    GeneralPasteboardTestCase,
-    ShareMessagePasteboardTestCase {
+protocol _SharePasteboardRequestTestCase:
+    GeneralPasteboardRequestTestCase,
+    ShareMessagePasteboardRequestTestCase {
 
     /// Pasteboard expectation
     var pbExpectation: XCTestExpectation { get }
 
-    /// Test share pasteboard
-    func _test_share(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint)
+    /// Test share pasteboard request
+    func _test_share_request(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint)
 
-    /// Test share pasteboard dictionary
-    func _test_share_pb(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint)
+    /// Test share pasteboard request dictionary
+    func _test_share_pb_request(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint)
 
     /// Avoid share pasteboard error
     func _avoid_share_pb_error(_ items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) -> Bool
@@ -101,8 +101,8 @@ protocol _ShareCompletionTestCase: XCTestCase {
 
 protocol ShareTestCase:
     _ShareSchemeTestCase,
-    _ShareUniversalLinkTestCase,
-    _SharePasteboardTestCase,
+    _ShareUniversalLinkRequestTestCase,
+    _SharePasteboardRequestTestCase,
     _ShareCompletionTestCase {
 
     var disposeBag: DisposeBag { get }

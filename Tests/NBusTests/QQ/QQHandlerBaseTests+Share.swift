@@ -98,15 +98,15 @@ extension QQHandlerBaseTests: ShareMessageSchemeTestCase {
     }
 }
 
-// MARK: - Share - Message - UniversalLink
+// MARK: - Share - Message - UniversalLink - Request
 
-extension QQHandlerBaseTests: ShareMessageUniversalLinkTestCase {
+extension QQHandlerBaseTests: ShareMessageUniversalLinkRequestTestCase {
 
-    func test_share_ul(path: String) {
+    func test_share_ul_request(path: String) {
         XCTAssertEqual(path, "/opensdkul/mqqapi/share/to_fri")
     }
 
-    func test_share_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+    func test_share_ul_request(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
         let callback_name = queryItems.removeFirst { $0.name == "callback_name" }!
         test_callback_name(callback_name)
 
@@ -521,11 +521,11 @@ extension QQHandlerBaseTests {
     }
 }
 
-// MARK: - Share - Message - Pasteboard
+// MARK: - Share - Message - Pasteboard - Request
 
-extension QQHandlerBaseTests: ShareMessagePasteboardTestCase {
+extension QQHandlerBaseTests: ShareMessagePasteboardRequestTestCase {
 
-    func test_share_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+    func test_share_pb_request(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         let file_data = dictionary.removeValue(forKey: "file_data") as? Data
         test_file_data(file_data, message)
 

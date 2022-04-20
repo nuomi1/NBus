@@ -28,15 +28,15 @@ extension WechatHandlerBaseTests: LaunchProgramSchemeTestCase {
     }
 }
 
-// MARK: - Launch - Program - UniversalLink
+// MARK: - Launch - Program - UniversalLink - Request
 
-extension WechatHandlerBaseTests: LaunchProgramUniversalLinkTestCase {
+extension WechatHandlerBaseTests: LaunchProgramUniversalLinkRequestTestCase {
 
-    func test_launch_ul(path: String) {
+    func test_launch_ul_request(path: String) {
         XCTAssertEqual(path, "/app/\(appID)/jumpWxa/")
     }
 
-    func test_launch_ul(queryItems: inout [URLQueryItem], _ platform: Platform, _ program: MiniProgramMessage) {
+    func test_launch_ul_request(queryItems: inout [URLQueryItem], _ platform: Platform, _ program: MiniProgramMessage) {
         let extMsg = queryItems.removeFirst { $0.name == "extMsg" }!
         test_extMsg(extMsg)
 
@@ -96,11 +96,11 @@ extension WechatHandlerBaseTests {
     }
 }
 
-// MARK: - Launch - Program - Pasteboard
+// MARK: - Launch - Program - Pasteboard - Request
 
-extension WechatHandlerBaseTests: LaunchProgramPasteboardTestCase {
+extension WechatHandlerBaseTests: LaunchProgramPasteboardRequestTestCase {
 
-    func test_launch_pb(dictionary: inout [String: Any], _ platform: Platform, _ program: MiniProgramMessage) {
+    func test_launch_pb_request(dictionary: inout [String: Any], _ platform: Platform, _ program: MiniProgramMessage) {
         let command = dictionary.removeValue(forKey: "command") as! String
         test_command_launch(command)
     }

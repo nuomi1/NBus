@@ -30,15 +30,15 @@ extension QQHandlerBaseTests: OauthPlatformSchemeTestCase {
     }
 }
 
-// MARK: - Oauth - Platform - UniversalLink
+// MARK: - Oauth - Platform - UniversalLink - Request
 
-extension QQHandlerBaseTests: OauthPlatformUniversalLinkTestCase {
+extension QQHandlerBaseTests: OauthPlatformUniversalRequestLinkTestCase {
 
-    func test_oauth_ul(path: String) {
+    func test_oauth_ul_request(path: String) {
         XCTAssertEqual(path, "/opensdkul/mqqOpensdkSSoLogin/SSoLogin/\(appID)")
     }
 
-    func test_oauth_ul(queryItems: inout [URLQueryItem], _ platform: Platform) {
+    func test_oauth_ul_request(queryItems: inout [URLQueryItem], _ platform: Platform) {
         let objectlocation = queryItems.removeFirst { $0.name == "objectlocation" }!
         test_objectlocation(objectlocation)
 
@@ -159,11 +159,11 @@ extension QQHandlerBaseTests {
     }
 }
 
-// MARK: - Oauth - Platform - Pasteboard
+// MARK: - Oauth - Platform - Pasteboard - Request
 
-extension QQHandlerBaseTests: OauthPlatformPasteboardTestCase {
+extension QQHandlerBaseTests: OauthPlatformPasteboardRequestTestCase {
 
-    func test_oauth_pb(dictionary: inout [String: Any], _ platform: Platform) {
+    func test_oauth_pb_request(dictionary: inout [String: Any], _ platform: Platform) {
         XCTAssertTrue(true)
     }
 }

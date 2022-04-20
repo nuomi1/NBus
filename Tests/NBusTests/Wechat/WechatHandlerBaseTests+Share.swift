@@ -119,24 +119,24 @@ extension WechatHandlerBaseTests: ShareMessageSchemeTestCase {
     }
 }
 
-// MARK: - Share - Message - UniversalLink
+// MARK: - Share - Message - UniversalLink - Request
 
-extension WechatHandlerBaseTests: ShareMessageUniversalLinkTestCase {
+extension WechatHandlerBaseTests: ShareMessageUniversalLinkRequestTestCase {
 
-    func test_share_ul(path: String) {
+    func test_share_ul_request(path: String) {
         XCTAssertEqual(path, "/app/\(appID)/sendreq/")
     }
 
-    func test_share_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+    func test_share_ul_request(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
         XCTAssertTrue(true)
     }
 }
 
-// MARK: - Share - Message - Pasteboard
+// MARK: - Share - Message - Pasteboard - Request
 
-extension WechatHandlerBaseTests: ShareMessagePasteboardTestCase {
+extension WechatHandlerBaseTests: ShareMessagePasteboardRequestTestCase {
 
-    func test_share_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+    func test_share_pb_request(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         let appBrandPath = dictionary.removeValue(forKey: "appBrandPath") as? String
         test_appBrandPath(appBrandPath, message)
 

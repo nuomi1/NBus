@@ -22,19 +22,19 @@ extension WeiboHandlerBaseTests: GeneralSchemeTestCase {
     }
 }
 
-// MARK: - General - UniversalLink
+// MARK: - General - UniversalLink - Request
 
-extension WeiboHandlerBaseTests: GeneralUniversalLinkTestCase {
+extension WeiboHandlerBaseTests: GeneralUniversalLinkRequestTestCase {
 
-    func test_general_ul(scheme: @autoclosure () throws -> String) {
+    func test_general_ul_request(scheme: @autoclosure () throws -> String) {
         XCTAssertEqual(try scheme(), "https")
     }
 
-    func test_general_ul(host: @autoclosure () throws -> String) {
+    func test_general_ul_request(host: @autoclosure () throws -> String) {
         XCTAssertEqual(try host(), "open.weibo.com")
     }
 
-    func test_general_ul(queryItems: inout [URLQueryItem]) {
+    func test_general_ul_request(queryItems: inout [URLQueryItem]) {
         let lfid = queryItems.removeFirst { $0.name == "lfid" }!
         test_lfid(lfid)
 
@@ -82,20 +82,20 @@ extension WeiboHandlerBaseTests {
     }
 }
 
-// MARK: - General - Pasteboard
+// MARK: - General - Pasteboard - Request
 
-extension WeiboHandlerBaseTests: GeneralPasteboardTestCase {
+extension WeiboHandlerBaseTests: GeneralPasteboardRequestTestCase {
 
-    func extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
+    func extract_major_pb_request(items: inout [[String: Data]]) -> [String: Any] {
         extract_KeyedArchiver_pb(items: &items, key: "transferObject")
     }
 
-    func test_general_pb(dictionary: inout [String: Any]) {
+    func test_general_pb_request(dictionary: inout [String: Any]) {
         let requestID = dictionary.removeValue(forKey: "requestID") as! String
         test_requestID(requestID)
     }
 
-    func test_extra_pb(items: inout [[String: Data]]) {
+    func test_extra_pb_request(items: inout [[String: Data]]) {
         test_app(&items)
 
         test_sdkVersion(&items)

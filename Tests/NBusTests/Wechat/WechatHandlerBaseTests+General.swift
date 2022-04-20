@@ -21,19 +21,19 @@ extension WechatHandlerBaseTests: GeneralSchemeTestCase {
     }
 }
 
-// MARK: - General - UniversalLink
+// MARK: - General - UniversalLink - Request
 
-extension WechatHandlerBaseTests: GeneralUniversalLinkTestCase {
+extension WechatHandlerBaseTests: GeneralUniversalLinkRequestTestCase {
 
-    func test_general_ul(scheme: @autoclosure () throws -> String) {
+    func test_general_ul_request(scheme: @autoclosure () throws -> String) {
         XCTAssertEqual(try scheme(), "https")
     }
 
-    func test_general_ul(host: @autoclosure () throws -> String) {
+    func test_general_ul_request(host: @autoclosure () throws -> String) {
         XCTAssertEqual(try host(), "help.wechat.com")
     }
 
-    func test_general_ul(queryItems: inout [URLQueryItem]) {
+    func test_general_ul_request(queryItems: inout [URLQueryItem]) {
         let wechat_app_bundleId = queryItems.removeFirst { $0.name == "wechat_app_bundleId" }!
         test_wechat_app_bundleId(wechat_app_bundleId)
 
@@ -53,11 +53,11 @@ extension WechatHandlerBaseTests {
     }
 }
 
-// MARK: - General - Pasteboard
+// MARK: - General - Pasteboard - Request
 
-extension WechatHandlerBaseTests: GeneralPasteboardTestCase {
+extension WechatHandlerBaseTests: GeneralPasteboardRequestTestCase {
 
-    func extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
+    func extract_major_pb_request(items: inout [[String: Data]]) -> [String: Any] {
         var plist = extract_PropertyList_pb(items: &items, key: "content")
 
         logger.debug("\(UIPasteboard.self), start, \(plist.keys.sorted())")
@@ -76,7 +76,7 @@ extension WechatHandlerBaseTests: GeneralPasteboardTestCase {
         return dictionary
     }
 
-    func test_general_pb(dictionary: inout [String: Any]) {
+    func test_general_pb_request(dictionary: inout [String: Any]) {
         let isAutoResend = dictionary.removeValue(forKey: "isAutoResend") as! Bool
         test_isAutoResend(isAutoResend)
 
@@ -93,7 +93,7 @@ extension WechatHandlerBaseTests: GeneralPasteboardTestCase {
         test_universalLink(universalLink)
     }
 
-    func test_extra_pb(items: inout [[String: Data]]) {
+    func test_extra_pb_request(items: inout [[String: Data]]) {
         XCTAssertTrue(true)
     }
 }

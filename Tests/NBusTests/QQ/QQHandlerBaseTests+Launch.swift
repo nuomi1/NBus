@@ -30,15 +30,15 @@ extension QQHandlerBaseTests: LaunchProgramSchemeTestCase {
     }
 }
 
-// MARK: - Launch - Program - UniversalLink
+// MARK: - Launch - Program - UniversalLink - Request
 
-extension QQHandlerBaseTests: LaunchProgramUniversalLinkTestCase {
+extension QQHandlerBaseTests: LaunchProgramUniversalLinkRequestTestCase {
 
-    func test_launch_ul(path: String) {
+    func test_launch_ul_request(path: String) {
         XCTAssertEqual(path, "/opensdkul/mqqapi/profile/sdk_launch_mini_app")
     }
 
-    func test_launch_ul(queryItems: inout [URLQueryItem], _ platform: Platform, _ program: MiniProgramMessage) {
+    func test_launch_ul_request(queryItems: inout [URLQueryItem], _ platform: Platform, _ program: MiniProgramMessage) {
         let appid = queryItems.removeFirst { $0.name == "appid" }!
         test_appid(appid)
 
@@ -75,11 +75,11 @@ extension QQHandlerBaseTests {
     }
 }
 
-// MARK: - Launch - Program - Pasteboard
+// MARK: - Launch - Program - Pasteboard - Request
 
-extension QQHandlerBaseTests: LaunchProgramPasteboardTestCase {
+extension QQHandlerBaseTests: LaunchProgramPasteboardRequestTestCase {
 
-    func test_launch_pb(dictionary: inout [String: Any], _ platform: Platform, _ program: MiniProgramMessage) {
+    func test_launch_pb_request(dictionary: inout [String: Any], _ platform: Platform, _ program: MiniProgramMessage) {
         XCTAssertTrue(true)
     }
 }

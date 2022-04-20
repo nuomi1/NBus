@@ -27,7 +27,7 @@ extension OauthTestCase {
         UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
-                self._test_oauth(url: url, platform)
+                self._test_oauth_request(url: url, platform)
             })
             .disposed(by: disposeBag)
 
@@ -50,7 +50,7 @@ extension OauthTestCase {
             })
             .filter { !$0.allSatisfy { $0.isEmpty } }
             .bind(onNext: { [unowned self] items in
-                self._test_oauth(items: items, platform)
+                self._test_oauth_request(items: items, platform)
             })
             .disposed(by: disposeBag)
 
@@ -78,26 +78,26 @@ extension _OauthSchemeTestCase {
     }
 }
 
-// MARK: - Oauth - UniversalLink
+// MARK: - Oauth - UniversalLink - Request
 
-extension _OauthUniversalLinkTestCase {
+extension _OauthUniversalLinkRequestTestCase {
 
-    func _test_oauth(url: URL, _ platform: Platform) {
+    func _test_oauth_request(url: URL, _ platform: Platform) {
         let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         var queryItems = urlComponents.queryItems ?? []
 
         logger.debug("\(URLComponents.self), start, \(queryItems.map(\.name).sorted())")
 
-        // General - UniversalLink
+        // General - UniversalLink - Request
 
-        test_general_ul(scheme: try XCTUnwrap(urlComponents.scheme))
-        test_general_ul(host: try XCTUnwrap(urlComponents.host))
-        test_general_ul(queryItems: &queryItems)
+        test_general_ul_request(scheme: try XCTUnwrap(urlComponents.scheme))
+        test_general_ul_request(host: try XCTUnwrap(urlComponents.host))
+        test_general_ul_request(queryItems: &queryItems)
 
-        // Oauth - Platform - UniversalLink
+        // Oauth - Platform - UniversalLink - Request
 
-        test_oauth_ul(path: urlComponents.path)
-        test_oauth_ul(queryItems: &queryItems, platform)
+        test_oauth_ul_request(path: urlComponents.path)
+        test_oauth_ul_request(queryItems: &queryItems, platform)
 
         logger.debug("\(URLComponents.self), end, \(queryItems.map(\.name).sorted())")
 
@@ -107,18 +107,18 @@ extension _OauthUniversalLinkTestCase {
     }
 }
 
-// MARK: - Oauth - Pasteboard
+// MARK: - Oauth - Pasteboard - Request
 
-extension _OauthPasteboardTestCase {
+extension _OauthPasteboardRequestTestCase {
 
-    func _test_oauth(items: [[String: Any]], _ platform: Platform) {
+    func _test_oauth_request(items: [[String: Any]], _ platform: Platform) {
         var items = items as! [[String: Data]]
 
         logger.debug("\(UIPasteboard.self), start, \(items.map { $0.keys.sorted() })")
 
-        _test_oauth_pb(dictionary: extract_major_pb(items: &items), platform)
+        _test_oauth_pb_request(dictionary: extract_major_pb_request(items: &items), platform)
 
-        test_extra_pb(items: &items)
+        test_extra_pb_request(items: &items)
 
         logger.debug("\(UIPasteboard.self), end, \(items.map { $0.keys.sorted() })")
 
@@ -127,18 +127,18 @@ extension _OauthPasteboardTestCase {
         pbExpectation.fulfill()
     }
 
-    func _test_oauth_pb(dictionary: [String: Any], _ platform: Platform) {
+    func _test_oauth_pb_request(dictionary: [String: Any], _ platform: Platform) {
         var dictionary = dictionary
 
         logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
 
-        // General - Pasteboard
+        // General - Pasteboard - Request
 
-        test_general_pb(dictionary: &dictionary)
+        test_general_pb_request(dictionary: &dictionary)
 
-        // Oauth - Platform - Pasteboard
+        // Oauth - Platform - Pasteboard - Request
 
-        test_oauth_pb(dictionary: &dictionary, platform)
+        test_oauth_pb_request(dictionary: &dictionary, platform)
 
         logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
 

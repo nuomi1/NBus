@@ -8,9 +8,9 @@
 
 import Foundation
 
-// MARK: - General - Pasteboard
+// MARK: - General - Pasteboard - Request
 
-extension GeneralPasteboardTestCase {
+extension GeneralPasteboardRequestTestCase {
 
     /// Extract pasteboard using KeyedArchiver
     func extract_KeyedArchiver_pb(items: inout [[String: Data]], key: String) -> [String: Any] {

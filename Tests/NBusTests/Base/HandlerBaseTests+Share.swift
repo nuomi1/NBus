@@ -27,7 +27,7 @@ extension ShareTestCase {
         UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
-                self._test_share(url: url, message, endpoint)
+                self._test_share_request(url: url, message, endpoint)
             })
             .disposed(by: disposeBag)
 
@@ -50,7 +50,7 @@ extension ShareTestCase {
             })
             .filter { !$0.allSatisfy { $0.isEmpty } }
             .bind(onNext: { [unowned self] items in
-                self._test_share(items: items, message, endpoint)
+                self._test_share_request(items: items, message, endpoint)
             })
             .disposed(by: disposeBag)
 
@@ -79,26 +79,26 @@ extension _ShareSchemeTestCase {
     }
 }
 
-// MARK: - Share - UniversalLink
+// MARK: - Share - UniversalLink - Request
 
-extension _ShareUniversalLinkTestCase {
+extension _ShareUniversalLinkRequestTestCase {
 
-    func _test_share(url: URL, _ message: MessageType, _ endpoint: Endpoint) {
+    func _test_share_request(url: URL, _ message: MessageType, _ endpoint: Endpoint) {
         let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         var queryItems = urlComponents.queryItems ?? []
 
         logger.debug("\(URLComponents.self), start, \(queryItems.map(\.name).sorted())")
 
-        // General - UniversalLink
+        // General - UniversalLink - Request
 
-        test_general_ul(scheme: try XCTUnwrap(urlComponents.scheme))
-        test_general_ul(host: try XCTUnwrap(urlComponents.host))
-        test_general_ul(queryItems: &queryItems)
+        test_general_ul_request(scheme: try XCTUnwrap(urlComponents.scheme))
+        test_general_ul_request(host: try XCTUnwrap(urlComponents.host))
+        test_general_ul_request(queryItems: &queryItems)
 
-        // Share - Message - UniversalLink
+        // Share - Message - UniversalLink - Request
 
-        test_share_ul(path: urlComponents.path)
-        test_share_ul(queryItems: &queryItems, message, endpoint)
+        test_share_ul_request(path: urlComponents.path)
+        test_share_ul_request(queryItems: &queryItems, message, endpoint)
 
         logger.debug("\(URLComponents.self), end, \(queryItems.map(\.name).sorted())")
 
@@ -108,18 +108,18 @@ extension _ShareUniversalLinkTestCase {
     }
 }
 
-// MARK: - Share - Pasteboard
+// MARK: - Share - Pasteboard - Request
 
-extension _SharePasteboardTestCase {
+extension _SharePasteboardRequestTestCase {
 
-    func _test_share(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) {
+    func _test_share_request(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) {
         var items = items as! [[String: Data]]
 
         logger.debug("\(UIPasteboard.self), start, \(items.map { $0.keys.sorted() })")
 
-        _test_share_pb(dictionary: extract_major_pb(items: &items), message, endpoint)
+        _test_share_pb_request(dictionary: extract_major_pb_request(items: &items), message, endpoint)
 
-        test_extra_pb(items: &items)
+        test_extra_pb_request(items: &items)
 
         logger.debug("\(UIPasteboard.self), end, \(items.map { $0.keys.sorted() })")
 
@@ -128,18 +128,18 @@ extension _SharePasteboardTestCase {
         pbExpectation.fulfill()
     }
 
-    func _test_share_pb(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+    func _test_share_pb_request(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         var dictionary = dictionary
 
         logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
 
-        // General - Pasteboard
+        // General - Pasteboard - Request
 
-        test_general_pb(dictionary: &dictionary)
+        test_general_pb_request(dictionary: &dictionary)
 
-        // Share - Message - Pasteboard
+        // Share - Message - Pasteboard - Request
 
-        test_share_pb(dictionary: &dictionary, message, endpoint)
+        test_share_pb_request(dictionary: &dictionary, message, endpoint)
 
         logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
 

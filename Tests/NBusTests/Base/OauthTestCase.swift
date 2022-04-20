@@ -29,52 +29,52 @@ protocol _OauthSchemeTestCase:
     func _test_oauth(scheme: URL, _ platform: Platform)
 }
 
-// MARK: - Oauth - Platform - UniversalLink
+// MARK: - Oauth - Platform - UniversalLink - Request
 
-protocol OauthPlatformUniversalLinkTestCase: XCTestCase {
+protocol OauthPlatformUniversalRequestLinkTestCase: XCTestCase {
 
-    /// Test oauth universal link path
-    func test_oauth_ul(path: String)
+    /// Test oauth universal link request path
+    func test_oauth_ul_request(path: String)
 
-    /// Test oauth universal link queryItems
-    func test_oauth_ul(queryItems: inout [URLQueryItem], _ platform: Platform)
+    /// Test oauth universal link request queryItems
+    func test_oauth_ul_request(queryItems: inout [URLQueryItem], _ platform: Platform)
 }
 
-// MARK: - Oauth - UniversalLink
+// MARK: - Oauth - UniversalLink - Request
 
-protocol _OauthUniversalLinkTestCase:
-    GeneralUniversalLinkTestCase,
-    OauthPlatformUniversalLinkTestCase {
+protocol _OauthUniversalLinkRequestTestCase:
+    GeneralUniversalLinkRequestTestCase,
+    OauthPlatformUniversalRequestLinkTestCase {
 
     /// Universal link expectation
     var ulExpectation: XCTestExpectation { get }
 
-    /// Test oauth universal link
-    func _test_oauth(url: URL, _ platform: Platform)
+    /// Test oauth universal link request
+    func _test_oauth_request(url: URL, _ platform: Platform)
 }
 
-// MARK: - Oauth - Platform - Pasteboard
+// MARK: - Oauth - Platform - Pasteboard - Request
 
-protocol OauthPlatformPasteboardTestCase: XCTestCase {
+protocol OauthPlatformPasteboardRequestTestCase: XCTestCase {
 
-    /// Test oauth pasteboard dictionary
-    func test_oauth_pb(dictionary: inout [String: Any], _ platform: Platform)
+    /// Test oauth pasteboard request dictionary
+    func test_oauth_pb_request(dictionary: inout [String: Any], _ platform: Platform)
 }
 
-// MARK: - Oauth - Pasteboard
+// MARK: - Oauth - Pasteboard - Request
 
-protocol _OauthPasteboardTestCase:
-    GeneralPasteboardTestCase,
-    OauthPlatformPasteboardTestCase {
+protocol _OauthPasteboardRequestTestCase:
+    GeneralPasteboardRequestTestCase,
+    OauthPlatformPasteboardRequestTestCase {
 
     /// Pasteboard expectation
     var pbExpectation: XCTestExpectation { get }
 
-    /// Test oauth pasteboard
-    func _test_oauth(items: [[String: Any]], _ platform: Platform)
+    /// Test oauth pasteboard request
+    func _test_oauth_request(items: [[String: Any]], _ platform: Platform)
 
-    /// Test oauth pasteboard dictionary
-    func _test_oauth_pb(dictionary: [String: Any], _ platform: Platform)
+    /// Test oauth pasteboard request dictionary
+    func _test_oauth_pb_request(dictionary: [String: Any], _ platform: Platform)
 
     /// Avoid oauth pasteboard error
     func _avoid_oauth_pb_error(_ items: [[String: Any]], _ platform: Platform) -> Bool
@@ -98,8 +98,8 @@ protocol _OauthCompletionTestCase: XCTestCase {
 
 protocol OauthTestCase:
     _OauthSchemeTestCase,
-    _OauthUniversalLinkTestCase,
-    _OauthPasteboardTestCase,
+    _OauthUniversalLinkRequestTestCase,
+    _OauthPasteboardRequestTestCase,
     _OauthCompletionTestCase {
 
     var disposeBag: DisposeBag { get }

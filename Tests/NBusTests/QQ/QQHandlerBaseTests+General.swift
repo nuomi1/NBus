@@ -21,19 +21,19 @@ extension QQHandlerBaseTests: GeneralSchemeTestCase {
     }
 }
 
-// MARK: - General - UniversalLink
+// MARK: - General - UniversalLink - Request
 
-extension QQHandlerBaseTests: GeneralUniversalLinkTestCase {
+extension QQHandlerBaseTests: GeneralUniversalLinkRequestTestCase {
 
-    func test_general_ul(scheme: @autoclosure () throws -> String) {
+    func test_general_ul_request(scheme: @autoclosure () throws -> String) {
         XCTAssertEqual(try scheme(), "https")
     }
 
-    func test_general_ul(host: @autoclosure () throws -> String) {
+    func test_general_ul_request(host: @autoclosure () throws -> String) {
         XCTAssertEqual(try host(), "qm.qq.com")
     }
 
-    func test_general_ul(queryItems: inout [URLQueryItem]) {
+    func test_general_ul_request(queryItems: inout [URLQueryItem]) {
         let appsign_txid = queryItems.removeFirst { $0.name == "appsign_txid" }!
         test_appsign_txid(appsign_txid)
 
@@ -60,22 +60,22 @@ extension QQHandlerBaseTests {
     }
 }
 
-// MARK: - General - Pasteboard
+// MARK: - General - Pasteboard - Request
 
-extension QQHandlerBaseTests: GeneralPasteboardTestCase {
+extension QQHandlerBaseTests: GeneralPasteboardRequestTestCase {
 
-    func extract_major_pb(items: inout [[String: Data]]) -> [String: Any] {
+    func extract_major_pb_request(items: inout [[String: Data]]) -> [String: Any] {
         extract_KeyedArchiver_pb(items: &items, key: "com.tencent.mqq.api.apiLargeData")
     }
 
-    func test_general_pb(dictionary: inout [String: Any]) {
+    func test_general_pb_request(dictionary: inout [String: Any]) {
         if context.setPasteboardString {
             let pasted_string = dictionary.removeValue(forKey: "pasted_string") as! String
             test_pasted_string(pasted_string)
         }
     }
 
-    func test_extra_pb(items: inout [[String: Data]]) {
+    func test_extra_pb_request(items: inout [[String: Data]]) {
         XCTAssertTrue(true)
     }
 }

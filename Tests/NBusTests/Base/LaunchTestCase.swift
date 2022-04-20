@@ -29,52 +29,52 @@ protocol _LaunchSchemeTestCase:
     func _test_launch(scheme: URL, _ platform: Platform, _ program: MiniProgramMessage)
 }
 
-// MARK: - Launch - Program - UniversalLink
+// MARK: - Launch - Program - UniversalLink - Request
 
-protocol LaunchProgramUniversalLinkTestCase: XCTestCase {
+protocol LaunchProgramUniversalLinkRequestTestCase: XCTestCase {
 
-    /// Test launch universal link path
-    func test_launch_ul(path: String)
+    /// Test launch universal link request path
+    func test_launch_ul_request(path: String)
 
-    /// Test launch universal link queryItems
-    func test_launch_ul(queryItems: inout [URLQueryItem], _ platform: Platform, _ program: MiniProgramMessage)
+    /// Test launch universal link request queryItems
+    func test_launch_ul_request(queryItems: inout [URLQueryItem], _ platform: Platform, _ program: MiniProgramMessage)
 }
 
-// MARK: - Launch - UniversalLink
+// MARK: - Launch - UniversalLink - Request
 
-protocol _LaunchUniversalLinkTestCase:
-    GeneralUniversalLinkTestCase,
-    LaunchProgramUniversalLinkTestCase {
+protocol _LaunchUniversalLinkRequestTestCase:
+    GeneralUniversalLinkRequestTestCase,
+    LaunchProgramUniversalLinkRequestTestCase {
 
     /// Universal link expectation
     var ulExpectation: XCTestExpectation { get }
 
-    /// Test launch universal link
-    func _test_launch(url: URL, _ platform: Platform, _ program: MiniProgramMessage)
+    /// Test launch universal link request
+    func _test_launch_request(url: URL, _ platform: Platform, _ program: MiniProgramMessage)
 }
 
-// MARK: - Launch - Platform - Pasteboard
+// MARK: - Launch - Platform - Pasteboard - Request
 
-protocol LaunchProgramPasteboardTestCase: XCTestCase {
+protocol LaunchProgramPasteboardRequestTestCase: XCTestCase {
 
-    /// Test launch pasteboard dictionary
-    func test_launch_pb(dictionary: inout [String: Any], _ platform: Platform, _ program: MiniProgramMessage)
+    /// Test launch pasteboard request dictionary
+    func test_launch_pb_request(dictionary: inout [String: Any], _ platform: Platform, _ program: MiniProgramMessage)
 }
 
-// MARK: - Launch - Pasteboard
+// MARK: - Launch - Pasteboard - Request
 
-protocol _LaunchPasteboardTestCase:
-    GeneralPasteboardTestCase,
-    LaunchProgramPasteboardTestCase {
+protocol _LaunchPasteboardRequestTestCase:
+    GeneralPasteboardRequestTestCase,
+    LaunchProgramPasteboardRequestTestCase {
 
     /// Pasteboard expectation
     var pbExpectation: XCTestExpectation { get }
 
-    /// Test launch pasteboard
-    func _test_launch(items: [[String: Any]], _ platform: Platform, _ program: MiniProgramMessage)
+    /// Test launch pasteboard request
+    func _test_launch_request(items: [[String: Any]], _ platform: Platform, _ program: MiniProgramMessage)
 
-    /// Test launch pasteboard dictionary
-    func _test_launch_pb(dictionary: [String: Any], _ platform: Platform, _ program: MiniProgramMessage)
+    /// Test launch pasteboard request dictionary
+    func _test_launch_pb_request(dictionary: [String: Any], _ platform: Platform, _ program: MiniProgramMessage)
 }
 
 // MARK: - Launch - Completion
@@ -95,8 +95,8 @@ protocol _LaunchCompletionTestCase: XCTestCase {
 
 protocol LaunchTestCase:
     _LaunchSchemeTestCase,
-    _LaunchUniversalLinkTestCase,
-    _LaunchPasteboardTestCase,
+    _LaunchUniversalLinkRequestTestCase,
+    _LaunchPasteboardRequestTestCase,
     _LaunchCompletionTestCase {
 
     var disposeBag: DisposeBag { get }

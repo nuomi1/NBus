@@ -27,7 +27,7 @@ extension LaunchTestCase {
         UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
-                self._test_launch(url: url, platform, program)
+                self._test_launch_request(url: url, platform, program)
             })
             .disposed(by: disposeBag)
 
@@ -35,7 +35,7 @@ extension LaunchTestCase {
             .items()
             .filter { !$0.allSatisfy { $0.isEmpty } }
             .bind(onNext: { [unowned self] items in
-                self._test_launch(items: items, platform, program)
+                self._test_launch_request(items: items, platform, program)
             })
             .disposed(by: disposeBag)
 
@@ -62,26 +62,26 @@ extension _LaunchSchemeTestCase {
     }
 }
 
-// MARK: - Launch - UniversalLink
+// MARK: - Launch - UniversalLink - Request
 
-extension _LaunchUniversalLinkTestCase {
+extension _LaunchUniversalLinkRequestTestCase {
 
-    func _test_launch(url: URL, _ platform: Platform, _ program: MiniProgramMessage) {
+    func _test_launch_request(url: URL, _ platform: Platform, _ program: MiniProgramMessage) {
         let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         var queryItems = urlComponents.queryItems ?? []
 
         logger.debug("\(URLComponents.self), start, \(queryItems.map(\.name).sorted())")
 
-        // General - UniversalLink
+        // General - UniversalLink - Request
 
-        test_general_ul(scheme: try XCTUnwrap(urlComponents.scheme))
-        test_general_ul(host: try XCTUnwrap(urlComponents.host))
-        test_general_ul(queryItems: &queryItems)
+        test_general_ul_request(scheme: try XCTUnwrap(urlComponents.scheme))
+        test_general_ul_request(host: try XCTUnwrap(urlComponents.host))
+        test_general_ul_request(queryItems: &queryItems)
 
-        // Launch - Program - UniversalLink
+        // Launch - Program - UniversalLink - Request
 
-        test_launch_ul(path: urlComponents.path)
-        test_launch_ul(queryItems: &queryItems, platform, program)
+        test_launch_ul_request(path: urlComponents.path)
+        test_launch_ul_request(queryItems: &queryItems, platform, program)
 
         logger.debug("\(URLComponents.self), end, \(queryItems.map(\.name).sorted())")
 
@@ -91,18 +91,18 @@ extension _LaunchUniversalLinkTestCase {
     }
 }
 
-// MARK: - Launch - Pasteboard
+// MARK: - Launch - Pasteboard - Request
 
-extension _LaunchPasteboardTestCase {
+extension _LaunchPasteboardRequestTestCase {
 
-    func _test_launch(items: [[String: Any]], _ platform: Platform, _ program: MiniProgramMessage) {
+    func _test_launch_request(items: [[String: Any]], _ platform: Platform, _ program: MiniProgramMessage) {
         var items = items as! [[String: Data]]
 
         logger.debug("\(UIPasteboard.self), start, \(items.map { $0.keys.sorted() })")
 
-        _test_launch_pb(dictionary: extract_major_pb(items: &items), platform, program)
+        _test_launch_pb_request(dictionary: extract_major_pb_request(items: &items), platform, program)
 
-        test_extra_pb(items: &items)
+        test_extra_pb_request(items: &items)
 
         logger.debug("\(UIPasteboard.self), end, \(items.map { $0.keys.sorted() })")
 
@@ -111,18 +111,18 @@ extension _LaunchPasteboardTestCase {
         pbExpectation.fulfill()
     }
 
-    func _test_launch_pb(dictionary: [String: Any], _ platform: Platform, _ program: MiniProgramMessage) {
+    func _test_launch_pb_request(dictionary: [String: Any], _ platform: Platform, _ program: MiniProgramMessage) {
         var dictionary = dictionary
 
         logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
 
-        // General - Pasteboard
+        // General - Pasteboard - Request
 
-        test_general_pb(dictionary: &dictionary)
+        test_general_pb_request(dictionary: &dictionary)
 
-        // Launch - Program - Pasteboard
+        // Launch - Program - Pasteboard - Request
 
-        test_launch_pb(dictionary: &dictionary, platform, program)
+        test_launch_pb_request(dictionary: &dictionary, platform, program)
 
         logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
 

@@ -63,24 +63,24 @@ extension WeiboHandlerBaseTests: ShareMessageSchemeTestCase {
     }
 }
 
-// MARK: - Share - Message - UniversalLink
+// MARK: - Share - Message - UniversalLink - Request
 
-extension WeiboHandlerBaseTests: ShareMessageUniversalLinkTestCase {
+extension WeiboHandlerBaseTests: ShareMessageUniversalLinkRequestTestCase {
 
-    func test_share_ul(path: String) {
+    func test_share_ul_request(path: String) {
         XCTAssertEqual(path, "/weibosdk/request")
     }
 
-    func test_share_ul(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+    func test_share_ul_request(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
         XCTAssertTrue(true)
     }
 }
 
-// MARK: - Share - Message - Pasteboard
+// MARK: - Share - Message - Pasteboard - Request
 
-extension WeiboHandlerBaseTests: ShareMessagePasteboardTestCase {
+extension WeiboHandlerBaseTests: ShareMessagePasteboardRequestTestCase {
 
-    func test_share_pb(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+    func test_share_pb_request(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
         let `class` = dictionary.removeValue(forKey: "__class") as! String
         test_class_share(`class`)
 

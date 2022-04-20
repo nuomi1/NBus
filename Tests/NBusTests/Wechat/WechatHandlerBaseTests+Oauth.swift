@@ -28,15 +28,15 @@ extension WechatHandlerBaseTests: OauthPlatformSchemeTestCase {
     }
 }
 
-// MARK: - Oauth - Platform - UniversalLink
+// MARK: - Oauth - Platform - UniversalLink - Request
 
-extension WechatHandlerBaseTests: OauthPlatformUniversalLinkTestCase {
+extension WechatHandlerBaseTests: OauthPlatformUniversalRequestLinkTestCase {
 
-    func test_oauth_ul(path: String) {
+    func test_oauth_ul_request(path: String) {
         XCTAssertEqual(path, "/app/\(appID)/auth/")
     }
 
-    func test_oauth_ul(queryItems: inout [URLQueryItem], _ platform: Platform) {
+    func test_oauth_ul_request(queryItems: inout [URLQueryItem], _ platform: Platform) {
         let scope = queryItems.removeFirst { $0.name == "scope" }!
         test_scope(scope)
 
@@ -56,11 +56,11 @@ extension WechatHandlerBaseTests {
     }
 }
 
-// MARK: - Oauth - Platform - Pasteboard
+// MARK: - Oauth - Platform - Pasteboard - Request
 
-extension WechatHandlerBaseTests: OauthPlatformPasteboardTestCase {
+extension WechatHandlerBaseTests: OauthPlatformPasteboardRequestTestCase {
 
-    func test_oauth_pb(dictionary: inout [String: Any], _ platform: Platform) {
+    func test_oauth_pb_request(dictionary: inout [String: Any], _ platform: Platform) {
         let command = dictionary.removeValue(forKey: "command") as! String
         test_command_oauth(command)
     }

@@ -28,24 +28,24 @@ extension WeiboHandlerBaseTests: OauthPlatformSchemeTestCase {
     }
 }
 
-// MARK: - Oauth - Platform - UniversalLink
+// MARK: - Oauth - Platform - UniversalLink - Request
 
-extension WeiboHandlerBaseTests: OauthPlatformUniversalLinkTestCase {
+extension WeiboHandlerBaseTests: OauthPlatformUniversalRequestLinkTestCase {
 
-    func test_oauth_ul(path: String) {
-        test_share_ul(path: path)
+    func test_oauth_ul_request(path: String) {
+        test_share_ul_request(path: path)
     }
 
-    func test_oauth_ul(queryItems: inout [URLQueryItem], _ platform: Platform) {
+    func test_oauth_ul_request(queryItems: inout [URLQueryItem], _ platform: Platform) {
         XCTAssertTrue(true)
     }
 }
 
-// MARK: - Oauth - Platform - Pasteboard
+// MARK: - Oauth - Platform - Pasteboard - Request
 
-extension WeiboHandlerBaseTests: OauthPlatformPasteboardTestCase {
+extension WeiboHandlerBaseTests: OauthPlatformPasteboardRequestTestCase {
 
-    func test_oauth_pb(dictionary: inout [String: Any], _ platform: Platform) {
+    func test_oauth_pb_request(dictionary: inout [String: Any], _ platform: Platform) {
         let `class` = dictionary.removeValue(forKey: "__class") as! String
         test_class_oauth(`class`)
 

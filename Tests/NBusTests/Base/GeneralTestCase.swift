@@ -17,30 +17,30 @@ protocol GeneralSchemeTestCase: XCTestCase {
     func report_general_scheme() -> Set<String>
 }
 
-// MARK: - General - UniversalLink
+// MARK: - General - UniversalLink - Request
 
-protocol GeneralUniversalLinkTestCase: XCTestCase {
+protocol GeneralUniversalLinkRequestTestCase: XCTestCase {
 
-    /// Test general universal link scheme
-    func test_general_ul(scheme: @autoclosure () throws -> String)
+    /// Test general universal link request scheme
+    func test_general_ul_request(scheme: @autoclosure () throws -> String)
 
-    /// Test general universal link host
-    func test_general_ul(host: @autoclosure () throws -> String)
+    /// Test general universal link request host
+    func test_general_ul_request(host: @autoclosure () throws -> String)
 
-    /// Test general universal link queryItems
-    func test_general_ul(queryItems: inout [URLQueryItem])
+    /// Test general universal link request queryItems
+    func test_general_ul_request(queryItems: inout [URLQueryItem])
 }
 
-// MARK: - General - Pasteboard
+// MARK: - General - Pasteboard - Request
 
-protocol GeneralPasteboardTestCase: XCTestCase {
+protocol GeneralPasteboardRequestTestCase: XCTestCase {
 
-    /// Extract pasteboard major data
-    func extract_major_pb(items: inout [[String: Data]]) -> [String: Any]
+    /// Extract pasteboard request major data
+    func extract_major_pb_request(items: inout [[String: Data]]) -> [String: Any]
 
-    /// Test general pasteboard dictionary
-    func test_general_pb(dictionary: inout [String: Any])
+    /// Test general pasteboard request dictionary
+    func test_general_pb_request(dictionary: inout [String: Any])
 
-    /// Test pasteboard extra data
-    func test_extra_pb(items: inout [[String: Data]])
+    /// Test pasteboard request extra data
+    func test_extra_pb_request(items: inout [[String: Data]])
 }
