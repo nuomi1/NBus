@@ -73,7 +73,7 @@ extension WechatHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(queryItem.value!, miniProgramType(message.miniProgramType))
         default:
-            XCTAssertTrue(false, "\(String(describing: queryItem.value))")
+            fatalError()
         }
     }
 
@@ -82,7 +82,7 @@ extension WechatHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(queryItem.value!, message.path)
         default:
-            XCTAssertTrue(false, "\(String(describing: queryItem.value))")
+            fatalError()
         }
     }
 
@@ -91,7 +91,7 @@ extension WechatHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(queryItem.value!, message.miniProgramID)
         default:
-            XCTAssertTrue(false, "\(String(describing: queryItem.value))")
+            fatalError()
         }
     }
 }

@@ -58,8 +58,7 @@ extension WeiboHandlerBaseTests: ShareMessageSchemeTestCase {
              is MiniProgramMessage:
             return []
         default:
-            XCTAssertTrue(false)
-            return []
+            fatalError()
         }
     }
 }
@@ -135,7 +134,7 @@ extension WeiboHandlerBaseTests {
         case is ImageMessage:
             test_image(value!, message, endpoint)
         default:
-            XCTAssertTrue(false, String(describing: value))
+            fatalError()
         }
     }
 
@@ -149,7 +148,7 @@ extension WeiboHandlerBaseTests {
              is WebPageMessage:
             test_media(value!, message, endpoint)
         default:
-            XCTAssertTrue(false, String(describing: value))
+            fatalError()
         }
     }
 
@@ -163,7 +162,7 @@ extension WeiboHandlerBaseTests {
              is WebPageMessage:
             XCTAssertNil(value)
         default:
-            XCTAssertTrue(false, String(describing: value))
+            fatalError()
         }
     }
 }
@@ -191,7 +190,7 @@ extension WeiboHandlerBaseTests {
         case let message as ImageMessage:
             XCTAssertEqual(value, message.data)
         default:
-            XCTAssertTrue(false, String(describing: value))
+            fatalError()
         }
     }
 }
@@ -242,7 +241,7 @@ extension WeiboHandlerBaseTests {
         case let message as WebPageMessage:
             XCTAssertEqual(value, message.description)
         default:
-            XCTAssertTrue(false, String(describing: value))
+            fatalError()
         }
     }
 
@@ -259,7 +258,7 @@ extension WeiboHandlerBaseTests {
         case let message as WebPageMessage:
             XCTAssertEqual(value, message.thumbnail)
         default:
-            XCTAssertTrue(false, String(describing: value))
+            fatalError()
         }
     }
 
@@ -272,7 +271,7 @@ extension WeiboHandlerBaseTests {
         case let message as WebPageMessage:
             XCTAssertEqual(value, message.title)
         default:
-            XCTAssertTrue(false, String(describing: value))
+            fatalError()
         }
     }
 
@@ -285,7 +284,7 @@ extension WeiboHandlerBaseTests {
         case let message as WebPageMessage:
             XCTAssertEqual(value, message.link.absoluteString)
         default:
-            XCTAssertTrue(false, String(describing: value))
+            fatalError()
         }
     }
 }

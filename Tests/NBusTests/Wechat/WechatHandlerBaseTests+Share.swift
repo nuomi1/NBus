@@ -114,8 +114,7 @@ extension WechatHandlerBaseTests: ShareMessageSchemeTestCase {
              is MiniProgramMessage:
             return []
         default:
-            XCTAssertTrue(false)
-            return []
+            fatalError()
         }
     }
 }
@@ -217,7 +216,7 @@ extension WechatHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(value!, message.path)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -233,7 +232,7 @@ extension WechatHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(value!, message.miniProgramID)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -249,7 +248,7 @@ extension WechatHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertEqual(value!, false)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -265,7 +264,7 @@ extension WechatHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertEqual(value!, false)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -281,7 +280,7 @@ extension WechatHandlerBaseTests {
              Messages.miniProgram:
             XCTAssertEqual(value, "1010")
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -302,7 +301,7 @@ extension WechatHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(value!, message.description)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -318,7 +317,7 @@ extension WechatHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertEqual(value!, false)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -335,7 +334,7 @@ extension WechatHandlerBaseTests {
         case let message as FileMessage:
             XCTAssertEqual(value, message.data)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -351,7 +350,7 @@ extension WechatHandlerBaseTests {
         case let message as FileMessage:
             XCTAssertEqual(value, message.fileExtension)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -367,7 +366,7 @@ extension WechatHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(value!, message.thumbnail)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -383,7 +382,7 @@ extension WechatHandlerBaseTests {
         case let message as AudioMessage:
             XCTAssertEqual(value!, message.dataLink?.absoluteString)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -402,7 +401,7 @@ extension WechatHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(value!, message.link.absoluteString)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -418,7 +417,7 @@ extension WechatHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertEqual(value!, 0)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -434,7 +433,7 @@ extension WechatHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertEqual(value!, "0")
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -450,7 +449,7 @@ extension WechatHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertEqual(value!, "0")
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -471,7 +470,7 @@ extension WechatHandlerBaseTests {
         case is MiniProgramMessage:
             XCTAssertEqual(value!, "36")
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -484,7 +483,7 @@ extension WechatHandlerBaseTests {
         case Endpoints.Wechat.favorite:
             XCTAssertEqual(value, "2")
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -505,7 +504,7 @@ extension WechatHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(value!, message.thumbnail)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -526,7 +525,7 @@ extension WechatHandlerBaseTests {
         case let message as MiniProgramMessage:
             XCTAssertEqual(value, message.title)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -542,7 +541,7 @@ extension WechatHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertEqual(value!, "0")
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 
@@ -558,7 +557,7 @@ extension WechatHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertEqual(value!, false)
         default:
-            XCTAssertTrue(false, "\(String(describing: value))")
+            fatalError()
         }
     }
 }
