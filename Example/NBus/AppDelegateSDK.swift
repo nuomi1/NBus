@@ -107,7 +107,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
 
         group.wait()
-        openURLToken = nil
+
+        NotificationCenter.default.removeObserver(openURLToken!)
 
         return result
     }
@@ -145,7 +146,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
 
         group.wait()
-        openUserActivityToken = nil
+
+        NotificationCenter.default.removeObserver(openUserActivityToken!)
 
         return result
     }
