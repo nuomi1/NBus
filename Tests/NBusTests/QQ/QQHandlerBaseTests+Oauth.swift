@@ -69,7 +69,7 @@ extension QQHandlerBaseTests {
         test_app_name(app_name)
 
         let bundleid = object.removeValue(forKey: "bundleid") as! String
-        test_bundleid(bundleid)
+        test_bundleid_oauth(bundleid)
 
         let client_id = object.removeValue(forKey: "client_id") as! String
         test_client_id(client_id)
@@ -87,7 +87,7 @@ extension QQHandlerBaseTests {
         test_sdkp(sdkp)
 
         let sdkv = object.removeValue(forKey: "sdkv") as! String
-        test_sdkv(sdkv)
+        test_sdkv_oauth(sdkv)
 
         let status_machine = object.removeValue(forKey: "status_machine") as! String
         test_status_machine(status_machine)
@@ -118,7 +118,7 @@ extension QQHandlerBaseTests {
         XCTAssertEqual(value, displayName)
     }
 
-    func test_bundleid(_ value: String) {
+    func test_bundleid_oauth(_ value: String) {
         XCTAssertEqual(value, bundleID)
     }
 
@@ -142,7 +142,7 @@ extension QQHandlerBaseTests {
         XCTAssertEqual(value, "i")
     }
 
-    func test_sdkv(_ value: String) {
+    func test_sdkv_oauth(_ value: String) {
         XCTAssertEqual(value, sdkVersion)
     }
 
