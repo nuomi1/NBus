@@ -28,6 +28,10 @@ target "BusMockWeiboSDK" do
   pod "NBusWeiboSDK"
 end
 
+target "BusMockTestSDK" do
+  pod "WoodPeckeriOS"
+end
+
 target "BusTests" do
   pod "NBus/BusHandlers", :path => "../"
   pod "NBus/SDKHandlers", :path => "../"
