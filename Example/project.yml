@@ -68,7 +68,11 @@ targets:
     templates:
       - BusMockSDKTemplate
     sources:
-      - path: NBus/Model/AppState+Notification.swift
+      - path: NBus
+        includes:
+          - Model/AppState.swift
+          - Model/AppState+ClearStorage.swift
+          - Model/AppState+Notification.swift
     postBuildScripts:
       - script: |
           find "${PROJECT_DIR}" -name "WeiboSDK.bundle" -exec cp -R "{}" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/" \;
