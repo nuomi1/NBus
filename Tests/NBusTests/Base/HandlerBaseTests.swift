@@ -62,14 +62,11 @@ class HandlerBaseTests: XCTestCase {
         super.setUp()
 
         NotificationCenter.default.rx
-            .notification(AppState.OpenURL.requestName)
-            .bind(onNext: { notification in
-                let url = notification.userInfo?[AppState.OpenURL.requestURLKey] as! URL
-                let items = notification.userInfo?[AppState.OpenURL.requestPasteboardKey] as! [[String: Any]]
-                let result = Bus.shared.openURL(url)
-
+            .openURL()
+            .bind(onNext: { url in
                 logger.debug("\(url)")
-                logger.debug("\(items.map { $0.keys.sorted() })")
+
+                let result = Bus.shared.openURL(url)
 
                 NotificationCenter.default.post(
                     name: AppState.OpenURL.responseName,
@@ -82,14 +79,11 @@ class HandlerBaseTests: XCTestCase {
             .disposed(by: disposeBag)
 
         NotificationCenter.default.rx
-            .notification(AppState.OpenUserActivity.requestName)
-            .bind(onNext: { notification in
-                let userActivity = notification.userInfo?[AppState.OpenUserActivity.requestUserActivityKey] as! NSUserActivity
-                let items = notification.userInfo?[AppState.OpenUserActivity.requestPasteboardKey] as! [[String: Any]]
-                let result = Bus.shared.openUserActivity(userActivity)
+            .openUserActivity()
+            .bind(onNext: { userActivity in
+                logger.debug("\(userActivity.webpageURL!)")
 
-                logger.debug("\(String(describing: userActivity.webpageURL))")
-                logger.debug("\(items.map { $0.keys.sorted() })")
+                let result = Bus.shared.openUserActivity(userActivity)
 
                 NotificationCenter.default.post(
                     name: AppState.OpenUserActivity.responseName,

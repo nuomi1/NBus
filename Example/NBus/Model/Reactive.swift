@@ -43,3 +43,16 @@ extension Reactive where Base: UIPasteboard {
             .map { _ in base.items }
     }
 }
+
+extension Reactive where Base: NotificationCenter {
+
+    func openURL() -> Observable<URL> {
+        notification(AppState.OpenURL.requestName)
+            .map { $0.userInfo?[AppState.OpenURL.requestURLKey] as! URL }
+    }
+
+    func openUserActivity() -> Observable<NSUserActivity> {
+        notification(AppState.OpenUserActivity.requestName)
+            .map { $0.userInfo?[AppState.OpenUserActivity.requestUserActivityKey] as! NSUserActivity }
+    }
+}
