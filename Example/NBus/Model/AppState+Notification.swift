@@ -8,15 +8,6 @@
 
 import Foundation
 
-#if BusMockTestSDK
-class AppState {
-
-    static let shared = AppState()
-
-    private init() {}
-}
-#endif
-
 extension AppState {
 
     enum OpenURL {
