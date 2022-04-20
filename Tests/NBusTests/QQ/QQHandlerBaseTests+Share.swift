@@ -178,11 +178,11 @@ extension QQHandlerBaseTests: ShareMessageUniversalLinkTestCase {
 extension QQHandlerBaseTests {
 
     func test_callback_name(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, txID)
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), txID)
     }
 
     func test_callback_type(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "scheme")
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "scheme")
     }
 
     func test_cflag(_ queryItem: URLQueryItem, _ message: MessageType, _ endpoint: Endpoint) {
@@ -194,16 +194,16 @@ extension QQHandlerBaseTests {
                  Messages.audio,
                  Messages.video,
                  Messages.webPage:
-                XCTAssertEqual(queryItem.value!, "2")
+                XCTAssertEqual(try XCTUnwrap(queryItem.value), "2")
             case Messages.file:
-                XCTAssertEqual(queryItem.value!, "18")
+                XCTAssertEqual(try XCTUnwrap(queryItem.value), "18")
             case Messages.miniProgram:
-                XCTAssertEqual(queryItem.value!, "64")
+                XCTAssertEqual(try XCTUnwrap(queryItem.value), "64")
             default:
                 fatalError()
             }
         case Endpoints.QQ.timeline:
-            XCTAssertEqual(queryItem.value!, "0")
+            XCTAssertEqual(try XCTUnwrap(queryItem.value), "0")
         default:
             fatalError()
         }
@@ -214,17 +214,17 @@ extension QQHandlerBaseTests {
         case is TextMessage:
             XCTAssertNil(queryItem)
         case let message as ImageMessage:
-            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.description?.bus.base64EncodedString)
         case let message as AudioMessage:
-            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.description?.bus.base64EncodedString)
         case let message as VideoMessage:
-            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.description?.bus.base64EncodedString)
         case let message as WebPageMessage:
-            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.description?.bus.base64EncodedString)
         case let message as FileMessage:
-            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.description?.bus.base64EncodedString)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(queryItem!.value!, message.description?.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.description?.bus.base64EncodedString)
         default:
             fatalError()
         }
@@ -240,7 +240,7 @@ extension QQHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertNil(queryItem)
         case let message as FileMessage:
-            XCTAssertEqual(queryItem!.value!, message.fullName)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.fullName)
         default:
             fatalError()
         }
@@ -249,7 +249,7 @@ extension QQHandlerBaseTests {
     func test_file_data(_ queryItem: URLQueryItem?, _ message: MessageType) {
         switch message {
         case let message as TextMessage:
-            XCTAssertEqual(queryItem!.value!, message.text.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.text.bus.base64EncodedString)
         case is ImageMessage,
              is AudioMessage,
              is VideoMessage,
@@ -265,19 +265,19 @@ extension QQHandlerBaseTests {
     func test_file_type(_ queryItem: URLQueryItem, _ message: MessageType) {
         switch message.identifier {
         case Messages.text:
-            XCTAssertEqual(queryItem.value!, "text")
+            XCTAssertEqual(try XCTUnwrap(queryItem.value), "text")
         case Messages.image:
-            XCTAssertEqual(queryItem.value!, "img")
+            XCTAssertEqual(try XCTUnwrap(queryItem.value), "img")
         case Messages.audio:
-            XCTAssertEqual(queryItem.value!, "audio")
+            XCTAssertEqual(try XCTUnwrap(queryItem.value), "audio")
         case Messages.video:
-            XCTAssertEqual(queryItem.value!, "video")
+            XCTAssertEqual(try XCTUnwrap(queryItem.value), "video")
         case Messages.webPage:
-            XCTAssertEqual(queryItem.value!, "news")
+            XCTAssertEqual(try XCTUnwrap(queryItem.value), "news")
         case Messages.file:
-            XCTAssertEqual(queryItem.value!, "localFile")
+            XCTAssertEqual(try XCTUnwrap(queryItem.value), "localFile")
         case Messages.miniProgram:
-            XCTAssertEqual(queryItem.value!, "news")
+            XCTAssertEqual(try XCTUnwrap(queryItem.value), "news")
         default:
             fatalError()
         }
@@ -293,14 +293,14 @@ extension QQHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertNil(queryItem)
         case let message as AudioMessage:
-            XCTAssertEqual(queryItem!.value!, message.dataLink?.absoluteString.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.dataLink?.absoluteString.bus.base64EncodedString)
         default:
             fatalError()
         }
     }
 
     func test_generalpastboard(_ queryItem: URLQueryItem?) {
-        XCTAssertEqual(queryItem!.value!, "1")
+        XCTAssertEqual(try XCTUnwrap(queryItem?.value), "1")
     }
 
     func test_mini_appid(_ queryItem: URLQueryItem?, _ message: MessageType) {
@@ -313,7 +313,7 @@ extension QQHandlerBaseTests {
              is FileMessage:
             XCTAssertNil(queryItem)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(queryItem!.value!, message.miniProgramID)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.miniProgramID)
         default:
             fatalError()
         }
@@ -329,7 +329,7 @@ extension QQHandlerBaseTests {
              is FileMessage:
             XCTAssertNil(queryItem)
         case is MiniProgramMessage:
-            XCTAssertEqual(queryItem!.value!, "1")
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), "1")
         default:
             fatalError()
         }
@@ -345,7 +345,7 @@ extension QQHandlerBaseTests {
              is FileMessage:
             XCTAssertNil(queryItem)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(queryItem!.value!, message.path.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.path.bus.base64EncodedString)
         default:
             fatalError()
         }
@@ -372,7 +372,7 @@ extension QQHandlerBaseTests {
              is FileMessage:
             XCTAssertNil(queryItem)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(queryItem!.value!, miniProgramType(message.miniProgramType))
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), miniProgramType(message.miniProgramType))
         default:
             fatalError()
         }
@@ -388,7 +388,7 @@ extension QQHandlerBaseTests {
              is FileMessage:
             XCTAssertNil(queryItem)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(queryItem!.value!, message.link.absoluteString.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.link.absoluteString.bus.base64EncodedString)
         default:
             fatalError()
         }
@@ -402,18 +402,18 @@ extension QQHandlerBaseTests {
              is AudioMessage,
              is VideoMessage,
              is FileMessage:
-            XCTAssertEqual(queryItem!.value!, "pasteboard")
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), "pasteboard")
         case is WebPageMessage,
              is MiniProgramMessage:
-            XCTAssertEqual(queryItem!.value!, "url")
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), "url")
         default:
             fatalError()
         }
     }
 
     func test_pasteboard(_ queryItem: URLQueryItem?, _ message: MessageType) {
-        let thumbnail: (String) -> Data = { value in
-            let data = Data(base64Encoded: value)!
+        let thumbnail: (String) throws -> Data = { value in
+            let data = try XCTUnwrap(Data(base64Encoded: value))
             var object = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
             let thumbnail = object.removeValue(forKey: "previewimagedata") as! Data
             XCTAssertTrue(object.isEmpty)
@@ -428,9 +428,9 @@ extension QQHandlerBaseTests {
              is FileMessage:
             XCTAssertNil(queryItem)
         case let message as WebPageMessage:
-            XCTAssertEqual(thumbnail(queryItem!.value!), message.thumbnail)
+            XCTAssertEqual(try thumbnail(XCTUnwrap(queryItem?.value)), message.thumbnail)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(thumbnail(queryItem!.value!), message.thumbnail)
+            XCTAssertEqual(try thumbnail(XCTUnwrap(queryItem?.value)), message.thumbnail)
         default:
             fatalError()
         }
@@ -447,7 +447,7 @@ extension QQHandlerBaseTests {
                  Messages.webPage,
                  Messages.file,
                  Messages.miniProgram:
-                XCTAssertEqual(queryItem.value!, "0")
+                XCTAssertEqual(try XCTUnwrap(queryItem.value), "0")
             default:
                 fatalError()
             }
@@ -455,11 +455,11 @@ extension QQHandlerBaseTests {
             switch message.identifier {
             case Messages.text,
                  Messages.image:
-                XCTAssertEqual(queryItem.value!, "0")
+                XCTAssertEqual(try XCTUnwrap(queryItem.value), "0")
             case Messages.audio,
                  Messages.video,
                  Messages.webPage:
-                XCTAssertEqual(queryItem.value!, "1")
+                XCTAssertEqual(try XCTUnwrap(queryItem.value), "1")
             default:
                 fatalError()
             }
@@ -469,11 +469,11 @@ extension QQHandlerBaseTests {
     }
 
     func test_src_type(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "app")
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "app")
     }
 
     func test_thirdAppDisplayName(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, displayName.bus.base64EncodedString)
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), displayName.bus.base64EncodedString)
     }
 
     func test_title(_ queryItem: URLQueryItem?, _ message: MessageType) {
@@ -481,17 +481,17 @@ extension QQHandlerBaseTests {
         case is TextMessage:
             XCTAssertNil(queryItem)
         case let message as ImageMessage:
-            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.title?.bus.base64EncodedString)
         case let message as AudioMessage:
-            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.title?.bus.base64EncodedString)
         case let message as VideoMessage:
-            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.title?.bus.base64EncodedString)
         case let message as WebPageMessage:
-            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.title?.bus.base64EncodedString)
         case let message as FileMessage:
-            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.title?.bus.base64EncodedString)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(queryItem!.value!, message.title?.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.title?.bus.base64EncodedString)
         default:
             fatalError()
         }
@@ -504,20 +504,20 @@ extension QQHandlerBaseTests {
              is FileMessage:
             XCTAssertNil(queryItem)
         case let message as AudioMessage:
-            XCTAssertEqual(queryItem!.value!, message.link.absoluteString.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.link.absoluteString.bus.base64EncodedString)
         case let message as VideoMessage:
-            XCTAssertEqual(queryItem!.value!, message.link.absoluteString.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.link.absoluteString.bus.base64EncodedString)
         case let message as WebPageMessage:
-            XCTAssertEqual(queryItem!.value!, message.link.absoluteString.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.link.absoluteString.bus.base64EncodedString)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(queryItem!.value!, message.link.absoluteString.bus.base64EncodedString)
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), message.link.absoluteString.bus.base64EncodedString)
         default:
             fatalError()
         }
     }
 
     func test_version(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "1")
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "1")
     }
 }
 
@@ -543,9 +543,9 @@ extension QQHandlerBaseTests {
              is VideoMessage:
             XCTAssertNil(value)
         case let message as ImageMessage:
-            XCTAssertEqual(value!, message.data)
+            XCTAssertEqual(try XCTUnwrap(value), message.data)
         case let message as FileMessage:
-            XCTAssertEqual(value!, message.data)
+            XCTAssertEqual(try XCTUnwrap(value), message.data)
         default:
             fatalError()
         }
@@ -556,13 +556,13 @@ extension QQHandlerBaseTests {
         case is TextMessage:
             XCTAssertNil(value)
         case let message as ImageMessage:
-            XCTAssertEqual(value!, message.thumbnail)
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         case let message as AudioMessage:
-            XCTAssertEqual(value!, message.thumbnail)
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         case let message as VideoMessage:
-            XCTAssertEqual(value!, message.thumbnail)
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         case let message as FileMessage:
-            XCTAssertEqual(value!, message.thumbnail)
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         default:
             fatalError()
         }

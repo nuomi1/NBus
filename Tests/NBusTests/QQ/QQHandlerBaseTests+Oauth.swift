@@ -50,11 +50,11 @@ extension QQHandlerBaseTests: OauthPlatformUniversalLinkTestCase {
 extension QQHandlerBaseTests {
 
     func test_objectlocation(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value, "url")
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "url")
     }
 
     func test_pasteboard(_ queryItem: URLQueryItem) {
-        let data = Data(base64Encoded: queryItem.value!)!
+        let data = try! XCTUnwrap(Data(base64Encoded: XCTUnwrap(queryItem.value)))
         var object = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
 
         logger.debug("\(URLComponents.self), start, \(object.keys.sorted())")

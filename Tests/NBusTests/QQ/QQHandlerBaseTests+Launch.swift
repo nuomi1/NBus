@@ -71,7 +71,7 @@ extension QQHandlerBaseTests: LaunchProgramUniversalLinkTestCase {
 extension QQHandlerBaseTests {
 
     func test_appid(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, appNumber)
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), appNumber)
     }
 }
 

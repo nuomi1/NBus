@@ -25,12 +25,12 @@ extension QQHandlerBaseTests: GeneralSchemeTestCase {
 
 extension QQHandlerBaseTests: GeneralUniversalLinkTestCase {
 
-    func test_general_ul(scheme: String) {
-        XCTAssertEqual(scheme, "https")
+    func test_general_ul(scheme: @autoclosure () throws -> String) {
+        XCTAssertEqual(try scheme(), "https")
     }
 
-    func test_general_ul(host: String) {
-        XCTAssertEqual(host, "qm.qq.com")
+    func test_general_ul(host: @autoclosure () throws -> String) {
+        XCTAssertEqual(try host(), "qm.qq.com")
     }
 
     func test_general_ul(queryItems: inout [URLQueryItem]) {
@@ -48,15 +48,15 @@ extension QQHandlerBaseTests: GeneralUniversalLinkTestCase {
 extension QQHandlerBaseTests {
 
     func test_appsign_txid(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, txID)
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), txID)
     }
 
     func test_bundleid(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, bundleID.bus.base64EncodedString)
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), bundleID.bus.base64EncodedString)
     }
 
     func test_sdkv(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, sdkShortVersion)
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), sdkShortVersion)
     }
 }
 

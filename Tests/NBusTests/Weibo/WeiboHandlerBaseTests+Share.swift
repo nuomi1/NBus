@@ -132,7 +132,7 @@ extension WeiboHandlerBaseTests {
              is WebPageMessage:
             XCTAssertNil(value)
         case is ImageMessage:
-            test_image(value!, message, endpoint)
+            test_image(try! XCTUnwrap(value), message, endpoint)
         default:
             fatalError()
         }
@@ -146,7 +146,7 @@ extension WeiboHandlerBaseTests {
         case is AudioMessage,
              is VideoMessage,
              is WebPageMessage:
-            test_media(value!, message, endpoint)
+            test_media(try! XCTUnwrap(value), message, endpoint)
         default:
             fatalError()
         }
@@ -155,7 +155,7 @@ extension WeiboHandlerBaseTests {
     func test_text(_ value: String?, _ message: MessageType) {
         switch message {
         case let message as TextMessage:
-            XCTAssertEqual(value!, message.text)
+            XCTAssertEqual(try XCTUnwrap(value), message.text)
         case is ImageMessage,
              is AudioMessage,
              is VideoMessage,

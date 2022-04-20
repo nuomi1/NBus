@@ -74,7 +74,7 @@ extension _OauthSchemeTestCase {
         schemeList.formUnion(report_general_scheme())
         schemeList.formUnion(report_oauth_scheme(platform))
 
-        XCTAssertTrue(schemeList.contains(scheme.scheme!))
+        XCTAssertTrue(schemeList.contains(try XCTUnwrap(scheme.scheme)))
     }
 }
 
@@ -90,8 +90,8 @@ extension _OauthUniversalLinkTestCase {
 
         // General - UniversalLink
 
-        test_general_ul(scheme: urlComponents.scheme!)
-        test_general_ul(host: urlComponents.host!)
+        test_general_ul(scheme: try XCTUnwrap(urlComponents.scheme))
+        test_general_ul(host: try XCTUnwrap(urlComponents.host))
         test_general_ul(queryItems: &queryItems)
 
         // Oauth - Platform - UniversalLink

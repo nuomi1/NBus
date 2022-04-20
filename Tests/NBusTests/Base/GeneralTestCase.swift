@@ -22,10 +22,10 @@ protocol GeneralSchemeTestCase: XCTestCase {
 protocol GeneralUniversalLinkTestCase: XCTestCase {
 
     /// Test general universal link scheme
-    func test_general_ul(scheme: String)
+    func test_general_ul(scheme: @autoclosure () throws -> String)
 
     /// Test general universal link host
-    func test_general_ul(host: String)
+    func test_general_ul(host: @autoclosure () throws -> String)
 
     /// Test general universal link queryItems
     func test_general_ul(queryItems: inout [URLQueryItem])

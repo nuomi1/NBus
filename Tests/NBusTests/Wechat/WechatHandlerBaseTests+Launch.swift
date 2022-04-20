@@ -54,7 +54,7 @@ extension WechatHandlerBaseTests: LaunchProgramUniversalLinkTestCase {
 extension WechatHandlerBaseTests {
 
     func test_extMsg(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "")
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "")
     }
 
     func test_miniProgramType(_ queryItem: URLQueryItem, _ message: MessageType) {
@@ -71,7 +71,7 @@ extension WechatHandlerBaseTests {
 
         switch message {
         case let message as MiniProgramMessage:
-            XCTAssertEqual(queryItem.value!, miniProgramType(message.miniProgramType))
+            XCTAssertEqual(try XCTUnwrap(queryItem.value), miniProgramType(message.miniProgramType))
         default:
             fatalError()
         }
@@ -80,7 +80,7 @@ extension WechatHandlerBaseTests {
     func test_path(_ queryItem: URLQueryItem, _ message: MessageType) {
         switch message {
         case let message as MiniProgramMessage:
-            XCTAssertEqual(queryItem.value!, message.path)
+            XCTAssertEqual(try XCTUnwrap(queryItem.value), message.path)
         default:
             fatalError()
         }
@@ -89,7 +89,7 @@ extension WechatHandlerBaseTests {
     func test_userName(_ queryItem: URLQueryItem, _ message: MessageType) {
         switch message {
         case let message as MiniProgramMessage:
-            XCTAssertEqual(queryItem.value!, message.miniProgramID)
+            XCTAssertEqual(try XCTUnwrap(queryItem.value), message.miniProgramID)
         default:
             fatalError()
         }

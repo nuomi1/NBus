@@ -48,11 +48,11 @@ extension WechatHandlerBaseTests: OauthPlatformUniversalLinkTestCase {
 extension WechatHandlerBaseTests {
 
     func test_scope(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "snsapi_userinfo")
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "snsapi_userinfo")
     }
 
     func test_state(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "")
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "")
     }
 }
 

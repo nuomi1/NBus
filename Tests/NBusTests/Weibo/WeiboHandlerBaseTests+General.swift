@@ -26,12 +26,12 @@ extension WeiboHandlerBaseTests: GeneralSchemeTestCase {
 
 extension WeiboHandlerBaseTests: GeneralUniversalLinkTestCase {
 
-    func test_general_ul(scheme: String) {
-        XCTAssertEqual(scheme, "https")
+    func test_general_ul(scheme: @autoclosure () throws -> String) {
+        XCTAssertEqual(try scheme(), "https")
     }
 
-    func test_general_ul(host: String) {
-        XCTAssertEqual(host, "open.weibo.com")
+    func test_general_ul(host: @autoclosure () throws -> String) {
+        XCTAssertEqual(try host(), "open.weibo.com")
     }
 
     func test_general_ul(queryItems: inout [URLQueryItem]) {
@@ -58,27 +58,27 @@ extension WeiboHandlerBaseTests: GeneralUniversalLinkTestCase {
 extension WeiboHandlerBaseTests {
 
     func test_lfid(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, bundleID)
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), bundleID)
     }
 
     func test_luicode(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "10000360")
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "10000360")
     }
 
     func test_newVersion(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, sdkShortVersion)
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), sdkShortVersion)
     }
 
     func test_objId(_ queryItem: URLQueryItem) {
-        XCTAssertNotNil(UUID(uuidString: queryItem.value!))
+        XCTAssertNotNil(try UUID(uuidString: XCTUnwrap(queryItem.value)))
     }
 
     func test_sdkversion(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, sdkVersion)
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), sdkVersion)
     }
 
     func test_urltype(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, "link")
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "link")
     }
 }
 

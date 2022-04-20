@@ -25,12 +25,12 @@ extension WechatHandlerBaseTests: GeneralSchemeTestCase {
 
 extension WechatHandlerBaseTests: GeneralUniversalLinkTestCase {
 
-    func test_general_ul(scheme: String) {
-        XCTAssertEqual(scheme, "https")
+    func test_general_ul(scheme: @autoclosure () throws -> String) {
+        XCTAssertEqual(try scheme(), "https")
     }
 
-    func test_general_ul(host: String) {
-        XCTAssertEqual(host, "help.wechat.com")
+    func test_general_ul(host: @autoclosure () throws -> String) {
+        XCTAssertEqual(try host(), "help.wechat.com")
     }
 
     func test_general_ul(queryItems: inout [URLQueryItem]) {
@@ -45,11 +45,11 @@ extension WechatHandlerBaseTests: GeneralUniversalLinkTestCase {
 extension WechatHandlerBaseTests {
 
     func test_wechat_app_bundleId(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!, bundleID)
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), bundleID)
     }
 
     func test_wechat_auth_context_id(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(queryItem.value!.count, 64)
+        XCTAssertEqual(try XCTUnwrap(queryItem.value).count, 64)
     }
 }
 

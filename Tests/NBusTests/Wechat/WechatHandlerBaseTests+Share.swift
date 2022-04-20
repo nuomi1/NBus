@@ -214,7 +214,7 @@ extension WechatHandlerBaseTests {
              is FileMessage:
             XCTAssertNil(value)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(value!, message.path)
+            XCTAssertEqual(try XCTUnwrap(value), message.path)
         default:
             fatalError()
         }
@@ -230,7 +230,7 @@ extension WechatHandlerBaseTests {
              is FileMessage:
             XCTAssertNil(value)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(value!, message.miniProgramID)
+            XCTAssertEqual(try XCTUnwrap(value), message.miniProgramID)
         default:
             fatalError()
         }
@@ -246,7 +246,7 @@ extension WechatHandlerBaseTests {
              is WebPageMessage,
              is FileMessage,
              is MiniProgramMessage:
-            XCTAssertEqual(value!, false)
+            XCTAssertEqual(try XCTUnwrap(value), false)
         default:
             fatalError()
         }
@@ -262,7 +262,7 @@ extension WechatHandlerBaseTests {
              is WebPageMessage,
              is FileMessage,
              is MiniProgramMessage:
-            XCTAssertEqual(value!, false)
+            XCTAssertEqual(try XCTUnwrap(value), false)
         default:
             fatalError()
         }
@@ -289,17 +289,17 @@ extension WechatHandlerBaseTests {
         case is TextMessage:
             XCTAssertNil(value)
         case let message as ImageMessage:
-            XCTAssertEqual(value!, message.description)
+            XCTAssertEqual(try XCTUnwrap(value), message.description)
         case let message as AudioMessage:
-            XCTAssertEqual(value!, message.description)
+            XCTAssertEqual(try XCTUnwrap(value), message.description)
         case let message as VideoMessage:
-            XCTAssertEqual(value!, message.description)
+            XCTAssertEqual(try XCTUnwrap(value), message.description)
         case let message as WebPageMessage:
-            XCTAssertEqual(value!, message.description)
+            XCTAssertEqual(try XCTUnwrap(value), message.description)
         case let message as FileMessage:
-            XCTAssertEqual(value!, message.description)
+            XCTAssertEqual(try XCTUnwrap(value), message.description)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(value!, message.description)
+            XCTAssertEqual(try XCTUnwrap(value), message.description)
         default:
             fatalError()
         }
@@ -315,7 +315,7 @@ extension WechatHandlerBaseTests {
              is WebPageMessage,
              is FileMessage,
              is MiniProgramMessage:
-            XCTAssertEqual(value!, false)
+            XCTAssertEqual(try XCTUnwrap(value), false)
         default:
             fatalError()
         }
@@ -330,9 +330,9 @@ extension WechatHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertNil(value)
         case let message as ImageMessage:
-            XCTAssertEqual(value, message.data)
+            XCTAssertEqual(try XCTUnwrap(value), message.data)
         case let message as FileMessage:
-            XCTAssertEqual(value, message.data)
+            XCTAssertEqual(try XCTUnwrap(value), message.data)
         default:
             fatalError()
         }
@@ -348,7 +348,7 @@ extension WechatHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertNil(value)
         case let message as FileMessage:
-            XCTAssertEqual(value, message.fileExtension)
+            XCTAssertEqual(try XCTUnwrap(value), message.fileExtension)
         default:
             fatalError()
         }
@@ -364,7 +364,7 @@ extension WechatHandlerBaseTests {
              is FileMessage:
             XCTAssertNil(value)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(value!, message.thumbnail)
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         default:
             fatalError()
         }
@@ -380,7 +380,7 @@ extension WechatHandlerBaseTests {
              is MiniProgramMessage:
             XCTAssertNil(value)
         case let message as AudioMessage:
-            XCTAssertEqual(value!, message.dataLink?.absoluteString)
+            XCTAssertEqual(try XCTUnwrap(value), message.dataLink?.absoluteString)
         default:
             fatalError()
         }
@@ -393,13 +393,13 @@ extension WechatHandlerBaseTests {
              is FileMessage:
             XCTAssertNil(value)
         case let message as AudioMessage:
-            XCTAssertEqual(value!, message.link.absoluteString)
+            XCTAssertEqual(try XCTUnwrap(value), message.link.absoluteString)
         case let message as VideoMessage:
-            XCTAssertEqual(value!, message.link.absoluteString)
+            XCTAssertEqual(try XCTUnwrap(value), message.link.absoluteString)
         case let message as WebPageMessage:
-            XCTAssertEqual(value!, message.link.absoluteString)
+            XCTAssertEqual(try XCTUnwrap(value), message.link.absoluteString)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(value!, message.link.absoluteString)
+            XCTAssertEqual(try XCTUnwrap(value), message.link.absoluteString)
         default:
             fatalError()
         }
@@ -415,7 +415,7 @@ extension WechatHandlerBaseTests {
              is WebPageMessage,
              is FileMessage,
              is MiniProgramMessage:
-            XCTAssertEqual(value!, 0)
+            XCTAssertEqual(try XCTUnwrap(value), 0)
         default:
             fatalError()
         }
@@ -431,7 +431,7 @@ extension WechatHandlerBaseTests {
              is WebPageMessage,
              is FileMessage,
              is MiniProgramMessage:
-            XCTAssertEqual(value!, "0")
+            XCTAssertEqual(try XCTUnwrap(value), "0")
         default:
             fatalError()
         }
@@ -447,7 +447,7 @@ extension WechatHandlerBaseTests {
              is WebPageMessage,
              is FileMessage,
              is MiniProgramMessage:
-            XCTAssertEqual(value!, "0")
+            XCTAssertEqual(try XCTUnwrap(value), "0")
         default:
             fatalError()
         }
@@ -458,17 +458,17 @@ extension WechatHandlerBaseTests {
         case is TextMessage:
             XCTAssertNil(value)
         case is ImageMessage:
-            XCTAssertEqual(value!, "2")
+            XCTAssertEqual(try XCTUnwrap(value), "2")
         case is AudioMessage:
-            XCTAssertEqual(value!, "3")
+            XCTAssertEqual(try XCTUnwrap(value), "3")
         case is VideoMessage:
-            XCTAssertEqual(value!, "4")
+            XCTAssertEqual(try XCTUnwrap(value), "4")
         case is WebPageMessage:
-            XCTAssertEqual(value!, "5")
+            XCTAssertEqual(try XCTUnwrap(value), "5")
         case is FileMessage:
-            XCTAssertEqual(value!, "6")
+            XCTAssertEqual(try XCTUnwrap(value), "6")
         case is MiniProgramMessage:
-            XCTAssertEqual(value!, "36")
+            XCTAssertEqual(try XCTUnwrap(value), "36")
         default:
             fatalError()
         }
@@ -492,17 +492,17 @@ extension WechatHandlerBaseTests {
         case is TextMessage:
             XCTAssertNil(value)
         case let message as ImageMessage:
-            XCTAssertEqual(value!, message.thumbnail)
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         case let message as AudioMessage:
-            XCTAssertEqual(value!, message.thumbnail)
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         case let message as VideoMessage:
-            XCTAssertEqual(value!, message.thumbnail)
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         case let message as WebPageMessage:
-            XCTAssertEqual(value!, message.thumbnail)
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         case let message as FileMessage:
-            XCTAssertEqual(value!, message.thumbnail)
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         case let message as MiniProgramMessage:
-            XCTAssertEqual(value!, message.thumbnail)
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         default:
             fatalError()
         }
@@ -539,7 +539,7 @@ extension WechatHandlerBaseTests {
              is WebPageMessage,
              is FileMessage,
              is MiniProgramMessage:
-            XCTAssertEqual(value!, "0")
+            XCTAssertEqual(try XCTUnwrap(value), "0")
         default:
             fatalError()
         }
@@ -555,7 +555,7 @@ extension WechatHandlerBaseTests {
              is WebPageMessage,
              is FileMessage,
              is MiniProgramMessage:
-            XCTAssertEqual(value!, false)
+            XCTAssertEqual(try XCTUnwrap(value), false)
         default:
             fatalError()
         }
