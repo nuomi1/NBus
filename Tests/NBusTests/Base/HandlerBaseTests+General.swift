@@ -8,6 +8,21 @@
 
 import Foundation
 
+// MARK: - General - UniversalLink - Request
+
+extension GeneralUniversalLinkRequestTestCase {
+
+    /// Extract url using JSON
+    func extract_JSON_ul(queryItems: inout [URLQueryItem], key: String) -> [String: Any] {
+        let item = queryItems.removeFirst { $0.name == key }!
+
+        let data = Data(base64Encoded: item.value!)!
+        let dictionary = try! JSONSerialization.jsonObject(with: data) as! [String: Any]
+
+        return dictionary
+    }
+}
+
 // MARK: - General - Pasteboard - Request
 
 extension GeneralPasteboardRequestTestCase {
