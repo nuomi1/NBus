@@ -44,3 +44,45 @@ protocol GeneralPasteboardRequestTestCase: XCTestCase {
     /// Test pasteboard request extra data
     func test_extra_pb_request(items: inout [[String: Data]])
 }
+
+// MARK: - General - URLScheme - Response
+
+protocol GeneralURLSchemeResponseTestCase: XCTestCase {
+
+    /// Test general url scheme response scheme
+    func test_general_us_response(scheme: @autoclosure () throws -> String)
+
+    /// Test general url scheme response host
+    func test_general_us_response(host: @autoclosure () throws -> String)
+
+    /// Test general url scheme response queryItems
+    func test_general_us_response(queryItems: inout [URLQueryItem])
+}
+
+// MARK: - General - UniversalLink - Response
+
+protocol GeneralUniversalLinkResponseTestCase: XCTestCase {
+
+    /// Test general universal link response scheme
+    func test_general_ul_response(scheme: @autoclosure () throws -> String)
+
+    /// Test general universal link response host
+    func test_general_ul_response(host: @autoclosure () throws -> String)
+
+    /// Test general universal link response queryItems
+    func test_general_ul_response(queryItems: inout [URLQueryItem])
+}
+
+// MARK: - General - Pasteboard - Response
+
+protocol GeneralPasteboardResponseTestCase: XCTestCase {
+
+    /// Extract pasteboard response major data
+    func extract_major_pb_response(items: inout [[String: Data]]) -> [String: Any]
+
+    /// Test general pasteboard response dictionary
+    func test_general_pb_response(dictionary: inout [String: Any])
+
+    /// Test pasteboard response extra data
+    func test_extra_pb_response(items: inout [[String: Data]])
+}

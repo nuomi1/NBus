@@ -37,4 +37,23 @@ extension Array where Element == [String: Any] {
 struct HandlerTestContext {
 
     var setPasteboardString = false
+
+    var skipPasteboard = false
+    var skipCompletion = false
+
+    var shareState: ShareState!
+}
+
+extension HandlerTestContext {
+
+    enum ShareState {
+        case requestFirst
+        case signToken
+        case requestSecond
+        case requestThird
+        case responseURLScheme
+        case responseUniversalLink
+        case success
+        case failure
+    }
 }

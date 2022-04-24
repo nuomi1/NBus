@@ -20,6 +20,10 @@ extension ShareTestCase {
         UIApplication.shared.rx
             .canOpenURL()
             .bind(onNext: { [unowned self] url in
+                if url.scheme == "mqqopensdknopasteboard" {
+                    self.context.skipPasteboard = true
+                }
+
                 self._test_share(scheme: url, message, endpoint)
             })
             .disposed(by: disposeBag)
@@ -27,42 +31,70 @@ extension ShareTestCase {
         UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
+                if context.shareState == .signToken {
+                    context.shareState = .requestSecond
+                }
+
                 self._test_share_request(url: url, message, endpoint)
             })
             .disposed(by: disposeBag)
 
         UIPasteboard.general.rx
             .items()
-            .skip(while: { [unowned self] items in
-                if self._avoid_share_pb_error(items, message, endpoint) {
-                    precondition(items.pasteboardString() == AppState.defaultPasteboardString)
-
-                    self.pbExpectation.fulfill()
-
-                    return true
+            .filter { [unowned self] items in
+                if self.context.skipPasteboard {
+                    return false
                 }
 
                 if self.context.setPasteboardString {
-                    return items.pasteboardString() == AppState.defaultPasteboardString
+                    return items.pasteboardString() != AppState.defaultPasteboardString
                 }
 
-                return false
-            })
+                return true
+            }
             .filter { !$0.allSatisfy { $0.isEmpty } }
             .bind(onNext: { [unowned self] items in
                 self._test_share_request(items: items, message, endpoint)
             })
             .disposed(by: disposeBag)
 
+        NotificationCenter.default.rx
+            .openURL()
+            .bind(onNext: { [unowned self] url in
+                precondition(self.context.shareState == .requestFirst)
+
+                self.context.shareState = .responseURLScheme
+
+                self._test_share_response(us: url, message, endpoint)
+
+                HandlerBaseTests.openURL(url)
+            })
+            .disposed(by: disposeBag)
+
+        NotificationCenter.default.rx
+            .openUserActivity()
+            .bind(onNext: { [unowned self] userActivity in
+                self._test_share_response(url: userActivity.webpageURL!, message, endpoint)
+
+                HandlerBaseTests.openUserActivity(userActivity)
+            })
+            .disposed(by: disposeBag)
+
+        context.shareState = .requestFirst
+
         Bus.shared.share(
             message: message,
             to: endpoint,
             completionHandler: { [unowned self] result in
+                if case .failure(.unsupportedMessage) = result {
+                    self.context.skipCompletion = true
+                }
+
                 self._test_share(result: result, message, endpoint)
             }
         )
 
-        wait(for: [ulExpectation, pbExpectation], timeout: 5)
+        wait(for: [ulExpectation, pbExpectation], timeout: 30)
     }
 }
 
@@ -103,8 +135,6 @@ extension _ShareUniversalLinkRequestTestCase {
         logger.debug("\(URLComponents.self), end, \(queryItems.map(\.name).sorted())")
 
         XCTAssertTrue(queryItems.isEmpty)
-
-        ulExpectation.fulfill()
     }
 }
 
@@ -124,8 +154,6 @@ extension _SharePasteboardRequestTestCase {
         logger.debug("\(UIPasteboard.self), end, \(items.map { $0.keys.sorted() })")
 
         XCTAssertTrue(items.isEmpty)
-
-        pbExpectation.fulfill()
     }
 
     func _test_share_pb_request(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
@@ -145,11 +173,96 @@ extension _SharePasteboardRequestTestCase {
 
         XCTAssertTrue(dictionary.isEmpty)
     }
+}
 
-    func _avoid_share_pb_error(_ items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) -> Bool {
-        (message.identifier == Messages.webPage && endpoint == Endpoints.QQ.friend)
-            || (message.identifier == Messages.webPage && endpoint == Endpoints.QQ.timeline)
-            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.QQ.friend)
+// MARK: - Share - URLScheme - Response
+
+extension _ShareURLSchemeResponseTestCase {
+
+    func _test_share_response(us: URL, _ message: MessageType, _ endpoint: Endpoint) {
+        let urlComponents = URLComponents(url: us, resolvingAgainstBaseURL: false)!
+        var queryItems = urlComponents.queryItems ?? []
+
+        logger.debug("\(URLComponents.self), start, \(queryItems.map(\.name).sorted())")
+
+        // General - URLScheme - Response
+
+        test_general_us_response(scheme: try XCTUnwrap(urlComponents.scheme))
+        test_general_us_response(host: try XCTUnwrap(urlComponents.host))
+        test_general_us_response(queryItems: &queryItems)
+
+        // Share - Message - URLScheme - Response
+
+        test_share_us_response(path: urlComponents.path)
+        test_share_us_response(queryItems: &queryItems, message, endpoint)
+
+        logger.debug("\(URLComponents.self), end, \(queryItems.map(\.name).sorted())")
+
+        XCTAssertTrue(queryItems.isEmpty)
+    }
+}
+
+// MARK: - Share - UniversalLink - Response
+
+extension _ShareUniversalLinkResponseTestCase {
+
+    func _test_share_response(url: URL, _ message: MessageType, _ endpoint: Endpoint) {
+        let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        var queryItems = urlComponents.queryItems ?? []
+
+        logger.debug("\(URLComponents.self), start, \(queryItems.map(\.name).sorted())")
+
+        // General - UniversalLink - Response
+
+        test_general_ul_response(scheme: try XCTUnwrap(urlComponents.scheme))
+        test_general_ul_response(host: try XCTUnwrap(urlComponents.host))
+        test_general_ul_response(queryItems: &queryItems)
+
+        // Share - Message - UniversalLink - Response
+
+        test_share_ul_response(path: urlComponents.path)
+        test_share_ul_response(queryItems: &queryItems, message, endpoint)
+
+        logger.debug("\(URLComponents.self), end, \(queryItems.map(\.name).sorted())")
+
+        XCTAssertTrue(queryItems.isEmpty)
+    }
+}
+
+// MARK: - Share - Pasteboard - Response
+
+extension _SharePasteboardResponseTestCase {
+
+    func _test_share_response(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) {
+        var items = items as! [[String: Data]]
+
+        logger.debug("\(UIPasteboard.self), start, \(items.map { $0.keys.sorted() })")
+
+        _test_share_pb_response(dictionary: extract_major_pb_response(items: &items), message, endpoint)
+
+        test_extra_pb_response(items: &items)
+
+        logger.debug("\(UIPasteboard.self), end, \(items.map { $0.keys.sorted() })")
+
+        XCTAssertTrue(items.isEmpty)
+    }
+
+    func _test_share_pb_response(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+        var dictionary = dictionary
+
+        logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
+
+        // General - Pasteboard - Response
+
+        test_general_pb_response(dictionary: &dictionary)
+
+        // Share - Message - Pasteboard - Response
+
+        test_share_pb_response(dictionary: &dictionary, message, endpoint)
+
+        logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
+
+        XCTAssertTrue(dictionary.isEmpty)
     }
 }
 
@@ -160,27 +273,31 @@ extension _ShareCompletionTestCase {
     func _test_share(result: Result<Void, Bus.Error>, _ message: MessageType, _ endpoint: Endpoint) {
         switch result {
         case .success:
-            XCTAssertTrue(true)
+            if context.shareState == .success {
+                XCTAssertTrue(true)
+                break
+            }
+
+            XCTAssertTrue(false)
         case let .failure(error):
             logger.error("\(error)")
 
-            if _avoid_share_completion_error(error, message, endpoint) {
+            if context.skipCompletion {
                 XCTAssertTrue(true)
-
-                ulExpectation.fulfill()
-                pbExpectation.fulfill()
-            } else {
-                XCTAssertTrue(false)
+                break
             }
-        }
-    }
 
-    func _avoid_share_completion_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool {
-        (message.identifier == Messages.file && endpoint == Endpoints.QQ.timeline)
-            || (message.identifier == Messages.file && endpoint == Endpoints.Wechat.timeline)
-            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.Wechat.timeline)
-            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.Wechat.favorite)
-            || (message.identifier == Messages.file && endpoint == Endpoints.Weibo.timeline)
-            || (message.identifier == Messages.miniProgram && endpoint == Endpoints.Weibo.timeline)
+            if context.shareState == .failure {
+                XCTAssertTrue(true)
+                break
+            }
+
+            XCTAssertTrue(false)
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [unowned self] in
+            self.ulExpectation.fulfill()
+            self.pbExpectation.fulfill()
+        }
     }
 }

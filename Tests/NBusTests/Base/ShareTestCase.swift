@@ -46,9 +46,6 @@ protocol _ShareUniversalLinkRequestTestCase:
     GeneralUniversalLinkRequestTestCase,
     ShareMessageUniversalLinkRequestTestCase {
 
-    /// Universal link expectation
-    var ulExpectation: XCTestExpectation { get }
-
     /// Test share universal link request
     func _test_share_request(url: URL, _ message: MessageType, _ endpoint: Endpoint)
 }
@@ -67,17 +64,74 @@ protocol _SharePasteboardRequestTestCase:
     GeneralPasteboardRequestTestCase,
     ShareMessagePasteboardRequestTestCase {
 
-    /// Pasteboard expectation
-    var pbExpectation: XCTestExpectation { get }
-
     /// Test share pasteboard request
     func _test_share_request(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint)
 
     /// Test share pasteboard request dictionary
     func _test_share_pb_request(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint)
+}
 
-    /// Avoid share pasteboard error
-    func _avoid_share_pb_error(_ items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint) -> Bool
+// MARK: - Share - Message - URLScheme - Response
+
+protocol ShareMessageURLSchemeResponseTestCase: XCTestCase {
+
+    /// Test share url scheme response path
+    func test_share_us_response(path: String)
+
+    /// Test share url scheme response queryItems
+    func test_share_us_response(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint)
+}
+
+// MARK: - Share - URLScheme - Response
+
+protocol _ShareURLSchemeResponseTestCase:
+    GeneralURLSchemeResponseTestCase,
+    ShareMessageURLSchemeResponseTestCase {
+
+    /// Test share url scheme response
+    func _test_share_response(us: URL, _ message: MessageType, _ endpoint: Endpoint)
+}
+
+// MARK: - Share - Message - UniversalLink - Response
+
+protocol ShareMessageUniversalLinkResponseTestCase: XCTestCase {
+
+    /// Test share universal link response path
+    func test_share_ul_response(path: String)
+
+    /// Test share universal link response queryItems
+    func test_share_ul_response(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint)
+}
+
+// MARK: - Share - UniversalLink - Response
+
+protocol _ShareUniversalLinkResponseTestCase:
+    GeneralUniversalLinkResponseTestCase,
+    ShareMessageUniversalLinkResponseTestCase {
+
+    /// Test share universal link response
+    func _test_share_response(url: URL, _ message: MessageType, _ endpoint: Endpoint)
+}
+
+// MARK: - Share - Message - Pasteboard - Response
+
+protocol ShareMessagePasteboardResponseTestCase: XCTestCase {
+
+    /// Test share pasteboard response dictionary
+    func test_share_pb_response(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint)
+}
+
+// MARK: - Share - Pasteboard - Response
+
+protocol _SharePasteboardResponseTestCase:
+    GeneralPasteboardResponseTestCase,
+    ShareMessagePasteboardResponseTestCase {
+
+    /// Test share pasteboard response
+    func _test_share_response(items: [[String: Any]], _ message: MessageType, _ endpoint: Endpoint)
+
+    /// Test share pasteboard response dictionary
+    func _test_share_pb_response(dictionary: [String: Any], _ message: MessageType, _ endpoint: Endpoint)
 }
 
 // MARK: - Share - Completion
@@ -90,11 +144,10 @@ protocol _ShareCompletionTestCase: XCTestCase {
     /// Pasteboard expectation
     var pbExpectation: XCTestExpectation { get }
 
+    var context: HandlerTestContext { get set }
+
     /// Test share completion
     func _test_share(result: Result<Void, Bus.Error>, _ message: MessageType, _ endpoint: Endpoint)
-
-    /// Avoid share completion error
-    func _avoid_share_completion_error(_ error: Bus.Error, _ message: MessageType, _ endpoint: Endpoint) -> Bool
 }
 
 // MARK: - Share
@@ -103,9 +156,12 @@ protocol ShareTestCase:
     _ShareSchemeTestCase,
     _ShareUniversalLinkRequestTestCase,
     _SharePasteboardRequestTestCase,
+    _ShareURLSchemeResponseTestCase,
+    _ShareUniversalLinkResponseTestCase,
+    _SharePasteboardResponseTestCase,
     _ShareCompletionTestCase {
 
     var disposeBag: DisposeBag { get }
 
-    var context: HandlerTestContext { get }
+    var context: HandlerTestContext { get set }
 }

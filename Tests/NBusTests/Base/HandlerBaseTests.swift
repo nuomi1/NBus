@@ -65,16 +65,6 @@ class HandlerBaseTests: XCTestCase {
             .openURL()
             .bind(onNext: { url in
                 logger.debug("\(url)")
-
-                let result = Bus.shared.openURL(url)
-
-                NotificationCenter.default.post(
-                    name: AppState.OpenURL.responseName,
-                    object: nil,
-                    userInfo: [
-                        AppState.OpenURL.responseResultKey: result,
-                    ]
-                )
             })
             .disposed(by: disposeBag)
 
@@ -82,16 +72,6 @@ class HandlerBaseTests: XCTestCase {
             .openUserActivity()
             .bind(onNext: { userActivity in
                 logger.debug("\(userActivity.webpageURL!)")
-
-                let result = Bus.shared.openUserActivity(userActivity)
-
-                NotificationCenter.default.post(
-                    name: AppState.OpenUserActivity.responseName,
-                    object: nil,
-                    userInfo: [
-                        AppState.OpenUserActivity.responseResultKey: result,
-                    ]
-                )
             })
             .disposed(by: disposeBag)
 
@@ -116,6 +96,30 @@ class HandlerBaseTests: XCTestCase {
             })
             .disposed(by: disposeBag)
     }
+
+    static func openURL(_ url: URL) {
+        let result = Bus.shared.openURL(url)
+
+        NotificationCenter.default.post(
+            name: AppState.OpenURL.responseName,
+            object: nil,
+            userInfo: [
+                AppState.OpenURL.responseResultKey: result,
+            ]
+        )
+    }
+
+    static func openUserActivity(_ userActivity: NSUserActivity) {
+        let result = Bus.shared.openUserActivity(userActivity)
+
+        NotificationCenter.default.post(
+            name: AppState.OpenUserActivity.responseName,
+            object: nil,
+            userInfo: [
+                AppState.OpenUserActivity.responseResultKey: result,
+            ]
+        )
+    }
 }
 
 extension HandlerBaseTests {
@@ -126,6 +130,8 @@ extension HandlerBaseTests {
         context.setPasteboardString = true
 
         AppState.shared.clearPasteboard(shouldSetString: context.setPasteboardString)
+        AppState.shared.clearKeychains()
+        AppState.shared.clearUserDefaults()
 
         Bus.shared.handlers = [handler]
     }
