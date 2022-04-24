@@ -40,6 +40,7 @@ extension Reactive where Base: UIPasteboard {
         NotificationCenter.default.rx
             .notification(UIPasteboard.changedNotification)
             .observe(on: MainScheduler.asyncInstance)
+            .filter { ($0.object as! UIPasteboard) == base }
             .map { _ in base.items }
     }
 }
