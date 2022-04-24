@@ -107,6 +107,12 @@ extension QQHandlerBaseTests: ShareMessageUniversalLinkRequestTestCase {
     }
 
     func test_share_ul_request(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        let appsign_token = queryItems.removeFirst(where: { $0.name == "appsign_token" })
+        test_appsign_token_share(appsign_token)
+
+        let appsign_txid = queryItems.removeFirst(where: { $0.name == "appsign_txid" })
+        test_appsign_txid_share(appsign_txid)
+
         let callback_name = queryItems.removeFirst { $0.name == "callback_name" }!
         test_callback_name(callback_name)
 
@@ -152,6 +158,9 @@ extension QQHandlerBaseTests: ShareMessageUniversalLinkRequestTestCase {
         let objectlocation = queryItems.removeFirst { $0.name == "objectlocation" }
         test_objectlocation(objectlocation, message)
 
+        let openredirect = queryItems.removeFirst(where: { $0.name == "openredirect" })
+        test_openredirect(openredirect)
+
         let pasteboard = queryItems.removeFirst { $0.name == "pasteboard" }
         test_pasteboard(pasteboard, message)
 
@@ -176,6 +185,38 @@ extension QQHandlerBaseTests: ShareMessageUniversalLinkRequestTestCase {
 }
 
 extension QQHandlerBaseTests {
+
+    func test_appsign_token_share(_ queryItem: URLQueryItem?) {
+        switch context.shareState! {
+        case .requestFirst:
+            XCTAssertNil(queryItem)
+        case .signToken,
+             .requestSecond:
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value).count, 32)
+        case .requestThird,
+             .responseURLScheme,
+             .responseUniversalLink,
+             .success,
+             .failure:
+            fatalError()
+        }
+    }
+
+    func test_appsign_txid_share(_ queryItem: URLQueryItem?) {
+        switch context.shareState! {
+        case .requestFirst:
+            XCTAssertNil(queryItem)
+        case .signToken,
+             .requestSecond:
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), txID)
+        case .requestThird,
+             .responseURLScheme,
+             .responseUniversalLink,
+             .success,
+             .failure:
+            fatalError()
+        }
+    }
 
     func test_callback_name(_ queryItem: URLQueryItem) {
         XCTAssertEqual(try XCTUnwrap(queryItem.value), txID)
@@ -411,6 +452,22 @@ extension QQHandlerBaseTests {
         }
     }
 
+    func test_openredirect(_ queryItem: URLQueryItem?) {
+        switch context.shareState! {
+        case .requestFirst:
+            XCTAssertNil(queryItem)
+        case .signToken,
+             .requestSecond:
+            XCTAssertEqual(try XCTUnwrap(queryItem?.value), "1")
+        case .requestThird,
+             .responseURLScheme,
+             .responseUniversalLink,
+             .success,
+             .failure:
+            fatalError()
+        }
+    }
+
     func test_pasteboard(_ queryItem: URLQueryItem?, _ message: MessageType) {
         let thumbnail: (String) throws -> Data = { value in
             let data = try XCTUnwrap(Data(base64Encoded: value))
@@ -566,5 +623,104 @@ extension QQHandlerBaseTests {
         default:
             fatalError()
         }
+    }
+}
+
+// MARK: - Share - Message - URLScheme - Response
+
+extension QQHandlerBaseTests: ShareMessageURLSchemeResponseTestCase {
+
+    func test_share_us_response(path: String) {
+        XCTAssertEqual(path, "")
+    }
+
+    func test_share_us_response(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        if context.shareState == .responseURLScheme {
+            let appsign_token = queryItems.removeFirst { $0.name == "appsign_token" }!
+            test_appsign_token_share(appsign_token)
+        }
+
+        let error = queryItems.removeFirst { $0.name == "error" }!
+        let error_description = queryItems.removeFirst { $0.name == "error_description" }
+
+        switch try! XCTUnwrap(error.value) {
+        case "0":
+            context.shareState = .success
+
+            XCTAssertNil(error_description)
+        case "--1000710008":
+            context.shareState = .failure
+
+            XCTAssertEqual(try XCTUnwrap(error_description?.value), "主体信息不一致，无法打开".bus.base64EncodedString)
+        default:
+            fatalError()
+        }
+    }
+}
+
+// MARK: - Share - Message - UniversalLink - Response
+
+extension QQHandlerBaseTests: ShareMessageUniversalLinkResponseTestCase {
+
+    func test_share_ul_response(path: String) {
+        let isSignToken = path == universalLink.appendingPathComponent("\(bundleID)/mqqsignapp").path
+        let isResponse = path == universalLink.appendingPathComponent("\(bundleID)").path
+
+        if isSignToken {
+            context.shareState = .signToken
+        } else if isResponse {
+            context.shareState = .responseUniversalLink
+        }
+
+        XCTAssertTrue(isSignToken || isResponse)
+    }
+
+    func test_share_ul_response(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        switch context.shareState! {
+        case .requestFirst,
+             .requestSecond,
+             .requestThird,
+             .responseURLScheme,
+             .success,
+             .failure:
+            fatalError()
+        case .signToken:
+            let generalpastboard = queryItems.removeFirst { $0.name == "generalpastboard" }!
+            test_generalpastboard(generalpastboard)
+        case .responseUniversalLink:
+            let sdkactioninfo = extract_JSON_ul(queryItems: &queryItems, key: "sdkactioninfo")
+            test_sdkactioninfo_share(sdkactioninfo, message, endpoint)
+        }
+    }
+}
+
+extension QQHandlerBaseTests {
+
+    func test_sdkactioninfo_us(_ value: [String: Any]) -> URL {
+        var dictionary = value as! [String: String]
+
+        var urlComponents = URLComponents()
+
+        urlComponents.scheme = dictionary.removeValue(forKey: "sdk_action_sheme")!
+        urlComponents.host = dictionary.removeValue(forKey: "sdk_action_host")!
+        urlComponents.path = dictionary.removeValue(forKey: "sdk_action_path")!
+        urlComponents.query = dictionary.removeValue(forKey: "sdk_action_query")!
+
+        XCTAssertTrue(dictionary.isEmpty)
+
+        return urlComponents.url!
+    }
+
+    func test_sdkactioninfo_share(_ value: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+        _test_share_response(us: test_sdkactioninfo_us(value), message, endpoint)
+    }
+}
+
+// MARK: - Share - Message - Pasteboard - Response
+
+extension QQHandlerBaseTests: ShareMessagePasteboardResponseTestCase {
+
+    func test_share_pb_response(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+        XCTAssertTrue(true)
     }
 }
