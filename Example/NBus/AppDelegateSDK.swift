@@ -96,13 +96,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         group.enter()
 
-        AppState.shared.setAgainPasteboard()
-
         NotificationCenter.default.post(
             name: AppState.OpenURL.requestName,
             object: nil,
             userInfo: [
                 AppState.OpenURL.requestURLKey: url,
+                AppState.OpenURL.requestPasteboardKey: UIPasteboard.general.items,
             ]
         )
 
@@ -135,13 +134,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         group.enter()
 
-        AppState.shared.setAgainPasteboard()
-
         NotificationCenter.default.post(
             name: AppState.OpenUserActivity.requestName,
             object: nil,
             userInfo: [
                 AppState.OpenUserActivity.requestUserActivityKey: userActivity,
+                AppState.OpenUserActivity.requestPasteboardKey: UIPasteboard.general.items,
             ]
         )
 

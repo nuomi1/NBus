@@ -47,13 +47,23 @@ extension Reactive where Base: UIPasteboard {
 
 extension Reactive where Base: NotificationCenter {
 
-    func openURL() -> Observable<URL> {
+    func openURL() -> Observable<(URL, [[String: Any]])> {
         notification(AppState.OpenURL.requestName)
-            .map { $0.userInfo?[AppState.OpenURL.requestURLKey] as! URL }
+            .map {
+                (
+                    $0.userInfo?[AppState.OpenURL.requestURLKey] as! URL,
+                    $0.userInfo?[AppState.OpenURL.requestPasteboardKey] as! [[String: Any]]
+                )
+            }
     }
 
-    func openUserActivity() -> Observable<NSUserActivity> {
+    func openUserActivity() -> Observable<(NSUserActivity, [[String: Any]])> {
         notification(AppState.OpenUserActivity.requestName)
-            .map { $0.userInfo?[AppState.OpenUserActivity.requestUserActivityKey] as! NSUserActivity }
+            .map {
+                (
+                    $0.userInfo?[AppState.OpenUserActivity.requestUserActivityKey] as! NSUserActivity,
+                    $0.userInfo?[AppState.OpenUserActivity.requestPasteboardKey] as! [[String: Any]]
+                )
+            }
     }
 }

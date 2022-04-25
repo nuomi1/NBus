@@ -63,15 +63,17 @@ class HandlerBaseTests: XCTestCase {
 
         NotificationCenter.default.rx
             .openURL()
-            .bind(onNext: { url in
+            .bind(onNext: { url, items in
                 logger.debug("\(url)")
+                logger.debug("\(items.map { $0.keys.sorted() })")
             })
             .disposed(by: disposeBag)
 
         NotificationCenter.default.rx
             .openUserActivity()
-            .bind(onNext: { userActivity in
+            .bind(onNext: { userActivity, items in
                 logger.debug("\(userActivity.webpageURL!)")
+                logger.debug("\(items.map { $0.keys.sorted() })")
             })
             .disposed(by: disposeBag)
 

@@ -46,13 +46,4 @@ extension AppState {
             defaults.removeObject(forKey: key)
         }
     }
-
-    func setAgainPasteboard() {
-        let pasteboard = UIPasteboard.general
-
-        let items = pasteboard.items
-
-        pasteboard.items = []
-        pasteboard.items = items
-    }
 }
