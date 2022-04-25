@@ -41,18 +41,14 @@ extension ShareTestCase {
 
         UIPasteboard.general.rx
             .items()
+            .filter { !$0.allSatisfy { $0.isEmpty } }
             .filter { [unowned self] items in
-                if self.context.skipPasteboard {
-                    return false
-                }
-
                 if self.context.setPasteboardString {
                     return items.pasteboardString() != AppState.defaultPasteboardString
                 }
 
                 return true
             }
-            .filter { !$0.allSatisfy { $0.isEmpty } }
             .bind(onNext: { [unowned self] items in
                 self._test_share_request(items: items, message, endpoint)
             })
@@ -60,12 +56,14 @@ extension ShareTestCase {
 
         NotificationCenter.default.rx
             .openURL()
-            .bind(onNext: { [unowned self] url in
+            .bind(onNext: { [unowned self] url, items in
                 precondition(self.context.shareState == .requestFirst)
 
                 self.context.shareState = .responseURLScheme
 
                 self._test_share_response(us: url, message, endpoint)
+
+                self._test_share_response(items: items, message, endpoint)
 
                 HandlerBaseTests.openURL(url)
             })
@@ -73,8 +71,18 @@ extension ShareTestCase {
 
         NotificationCenter.default.rx
             .openUserActivity()
-            .bind(onNext: { [unowned self] userActivity in
+            .bind(onNext: { [unowned self] userActivity, items in
                 self._test_share_response(url: userActivity.webpageURL!, message, endpoint)
+
+                test_pasteboard: if items.pasteboardString() != AppState.defaultPasteboardString {
+                    if items.contains(where: { $0.contains(where: { $0.key == "com.tencent.mqq.api.apiLargeData" }) }) {
+                        self._test_share_request(items: items, message, endpoint)
+
+                        break test_pasteboard
+                    }
+
+                    self._test_share_response(items: items, message, endpoint)
+                }
 
                 HandlerBaseTests.openUserActivity(userActivity)
             })

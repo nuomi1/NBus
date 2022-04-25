@@ -597,7 +597,9 @@ extension QQHandlerBaseTests {
         switch message {
         case is TextMessage,
              is AudioMessage,
-             is VideoMessage:
+             is VideoMessage,
+             is WebPageMessage,
+             is MiniProgramMessage:
             XCTAssertNil(value)
         case let message as ImageMessage:
             XCTAssertEqual(try XCTUnwrap(value), message.data)
@@ -618,7 +620,11 @@ extension QQHandlerBaseTests {
             XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         case let message as VideoMessage:
             XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
+        case let message as WebPageMessage:
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         case let message as FileMessage:
+            XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
+        case let message as MiniProgramMessage:
             XCTAssertEqual(try XCTUnwrap(value), message.thumbnail)
         default:
             fatalError()
@@ -721,6 +727,31 @@ extension QQHandlerBaseTests {
 extension QQHandlerBaseTests: ShareMessagePasteboardResponseTestCase {
 
     func test_share_pb_response(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
-        XCTAssertTrue(true)
+        let appsign_redirect_pasteboard = dictionary.removeValue(forKey: "appsign_redirect_pasteboard") as! [String: Any]
+        test_appsign_redirect_pasteboard(appsign_redirect_pasteboard, message, endpoint)
+    }
+}
+
+extension QQHandlerBaseTests {
+
+    func test_appsign_redirect_pasteboard(_ value: [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+        var dictionary = value
+
+        logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
+
+        let file_data = dictionary.removeValue(forKey: "file_data") as? Data
+        test_file_data(file_data, message)
+
+        if !context.skipPasteboard, context.setPasteboardString {
+            let pasted_string = dictionary.removeValue(forKey: "pasted_string") as! String
+            test_pasted_string(pasted_string)
+        }
+
+        let previewimagedata = dictionary.removeValue(forKey: "previewimagedata") as? Data
+        test_previewimagedata(previewimagedata, message)
+
+        logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
+
+        XCTAssertTrue(dictionary.isEmpty)
     }
 }

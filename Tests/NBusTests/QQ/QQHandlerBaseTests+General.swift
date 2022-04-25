@@ -69,7 +69,7 @@ extension QQHandlerBaseTests: GeneralPasteboardRequestTestCase {
     }
 
     func test_general_pb_request(dictionary: inout [String: Any]) {
-        if context.setPasteboardString {
+        if !context.skipPasteboard, context.setPasteboardString {
             let pasted_string = dictionary.removeValue(forKey: "pasted_string") as! String
             test_pasted_string(pasted_string)
         }
@@ -161,9 +161,6 @@ extension QQHandlerBaseTests: GeneralPasteboardResponseTestCase {
         let appsign_redirect = dictionary.removeValue(forKey: "appsign_redirect") as! String
         test_appsign_redirect(appsign_redirect)
 
-        let appsign_redirect_pasteboard = dictionary.removeValue(forKey: "appsign_redirect_pasteboard") as! [String: String]
-        test_appsign_redirect_pasteboard(appsign_redirect_pasteboard)
-
         let appsign_retcode = dictionary.removeValue(forKey: "appsign_retcode") as! String
         test_appsign_retcode(appsign_retcode)
 
@@ -184,10 +181,6 @@ extension QQHandlerBaseTests {
 
     func test_appsign_redirect(_ value: String) {
         XCTAssertNotNil(URL(string: value))
-    }
-
-    func test_appsign_redirect_pasteboard(_ value: [String: String]) {
-        XCTAssertEqual(value, ["pasted_string": AppState.defaultPasteboardString])
     }
 
     func test_appsign_retcode(_ value: String) {
