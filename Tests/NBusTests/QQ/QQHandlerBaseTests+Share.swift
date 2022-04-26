@@ -107,11 +107,15 @@ extension QQHandlerBaseTests: ShareMessageUniversalLinkRequestTestCase {
     }
 
     func test_share_ul_request(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
-        let appsign_token = queryItems.removeFirst(where: { $0.name == "appsign_token" })
-        test_appsign_token_share(appsign_token)
+        if context.shareState == .requestSecond {
+            let appsign_token = queryItems.removeFirst(where: { $0.name == "appsign_token" })!
+            test_appsign_token_share(appsign_token)
+        }
 
-        let appsign_txid = queryItems.removeFirst(where: { $0.name == "appsign_txid" })
-        test_appsign_txid_share(appsign_txid)
+        if context.shareState == .requestSecond {
+            let appsign_txid = queryItems.removeFirst(where: { $0.name == "appsign_txid" })!
+            test_appsign_txid(appsign_txid)
+        }
 
         let callback_name = queryItems.removeFirst { $0.name == "callback_name" }!
         test_callback_name(callback_name)
@@ -158,8 +162,10 @@ extension QQHandlerBaseTests: ShareMessageUniversalLinkRequestTestCase {
         let objectlocation = queryItems.removeFirst { $0.name == "objectlocation" }
         test_objectlocation(objectlocation, message)
 
-        let openredirect = queryItems.removeFirst(where: { $0.name == "openredirect" })
-        test_openredirect(openredirect)
+        if context.shareState == .requestSecond {
+            let openredirect = queryItems.removeFirst(where: { $0.name == "openredirect" })!
+            test_openredirect(openredirect)
+        }
 
         let pasteboard = queryItems.removeFirst { $0.name == "pasteboard" }
         test_pasteboard(pasteboard, message)
@@ -186,36 +192,8 @@ extension QQHandlerBaseTests: ShareMessageUniversalLinkRequestTestCase {
 
 extension QQHandlerBaseTests {
 
-    func test_appsign_token_share(_ queryItem: URLQueryItem?) {
-        switch context.shareState! {
-        case .requestFirst:
-            XCTAssertNil(queryItem)
-        case .signToken,
-             .requestSecond:
-            XCTAssertEqual(try XCTUnwrap(queryItem?.value).count, 32)
-        case .requestThird,
-             .responseURLScheme,
-             .responseUniversalLink,
-             .success,
-             .failure:
-            fatalError()
-        }
-    }
-
-    func test_appsign_txid_share(_ queryItem: URLQueryItem?) {
-        switch context.shareState! {
-        case .requestFirst:
-            XCTAssertNil(queryItem)
-        case .signToken,
-             .requestSecond:
-            XCTAssertEqual(try XCTUnwrap(queryItem?.value), txID)
-        case .requestThird,
-             .responseURLScheme,
-             .responseUniversalLink,
-             .success,
-             .failure:
-            fatalError()
-        }
+    func test_appsign_token_share(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(try XCTUnwrap(queryItem.value).count, 32)
     }
 
     func test_callback_name(_ queryItem: URLQueryItem) {
@@ -452,20 +430,8 @@ extension QQHandlerBaseTests {
         }
     }
 
-    func test_openredirect(_ queryItem: URLQueryItem?) {
-        switch context.shareState! {
-        case .requestFirst:
-            XCTAssertNil(queryItem)
-        case .signToken,
-             .requestSecond:
-            XCTAssertEqual(try XCTUnwrap(queryItem?.value), "1")
-        case .requestThird,
-             .responseURLScheme,
-             .responseUniversalLink,
-             .success,
-             .failure:
-            fatalError()
-        }
+    func test_openredirect(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "1")
     }
 
     func test_pasteboard(_ queryItem: URLQueryItem?, _ message: MessageType) {
@@ -669,28 +635,31 @@ extension QQHandlerBaseTests: ShareMessageURLSchemeResponseTestCase {
 extension QQHandlerBaseTests: ShareMessageUniversalLinkResponseTestCase {
 
     func test_share_ul_response(path: String) {
-        let isSignToken = path == universalLink.appendingPathComponent("\(bundleID)/mqqsignapp").path
-        let isResponse = path == universalLink.appendingPathComponent("\(bundleID)").path
-
-        if isSignToken {
-            context.shareState = .signToken
-        } else if isResponse {
-            context.shareState = .responseUniversalLink
+        switch context.shareState! {
+        case .requestFirst,
+             .requestSecond,
+             .responseURLScheme,
+             .requestThird,
+             .success,
+             .failure:
+            fatalError()
+        case .responseSignToken:
+            XCTAssertEqual(path, universalLink.appendingPathComponent("\(bundleID)/mqqsignapp").path)
+        case .responseUniversalLink:
+            XCTAssertEqual(path, universalLink.appendingPathComponent("\(bundleID)").path)
         }
-
-        XCTAssertTrue(isSignToken || isResponse)
     }
 
     func test_share_ul_response(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
         switch context.shareState! {
         case .requestFirst,
              .requestSecond,
-             .requestThird,
              .responseURLScheme,
+             .requestThird,
              .success,
              .failure:
             fatalError()
-        case .signToken:
+        case .responseSignToken:
             let generalpastboard = queryItems.removeFirst { $0.name == "generalpastboard" }!
             test_generalpastboard(generalpastboard)
         case .responseUniversalLink:
