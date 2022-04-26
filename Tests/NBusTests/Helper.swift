@@ -48,11 +48,11 @@ extension HandlerTestContext {
 
     enum ShareState {
         case requestFirst
-        case signToken
+        case responseSignToken
         case requestSecond
-        case requestThird
         case responseURLScheme
         case responseUniversalLink
+        case requestThird
         case success
         case failure
     }
