@@ -31,7 +31,7 @@ extension ShareTestCase {
         UIApplication.shared.rx
             .openURL()
             .bind(onNext: { [unowned self] url in
-                if context.shareState == .signToken {
+                if context.shareState == .responseSignToken {
                     context.shareState = .requestSecond
                 }
 
@@ -72,7 +72,24 @@ extension ShareTestCase {
         NotificationCenter.default.rx
             .openUserActivity()
             .bind(onNext: { [unowned self] userActivity, items in
-                self._test_share_response(url: userActivity.webpageURL!, message, endpoint)
+                let webpageURL = userActivity.webpageURL!
+                let bundleID = Bundle.main.bus.identifier!
+
+                if endpoint.toPlatform == Platforms.qq {
+                    if webpageURL.path.hasSuffix("\(bundleID)/mqqsignapp") {
+                        self.context.shareState = .responseSignToken
+                    } else if webpageURL.path.hasSuffix("\(bundleID)") {
+                        self.context.shareState = .responseUniversalLink
+                    }
+                }
+
+                if endpoint.toPlatform == Platforms.weibo {
+                    if webpageURL.query!.contains("checkStatus") {
+                        self.context.shareState = .responseSignToken
+                    }
+                }
+
+                self._test_share_response(url: webpageURL, message, endpoint)
 
                 test_pasteboard: if items.pasteboardString() != AppState.defaultPasteboardString {
                     if items.contains(where: { $0.contains(where: { $0.key == "com.tencent.mqq.api.apiLargeData" }) }) {
