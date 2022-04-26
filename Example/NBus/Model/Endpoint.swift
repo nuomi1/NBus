@@ -33,3 +33,28 @@ extension Endpoint: CustomStringConvertible {
         }
     }
 }
+
+extension Endpoint {
+
+    var toPlatform: Platform {
+        switch self {
+        case Endpoints.Wechat.friend:
+            return Platforms.wechat
+        case Endpoints.Wechat.timeline:
+            return Platforms.wechat
+        case Endpoints.Wechat.favorite:
+            return Platforms.wechat
+        case Endpoints.QQ.friend:
+            return Platforms.qq
+        case Endpoints.QQ.timeline:
+            return Platforms.qq
+        case Endpoints.Weibo.timeline:
+            return Platforms.weibo
+        case Endpoints.System.activity:
+            return Platforms.system
+        default:
+            assertionFailure()
+            return Platform(rawValue: "unknown")
+        }
+    }
+}
