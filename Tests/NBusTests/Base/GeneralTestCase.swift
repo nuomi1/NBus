@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RxRelay
 import XCTest
 
 // MARK: - General - Scheme
@@ -85,4 +86,27 @@ protocol GeneralPasteboardResponseTestCase: XCTestCase {
 
     /// Test pasteboard response extra data
     func test_extra_pb_response(items: inout [[String: Data]])
+}
+
+// MARK: - General - Completion
+
+protocol GeneralCompletionTestCase: XCTestCase {
+
+    /// scheme relay
+    static var schemeRelay: PublishRelay<URL> { get }
+
+    /// universal link request relay
+    static var universalLinkRequestRelay: PublishRelay<URL> { get }
+
+    /// pasteboard request relay
+    static var pasteboardRequestRelay: PublishRelay<[[String: Any]]> { get }
+
+    /// url scheme response relay
+    static var urlSchemeResponseRelay: PublishRelay<URL> { get }
+
+    /// universal link response relay
+    static var universalLinkResponseRelay: PublishRelay<URL> { get }
+
+    /// pasteboard response relay
+    static var pasteboardResponseRelay: PublishRelay<[[String: Any]]> { get }
 }

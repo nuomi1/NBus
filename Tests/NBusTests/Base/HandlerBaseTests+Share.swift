@@ -17,8 +17,7 @@ import XCTest
 extension ShareTestCase {
 
     func test_share(_ message: MessageType, _ endpoint: Endpoint) {
-        UIApplication.shared.rx
-            .canOpenURL()
+        Self.schemeRelay
             .bind(onNext: { [unowned self] url in
                 if url.scheme == "mqqopensdknopasteboard" {
                     self.context.skipPasteboard = true
@@ -28,8 +27,7 @@ extension ShareTestCase {
             })
             .disposed(by: disposeBag)
 
-        UIApplication.shared.rx
-            .openURL()
+        Self.universalLinkRequestRelay
             .bind(onNext: { [unowned self] url in
                 if context.shareState == .responseSignToken {
                     context.shareState = .requestSecond
@@ -39,69 +37,54 @@ extension ShareTestCase {
             })
             .disposed(by: disposeBag)
 
-        UIPasteboard.general.rx
-            .items()
-            .filter { !$0.allSatisfy { $0.isEmpty } }
-            .filter { [unowned self] items in
-                if self.context.setPasteboardString {
-                    return items.pasteboardString() != AppState.defaultPasteboardString
-                }
-
-                return true
-            }
+        Self.pasteboardRequestRelay
             .bind(onNext: { [unowned self] items in
                 self._test_share_request(items: items, message, endpoint)
             })
             .disposed(by: disposeBag)
 
-        NotificationCenter.default.rx
-            .openURL()
-            .bind(onNext: { [unowned self] url, items in
+        Self.urlSchemeResponseRelay
+            .bind(onNext: { [unowned self] url in
                 precondition(self.context.shareState == .requestFirst)
 
                 self.context.shareState = .responseURLScheme
 
                 self._test_share_response(us: url, message, endpoint)
-
-                self._test_share_response(items: items, message, endpoint)
-
-                HandlerBaseTests.openURL(url)
             })
             .disposed(by: disposeBag)
 
-        NotificationCenter.default.rx
-            .openUserActivity()
-            .bind(onNext: { [unowned self] userActivity, items in
-                let webpageURL = userActivity.webpageURL!
+        Self.universalLinkResponseRelay
+            .bind(onNext: { [unowned self] url in
                 let bundleID = Bundle.main.bus.identifier!
 
                 if endpoint.toPlatform == Platforms.qq {
-                    if webpageURL.path.hasSuffix("\(bundleID)/mqqsignapp") {
+                    if url.path.hasSuffix("\(bundleID)/mqqsignapp") {
                         self.context.shareState = .responseSignToken
-                    } else if webpageURL.path.hasSuffix("\(bundleID)") {
+                    } else if url.path.hasSuffix("\(bundleID)") {
                         self.context.shareState = .responseUniversalLink
                     }
                 }
 
                 if endpoint.toPlatform == Platforms.weibo {
-                    if webpageURL.query!.contains("checkStatus") {
+                    if url.query!.contains("checkStatus") {
                         self.context.shareState = .responseSignToken
+                    } else if url.query!.contains("sdkversion") {
+                        self.context.shareState = .responseUniversalLink
                     }
                 }
 
-                self._test_share_response(url: webpageURL, message, endpoint)
+                self._test_share_response(url: url, message, endpoint)
+            })
+            .disposed(by: disposeBag)
 
-                test_pasteboard: if items.pasteboardString() != AppState.defaultPasteboardString {
-                    if items.contains(where: { $0.contains(where: { $0.key == "com.tencent.mqq.api.apiLargeData" }) }) {
-                        self._test_share_request(items: items, message, endpoint)
-
-                        break test_pasteboard
-                    }
-
-                    self._test_share_response(items: items, message, endpoint)
+        Self.pasteboardResponseRelay
+            .bind(onNext: { [unowned self] items in
+                if self.context.skipPasteboard, self.context.shareState == .success || self.context.shareState == .failure {
+                    self._test_share_request(items: items, message, endpoint)
+                    return
                 }
 
-                HandlerBaseTests.openUserActivity(userActivity)
+                self._test_share_response(items: items, message, endpoint)
             })
             .disposed(by: disposeBag)
 

@@ -136,7 +136,7 @@ protocol _SharePasteboardResponseTestCase:
 
 // MARK: - Share - Completion
 
-protocol _ShareCompletionTestCase: XCTestCase {
+protocol _ShareCompletionTestCase: GeneralCompletionTestCase {
 
     /// Universal link expectation
     var ulExpectation: XCTestExpectation { get }

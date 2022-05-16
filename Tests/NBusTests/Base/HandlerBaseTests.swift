@@ -9,6 +9,7 @@
 import Foundation
 @testable import NBus
 import RxCocoa
+import RxRelay
 import RxSwift
 import XCTest
 
@@ -53,6 +54,18 @@ class HandlerBaseTests: XCTestCase {
     static var disposeBag = DisposeBag()
     var disposeBag = DisposeBag()
 
+    static let schemeRelay = PublishRelay<URL>()
+
+    static let universalLinkRequestRelay = PublishRelay<URL>()
+
+    static let pasteboardRequestRelay = PublishRelay<[[String: Any]]>()
+
+    static let urlSchemeResponseRelay = PublishRelay<URL>()
+
+    static let universalLinkResponseRelay = PublishRelay<URL>()
+
+    static let pasteboardResponseRelay = PublishRelay<[[String: Any]]>()
+
     var context = HandlerTestContext()
 
     let ulExpectation = XCTestExpectation(description: "UniversalLink")
@@ -60,6 +73,48 @@ class HandlerBaseTests: XCTestCase {
 
     override class func setUp() {
         super.setUp()
+
+        UIApplication.shared.rx
+            .canOpenURL()
+            .bind(onNext: { url in
+                schemeRelay.accept(url)
+            })
+            .disposed(by: disposeBag)
+
+        UIApplication.shared.rx
+            .openURL()
+            .bind(onNext: { url in
+                universalLinkRequestRelay.accept(url)
+
+                let items = UIPasteboard.general.items
+
+                if filter(items) {
+                    pasteboardRequestRelay.accept(items)
+                }
+            })
+            .disposed(by: disposeBag)
+
+        NotificationCenter.default.rx
+            .openURL()
+            .bind(onNext: { url, items in
+                urlSchemeResponseRelay.accept(url)
+
+                if filter(items) {
+                    pasteboardResponseRelay.accept(items)
+                }
+            })
+            .disposed(by: disposeBag)
+
+        NotificationCenter.default.rx
+            .openUserActivity()
+            .bind(onNext: { userActivity, items in
+                universalLinkResponseRelay.accept(userActivity.webpageURL!)
+
+                if filter(items) {
+                    pasteboardResponseRelay.accept(items)
+                }
+            })
+            .disposed(by: disposeBag)
 
         NotificationCenter.default.rx
             .openURL()
@@ -97,6 +152,20 @@ class HandlerBaseTests: XCTestCase {
                 logger.debug("\(items.map { $0.keys.sorted() })")
             })
             .disposed(by: disposeBag)
+
+        NotificationCenter.default.rx
+            .openURL()
+            .bind(onNext: { url, _ in
+                openURL(url)
+            })
+            .disposed(by: disposeBag)
+
+        NotificationCenter.default.rx
+            .openUserActivity()
+            .bind(onNext: { userActivity, _ in
+                openUserActivity(userActivity)
+            })
+            .disposed(by: disposeBag)
     }
 
     static func openURL(_ url: URL) {
@@ -121,6 +190,11 @@ class HandlerBaseTests: XCTestCase {
                 AppState.OpenUserActivity.responseResultKey: result,
             ]
         )
+    }
+
+    static func filter(_ items: [[String: Any]]) -> Bool {
+        !items.allSatisfy { $0.isEmpty }
+            && items.pasteboardString() != AppState.defaultPasteboardString
     }
 }
 
