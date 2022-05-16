@@ -72,7 +72,53 @@ extension WeiboHandlerBaseTests: ShareMessageUniversalLinkRequestTestCase {
     }
 
     func test_share_ul_request(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
-        XCTAssertTrue(true)
+        if context.shareState == .requestFirst {
+            let checkLink = queryItems.removeFirst { $0.name == "checkLink" }!
+            test_checkLink_request(checkLink)
+        }
+
+        if context.shareState == .requestSecond {
+            let lfid = queryItems.removeFirst { $0.name == "lfid" }!
+            test_lfid(lfid)
+        }
+
+        if context.shareState == .requestSecond {
+            let luicode = queryItems.removeFirst { $0.name == "luicode" }!
+            test_luicode(luicode)
+        }
+
+        if context.shareState == .requestSecond {
+            let sdkversion = queryItems.removeFirst { $0.name == "sdkversion" }!
+            test_sdkversion(sdkversion)
+        }
+
+        if context.shareState == .requestSecond {
+            let urltype = queryItems.removeFirst { $0.name == "urltype" }!
+            test_urltype(urltype)
+        }
+    }
+}
+
+extension WeiboHandlerBaseTests {
+
+    func test_checkLink_request(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), universalLink.absoluteString)
+    }
+
+    func test_lfid(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), bundleID)
+    }
+
+    func test_luicode(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "10000360")
+    }
+
+    func test_sdkversion(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), sdkVersion)
+    }
+
+    func test_urltype(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "link")
     }
 }
 
@@ -81,11 +127,15 @@ extension WeiboHandlerBaseTests: ShareMessageUniversalLinkRequestTestCase {
 extension WeiboHandlerBaseTests: ShareMessagePasteboardRequestTestCase {
 
     func test_share_pb_request(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
-        let `class` = dictionary.removeValue(forKey: "__class") as! String
-        test_class_share(`class`)
+        if context.shareState == .requestSecond {
+            let `class` = dictionary.removeValue(forKey: "__class") as! String
+            test_class_share(`class`)
+        }
 
-        let _message = dictionary.removeValue(forKey: "message") as! [String: Any]
-        test_message(_message, message, endpoint)
+        if context.shareState == .requestSecond {
+            let _message = dictionary.removeValue(forKey: "message") as! [String: Any]
+            test_message(_message, message, endpoint)
+        }
     }
 }
 
@@ -283,6 +333,109 @@ extension WeiboHandlerBaseTests {
             XCTAssertEqual(value, message.link.absoluteString)
         case let message as WebPageMessage:
             XCTAssertEqual(value, message.link.absoluteString)
+        default:
+            fatalError()
+        }
+    }
+}
+
+// MARK: - Share - Message - URLScheme - Response
+
+extension WeiboHandlerBaseTests: ShareMessageURLSchemeResponseTestCase {
+
+    func test_share_us_response(path: String) {
+        fatalError()
+    }
+
+    func test_share_us_response(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        fatalError()
+    }
+}
+
+// MARK: - Share - Message - UniversalLink - Response
+
+extension WeiboHandlerBaseTests: ShareMessageUniversalLinkResponseTestCase {
+
+    func test_share_ul_response(path: String) {
+        XCTAssertEqual(path, universalLink.appendingPathComponent("weibosdk/response").path)
+    }
+
+    func test_share_ul_response(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        if context.shareState == .responseSignToken {
+            let checkLink = queryItems.removeFirst { $0.name == "checkLink" }!
+            test_checkLink_response(checkLink)
+        }
+
+        if context.shareState == .responseSignToken {
+            let checkStatus = queryItems.removeFirst { $0.name == "checkStatus" }!
+            test_checkStatus(checkStatus)
+        }
+
+        if context.shareState == .responseUniversalLink {
+            let sdkversion = queryItems.removeFirst { $0.name == "sdkversion" }!
+            test_sdkversion_response(sdkversion)
+        }
+    }
+}
+
+extension WeiboHandlerBaseTests {
+
+    func test_checkLink_response(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "https://open.weibo.com/weibosdk")
+    }
+
+    func test_checkStatus(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), "1")
+    }
+
+    func test_sdkversion_response(_ queryItem: URLQueryItem) {
+        XCTAssertEqual(try XCTUnwrap(queryItem.value), remoteSDKShortVersion)
+    }
+}
+
+// MARK: - Share - Message - Pasteboard - Response
+
+extension WeiboHandlerBaseTests: ShareMessagePasteboardResponseTestCase {
+
+    func test_share_pb_response(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+        if context.shareState == .responseUniversalLink {
+            let `class` = dictionary.removeValue(forKey: "__class") as! String
+            test_class_share_response(`class`)
+        }
+
+        if context.shareState == .responseUniversalLink {
+            let requestID = dictionary.removeValue(forKey: "requestID") as! String
+            test_requestID(requestID)
+        }
+
+        if context.shareState == .responseUniversalLink {
+            let responseID = dictionary.removeValue(forKey: "responseID") as! String
+            test_responseID(responseID)
+        }
+
+        if context.shareState == .responseUniversalLink {
+            let statusCode = dictionary.removeValue(forKey: "statusCode") as! Int
+            test_statusCode_share(statusCode)
+        }
+    }
+}
+
+extension WeiboHandlerBaseTests {
+
+    func test_class_share_response(_ value: String) {
+        XCTAssertEqual(value, "WBSendMessageToWeiboResponse")
+    }
+
+    func test_responseID(_ value: String) {
+        XCTAssertNotNil(UUID(uuidString: value))
+    }
+
+    func test_statusCode_share(_ value: Int) {
+        switch value {
+        case 0:
+            context.shareState = .success
+        case -1:
+            context.shareState = .failure
         default:
             fatalError()
         }

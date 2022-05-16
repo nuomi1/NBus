@@ -35,35 +35,15 @@ extension WeiboHandlerBaseTests: GeneralUniversalLinkRequestTestCase {
     }
 
     func test_general_ul_request(queryItems: inout [URLQueryItem]) {
-        let lfid = queryItems.removeFirst { $0.name == "lfid" }!
-        test_lfid(lfid)
-
-        let luicode = queryItems.removeFirst { $0.name == "luicode" }!
-        test_luicode(luicode)
-
         let newVersion = queryItems.removeFirst { $0.name == "newVersion" }!
         test_newVersion(newVersion)
 
         let objId = queryItems.removeFirst { $0.name == "objId" }!
         test_objId(objId)
-
-        let sdkversion = queryItems.removeFirst { $0.name == "sdkversion" }!
-        test_sdkversion(sdkversion)
-
-        let urltype = queryItems.removeFirst { $0.name == "urltype" }!
-        test_urltype(urltype)
     }
 }
 
 extension WeiboHandlerBaseTests {
-
-    func test_lfid(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(try XCTUnwrap(queryItem.value), bundleID)
-    }
-
-    func test_luicode(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(try XCTUnwrap(queryItem.value), "10000360")
-    }
 
     func test_newVersion(_ queryItem: URLQueryItem) {
         XCTAssertEqual(try XCTUnwrap(queryItem.value), sdkShortVersion)
@@ -72,14 +52,6 @@ extension WeiboHandlerBaseTests {
     func test_objId(_ queryItem: URLQueryItem) {
         XCTAssertNotNil(try UUID(uuidString: XCTUnwrap(queryItem.value)))
     }
-
-    func test_sdkversion(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(try XCTUnwrap(queryItem.value), sdkVersion)
-    }
-
-    func test_urltype(_ queryItem: URLQueryItem) {
-        XCTAssertEqual(try XCTUnwrap(queryItem.value), "link")
-    }
 }
 
 // MARK: - General - Pasteboard - Request
@@ -87,12 +59,18 @@ extension WeiboHandlerBaseTests {
 extension WeiboHandlerBaseTests: GeneralPasteboardRequestTestCase {
 
     func extract_major_pb_request(items: inout [[String: Data]]) -> [String: Any] {
-        extract_KeyedArchiver_pb(items: &items, key: "transferObject")
+        if context.shareState == .requestSecond {
+            return extract_KeyedArchiver_pb(items: &items, key: "transferObject")
+        }
+
+        return [:]
     }
 
     func test_general_pb_request(dictionary: inout [String: Any]) {
-        let requestID = dictionary.removeValue(forKey: "requestID") as! String
-        test_requestID(requestID)
+        if context.shareState == .requestSecond {
+            let requestID = dictionary.removeValue(forKey: "requestID") as! String
+            test_requestID(requestID)
+        }
     }
 
     func test_extra_pb_request(items: inout [[String: Data]]) {
@@ -100,7 +78,9 @@ extension WeiboHandlerBaseTests: GeneralPasteboardRequestTestCase {
 
         test_sdkVersion(&items)
 
-        test_userInfo(&items)
+        if context.shareState == .requestSecond {
+            test_userInfo_share(&items)
+        }
     }
 }
 
@@ -127,8 +107,20 @@ extension WeiboHandlerBaseTests {
         let bundleID = dictionary.removeValue(forKey: "bundleID") as! String
         test_bundleID(bundleID)
 
-        let universalLink = dictionary.removeValue(forKey: "universalLink") as! String
-        test_universalLink(universalLink)
+        switch context.shareState! {
+        case .requestFirst,
+             .responseSignToken,
+             .requestSecond:
+            let universalLink = dictionary.removeValue(forKey: "universalLink") as! String
+            test_universalLink(universalLink)
+        case .success,
+             .failure:
+            XCTAssertTrue(true)
+        case .responseURLScheme,
+             .responseUniversalLink,
+             .requestThird:
+            fatalError()
+        }
 
         logger.debug("\(UIPasteboard.self), end, \(dictionary.keys.sorted())")
 
@@ -162,13 +154,25 @@ extension WeiboHandlerBaseTests {
     func test_sdkVersion(_ items: inout [[String: Data]]) {
         let data = items.removeFirst { $0.keys.contains("sdkVersion") }!["sdkVersion"]!
 
-        XCTAssertEqual(data, Data(sdkVersion.utf8))
+        switch context.shareState! {
+        case .requestFirst,
+             .responseSignToken,
+             .requestSecond:
+            XCTAssertEqual(data, Data(sdkVersion.utf8))
+        case .success,
+             .failure:
+            XCTAssertEqual(data, Data(remoteSDKShortVersion.utf8))
+        case .responseURLScheme,
+             .responseUniversalLink,
+             .requestThird:
+            fatalError()
+        }
     }
 }
 
 extension WeiboHandlerBaseTests {
 
-    func test_userInfo(_ items: inout [[String: Data]]) {
+    func test_userInfo_share(_ items: inout [[String: Data]]) {
         var dictionary = extract_KeyedArchiver_pb(items: &items, key: "userInfo")
 
         logger.debug("\(UIPasteboard.self), start, \(dictionary.keys.sorted())")
@@ -186,5 +190,74 @@ extension WeiboHandlerBaseTests {
 
     func test_startTime(_ value: String) {
         XCTAssertNotNil(dateFormatter.date(from: value))
+    }
+}
+
+// MARK: - General - URLScheme - Response
+
+extension WeiboHandlerBaseTests: GeneralURLSchemeResponseTestCase {
+
+    func test_general_us_response(scheme: @autoclosure () throws -> String) {
+        fatalError()
+    }
+
+    func test_general_us_response(host: @autoclosure () throws -> String) {
+        fatalError()
+    }
+
+    func test_general_us_response(queryItems: inout [URLQueryItem]) {
+        fatalError()
+    }
+}
+
+// MARK: - General - UniversalLink - Response
+
+extension WeiboHandlerBaseTests: GeneralUniversalLinkResponseTestCase {
+
+    func test_general_ul_response(scheme: @autoclosure () throws -> String) {
+        XCTAssertEqual(try scheme(), universalLink.scheme)
+    }
+
+    func test_general_ul_response(host: @autoclosure () throws -> String) {
+        XCTAssertEqual(try host(), universalLink.host)
+    }
+
+    func test_general_ul_response(queryItems: inout [URLQueryItem]) {
+        let id = queryItems.removeFirst { $0.name == "id" }!
+        test_id(id)
+    }
+}
+
+extension WeiboHandlerBaseTests {
+
+    func test_id(_ queryItem: URLQueryItem) {
+        XCTAssertNotNil(try UUID(uuidString: XCTUnwrap(queryItem.value)))
+    }
+}
+
+// MARK: - General - Pasteboard - Response
+
+extension WeiboHandlerBaseTests: GeneralPasteboardResponseTestCase {
+
+    func extract_major_pb_response(items: inout [[String: Data]]) -> [String: Any] {
+        if context.shareState == .responseUniversalLink {
+            return extract_KeyedArchiver_pb(items: &items, key: "transferObject")
+        }
+
+        return [:]
+    }
+
+    func test_general_pb_response(dictionary: inout [String: Any]) {
+        test_general_pb_request(dictionary: &dictionary)
+    }
+
+    func test_extra_pb_response(items: inout [[String: Data]]) {
+        test_app(&items)
+
+        test_sdkVersion(&items)
+
+        if context.shareState == .success {
+            test_userInfo_share(&items)
+        }
     }
 }

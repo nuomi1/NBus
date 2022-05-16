@@ -36,6 +36,10 @@ class WeiboHandlerBaseTests: HandlerBaseTests {
         }
     }
 
+    var remoteSDKShortVersion: String {
+        "2.5"
+    }
+
     override var sdkShortVersion: String {
         "3.3"
     }
