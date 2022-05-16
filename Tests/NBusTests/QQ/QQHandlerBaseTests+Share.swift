@@ -620,6 +620,10 @@ extension QQHandlerBaseTests: ShareMessageURLSchemeResponseTestCase {
             context.shareState = .success
 
             XCTAssertNil(error_description)
+        case "-4":
+            context.shareState = .failure
+
+            XCTAssertEqual(try XCTUnwrap(error_description?.value), "the user give up the current operation".bus.base64EncodedString)
         case "--1000710008":
             context.shareState = .failure
 
