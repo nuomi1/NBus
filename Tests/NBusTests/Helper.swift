@@ -41,6 +41,13 @@ struct HandlerTestContext {
     var skipPasteboard = false
     var skipCompletion = false
 
+    let bundleID = Bundle.main.bus.identifier!
+
+    var appID: String!
+    var universalLink: URL!
+
+    var signToken: String!
+
     var shareState: ShareState!
 }
 

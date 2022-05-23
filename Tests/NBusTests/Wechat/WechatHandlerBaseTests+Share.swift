@@ -128,7 +128,10 @@ extension WechatHandlerBaseTests: ShareMessageUniversalLinkRequestTestCase {
     }
 
     func test_share_ul_request(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
-        XCTAssertTrue(true)
+        if context.shareState == .requestSecond {
+            let wechat_auth_token = queryItems.removeFirst { $0.name == "wechat_auth_token" }!
+            test_wechat_auth_token(wechat_auth_token)
+        }
     }
 }
 
@@ -556,6 +559,75 @@ extension WechatHandlerBaseTests {
              is FileMessage,
              is MiniProgramMessage:
             XCTAssertEqual(try XCTUnwrap(value), false)
+        default:
+            fatalError()
+        }
+    }
+}
+
+// MARK: - Share - Message - URLScheme - Response
+
+extension WechatHandlerBaseTests: ShareMessageURLSchemeResponseTestCase {
+
+    func test_share_us_response(path: String) {
+        XCTAssertEqual(path, "")
+    }
+
+    func test_share_us_response(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        XCTAssertTrue(true)
+    }
+}
+
+// MARK: - Share - Message - UniversalLink - Response
+
+extension WechatHandlerBaseTests: ShareMessageUniversalLinkResponseTestCase {
+
+    func test_share_ul_response(path: String) {
+        switch context.shareState! {
+        case .requestFirst,
+             .requestSecond,
+             .responseURLScheme,
+             .requestThird,
+             .success,
+             .failure:
+            fatalError()
+        case .responseSignToken:
+            XCTAssertEqual(path, universalLink.appendingPathComponent("\(appID)/refreshToken").path)
+        case .responseUniversalLink:
+            XCTAssertEqual(path, universalLink.appendingPathComponent("\(appID)//").path)
+        }
+    }
+
+    func test_share_ul_response(queryItems: inout [URLQueryItem], _ message: MessageType, _ endpoint: Endpoint) {
+        XCTAssertTrue(true)
+    }
+}
+
+// MARK: - Share - Message - Pasteboard - Response
+
+extension WechatHandlerBaseTests: ShareMessagePasteboardResponseTestCase {
+
+    func test_share_pb_response(dictionary: inout [String: Any], _ message: MessageType, _ endpoint: Endpoint) {
+        let command = dictionary.removeValue(forKey: "command") as! String
+        test_command_share(command)
+
+        let result = dictionary.removeValue(forKey: "result") as! String
+        test_result_share(result)
+    }
+}
+
+extension WechatHandlerBaseTests {
+
+    func test_command_share(_ value: String) {
+        XCTAssertEqual(value, "2020")
+    }
+
+    func test_result_share(_ value: String) {
+        switch value {
+        case "0":
+            context.shareState = .success
+        case "-2":
+            context.shareState = .failure
         default:
             fatalError()
         }

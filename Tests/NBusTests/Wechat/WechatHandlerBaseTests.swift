@@ -24,6 +24,10 @@ class WechatHandlerBaseTests: HandlerBaseTests {
         }
     }
 
+    var remoteSDKShortVersion: Int {
+        402_658_851
+    }
+
     override var sdkVersion: String {
         "1.9.2"
     }

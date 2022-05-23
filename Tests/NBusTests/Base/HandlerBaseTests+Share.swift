@@ -55,12 +55,18 @@ extension ShareTestCase {
 
         Self.universalLinkResponseRelay
             .bind(onNext: { [unowned self] url in
-                let bundleID = Bundle.main.bus.identifier!
-
                 if endpoint.toPlatform == Platforms.qq {
-                    if url.path.hasSuffix("\(bundleID)/mqqsignapp") {
+                    if url.path.hasSuffix("\(self.context.bundleID)/mqqsignapp") {
                         self.context.shareState = .responseSignToken
-                    } else if url.path.hasSuffix("\(bundleID)") {
+                    } else if url.path.hasSuffix("\(self.context.bundleID)") {
+                        self.context.shareState = .responseUniversalLink
+                    }
+                }
+
+                if endpoint.toPlatform == Platforms.wechat {
+                    if url.path.hasSuffix("\(self.context.appID!)/refreshToken") {
+                        self.context.shareState = .responseSignToken
+                    } else if url.path.hasSuffix("\(self.context.appID!)") {
                         self.context.shareState = .responseUniversalLink
                     }
                 }

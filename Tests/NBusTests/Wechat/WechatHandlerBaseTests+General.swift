@@ -37,8 +37,10 @@ extension WechatHandlerBaseTests: GeneralUniversalLinkRequestTestCase {
         let wechat_app_bundleId = queryItems.removeFirst { $0.name == "wechat_app_bundleId" }!
         test_wechat_app_bundleId(wechat_app_bundleId)
 
-        let wechat_auth_context_id = queryItems.removeFirst { $0.name == "wechat_auth_context_id" }!
-        test_wechat_auth_context_id(wechat_auth_context_id)
+        if context.shareState == .requestFirst {
+            let wechat_auth_context_id = queryItems.removeFirst { $0.name == "wechat_auth_context_id" }!
+            test_wechat_auth_context_id(wechat_auth_context_id)
+        }
     }
 }
 
@@ -108,7 +110,19 @@ extension WechatHandlerBaseTests {
 extension WechatHandlerBaseTests {
 
     func test_isAutoResend(_ value: Bool) {
-        XCTAssertEqual(value, false)
+        switch context.shareState! {
+        case .requestFirst,
+             .responseUniversalLink:
+            XCTAssertEqual(value, false)
+        case .requestSecond:
+            XCTAssertEqual(value, true)
+        case .responseSignToken,
+             .responseURLScheme,
+             .requestThird,
+             .success,
+             .failure:
+            fatalError()
+        }
     }
 
     func test_result(_ value: String) {
@@ -125,5 +139,102 @@ extension WechatHandlerBaseTests {
 
     func test_universalLink(_ value: String) {
         XCTAssertEqual(value, universalLink.absoluteString)
+    }
+}
+
+// MARK: - General - URLScheme - Response
+
+extension WechatHandlerBaseTests: GeneralURLSchemeResponseTestCase {
+
+    func test_general_us_response(scheme: @autoclosure () throws -> String) {
+        XCTAssertEqual(try scheme(), appID)
+    }
+
+    func test_general_us_response(host: @autoclosure () throws -> String) {
+        XCTAssertEqual(try host(), "resendContextReqByScheme")
+    }
+
+    func test_general_us_response(queryItems: inout [URLQueryItem]) {
+        let wechat_auth_context_id = queryItems.removeFirst { $0.name == "wechat_auth_context_id" }!
+        test_wechat_auth_context_id(wechat_auth_context_id)
+    }
+}
+
+// MARK: - General - UniversalLink - Response
+
+extension WechatHandlerBaseTests: GeneralUniversalLinkResponseTestCase {
+
+    func test_general_ul_response(scheme: @autoclosure () throws -> String) {
+        XCTAssertEqual(try scheme(), universalLink.scheme)
+    }
+
+    func test_general_ul_response(host: @autoclosure () throws -> String) {
+        XCTAssertEqual(try host(), universalLink.host)
+    }
+
+    func test_general_ul_response(queryItems: inout [URLQueryItem]) {
+        if context.shareState == .responseSignToken {
+            let wechat_auth_context_id = queryItems.removeFirst { $0.name == "wechat_auth_context_id" }!
+            test_wechat_auth_context_id(wechat_auth_context_id)
+        }
+
+        if context.shareState == .responseSignToken {
+            let wechat_auth_token = queryItems.removeFirst { $0.name == "wechat_auth_token" }!
+            test_wechat_auth_token(wechat_auth_token)
+        }
+    }
+}
+
+extension WechatHandlerBaseTests {
+
+    func test_wechat_auth_token(_ queryItem: URLQueryItem) {
+        let token = try! XCTUnwrap(queryItem.value).split(separator: "_")
+        XCTAssertEqual(token.count, 2)
+        XCTAssertEqual(try XCTUnwrap(token.first).count, 64)
+    }
+}
+
+// MARK: - General - Pasteboard - Response
+
+extension WechatHandlerBaseTests: GeneralPasteboardResponseTestCase {
+
+    func extract_major_pb_response(items: inout [[String: Data]]) -> [String: Any] {
+        extract_major_pb_request(items: &items)
+    }
+
+    func test_general_pb_response(dictionary: inout [String: Any]) {
+        let country = dictionary.removeValue(forKey: "country") as! String
+        test_country(country)
+
+        let isAutoResend = dictionary.removeValue(forKey: "isAutoResend") as! Bool
+        test_isAutoResend(isAutoResend)
+
+        let language = dictionary.removeValue(forKey: "language") as! String
+        test_language(language)
+
+        let returnFromApp = dictionary.removeValue(forKey: "returnFromApp") as! String
+        test_returnFromApp(returnFromApp)
+
+        let wechatVersion = dictionary.removeValue(forKey: "wechatVersion") as! Int
+        test_wechatVersion(wechatVersion)
+    }
+
+    func test_extra_pb_response(items: inout [[String: Data]]) {
+        XCTAssertTrue(true)
+    }
+}
+
+extension WechatHandlerBaseTests {
+
+    func test_country(_ value: String) {
+        XCTAssertEqual(value, "")
+    }
+
+    func test_language(_ value: String) {
+        XCTAssertEqual(value, "zh_CN")
+    }
+
+    func test_wechatVersion(_ value: Int) {
+        XCTAssertEqual(value, remoteSDKShortVersion)
     }
 }

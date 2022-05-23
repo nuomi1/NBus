@@ -205,6 +205,9 @@ extension HandlerBaseTests {
 
         context.setPasteboardString = true
 
+        context.appID = appID
+        context.universalLink = universalLink
+
         AppState.shared.clearPasteboard(shouldSetString: context.setPasteboardString)
         AppState.shared.clearKeychains()
         AppState.shared.clearUserDefaults()
