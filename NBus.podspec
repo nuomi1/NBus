@@ -29,51 +29,51 @@ Pod::Spec.new do |s|
   end
 
   s.subspec "Core" do |ss|
-    ss.source_files = ["NBus/Classes/Core/**/*.swift"]
+    ss.source_files = ["Sources/NBusCore/*.swift"]
   end
 
   s.subspec "QQSDKHandler" do |ss|
     ss.dependency "NBus/Core"
     ss.dependency "NBusQQSDK"
 
-    ss.source_files = ["NBus/Classes/Handler/QQSDKHandler.swift"]
+    ss.source_files = ["Sources/NBusQQSDKHandler/*.swift"]
   end
 
   s.subspec "QQHandler" do |ss|
     ss.dependency "NBus/Core"
 
-    ss.source_files = ["NBus/Classes/Handler/QQHandler.swift"]
+    ss.source_files = ["Sources/NBusQQHandler/*.swift"]
   end
 
   s.subspec "WechatSDKHandler" do |ss|
     ss.dependency "NBus/Core"
     ss.dependency "NBusWechatSDK"
 
-    ss.source_files = ["NBus/Classes/Handler/WechatSDKHandler.swift"]
+    ss.source_files = ["Sources/NBusWechatSDKHandler/*.swift"]
   end
 
   s.subspec "WechatHandler" do |ss|
     ss.dependency "NBus/Core"
 
-    ss.source_files = ["NBus/Classes/Handler/WechatHandler.swift"]
+    ss.source_files = ["Sources/NBusWechatHandler/*.swift"]
   end
 
   s.subspec "WeiboSDKHandler" do |ss|
     ss.dependency "NBus/Core"
     ss.dependency "NBusWeiboSDK"
 
-    ss.source_files = ["NBus/Classes/Handler/WeiboSDKHandler.swift"]
+    ss.source_files = ["Sources/NBusWeiboSDKHandler/*.swift"]
   end
 
   s.subspec "WeiboHandler" do |ss|
     ss.dependency "NBus/Core"
 
-    ss.source_files = ["NBus/Classes/Handler/WeiboHandler.swift"]
+    ss.source_files = ["Sources/NBusWeiboHandler/*.swift"]
   end
 
   s.subspec "SystemHandler" do |ss|
     ss.dependency "NBus/Core"
 
-    ss.source_files = ["NBus/Classes/Handler/SystemHandler.swift"]
+    ss.source_files = ["Sources/NBusSystemHandler/*.swift"]
   end
 end

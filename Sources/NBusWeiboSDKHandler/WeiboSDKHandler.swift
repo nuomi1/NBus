@@ -30,7 +30,7 @@ public class WeiboSDKHandler {
 
     public let appID: String
     public let universalLink: URL
-    private let redirectLink: URL
+    public let redirectLink: URL
 
     private var coordinator: Coordinator!
 

@@ -47,6 +47,8 @@ public class QQSDKHandler {
 
         coordinator = Coordinator(owner: self)
 
+        TencentOAuth.setIsUserAgreedAuthorization(true)
+
         oauthCoordinator = TencentOAuth(
             appId: appID.trimmingCharacters(in: .letters),
             enableUniveralLink: true,
@@ -173,7 +175,7 @@ extension QQSDKHandler: ShareHandlerType {
         case Endpoints.QQ.friend:
             let cflag = self.cflag(endpoint, message.identifier)
                 .reduce(0) { result, flag in result | flag.rawValue }
-            request.apiObject.cflag |= UInt64(cflag)
+            request.apiObject?.cflag |= UInt64(cflag)
             code = QQApiInterface.send(request)
         case Endpoints.QQ.timeline:
             code = QQApiInterface.sendReq(toQZone: request)
@@ -190,6 +192,8 @@ extension QQSDKHandler: ShareHandlerType {
             completionHandler(.failure(.invalidParameter))
         case .EQQAPIVERSIONNEEDUPDATE:
             completionHandler(.failure(.unsupportedApplication))
+        case .EQQAPI_ERROR_USER_NOT_AGREED_AUTHORIZATION:
+            completionHandler(.failure(.invalidParameter))
         default:
             busAssertionFailure()
             completionHandler(.failure(.unknown))

@@ -18,32 +18,23 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "NBusCore",
-            path: "NBus/Classes/Core"
+            name: "NBusCore"
         ),
         .target(
             name: "NBusQQHandler",
-            dependencies: ["NBusCore"],
-            path: "NBus/Classes/Handler",
-            sources: ["QQHandler.swift"]
+            dependencies: ["NBusCore"]
         ),
         .target(
             name: "NBusWechatHandler",
-            dependencies: ["NBusCore"],
-            path: "NBus/Classes/Handler",
-            sources: ["WechatHandler.swift"]
+            dependencies: ["NBusCore"]
         ),
         .target(
             name: "NBusWeiboHandler",
-            dependencies: ["NBusCore"],
-            path: "NBus/Classes/Handler",
-            sources: ["WeiboHandler.swift"]
+            dependencies: ["NBusCore"]
         ),
         .target(
             name: "NBusSystemHandler",
-            dependencies: ["NBusCore"],
-            path: "NBus/Classes/Handler",
-            sources: ["SystemHandler.swift"]
+            dependencies: ["NBusCore"]
         ),
         .testTarget(
             name: "NBusTests",

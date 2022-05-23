@@ -38,7 +38,7 @@ PODS:
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
   - SwiftTrace (6.6.0)
-  - WoodPeckeriOS (1.2.93)
+  - WoodPeckeriOS (1.3.0)
 
 DEPENDENCIES:
   - NBus/BusHandlers (from `../`)
@@ -68,7 +68,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  NBus: 886bd839fdc1241f2de86f0b7636540a888d12ce
+  NBus: 20022fd04c4f9f36302ba7e3a0c4ea5c8aedde91
   NBusQQSDK: 196ee749b74b67feda8c385d7a8da04c641bb21e
   NBusWechatSDK: efebd57656091bb33a3b54a67156bd293b37d423
   NBusWeiboSDK: 9ece35d36da59080de85d7d5e34446111648da02
@@ -77,8 +77,8 @@ SPEC CHECKSUMS:
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   SwiftTrace: affc6601a316add7c299a3916d9f43c286a583ef
-  WoodPeckeriOS: 12ec7f38c695e51cd94a476228888dfe85d9d916
+  WoodPeckeriOS: 39e2bc92d88460dfd0c9429580ef71748d0ecf5e
 
-PODFILE CHECKSUM: 7615e56e197a0fccb1a3d0d7e94e2eb4c3b595fa
+PODFILE CHECKSUM: 02653ac45a0ec833b1ea1151b71b2ce38660fe07
 
 COCOAPODS: 1.11.2

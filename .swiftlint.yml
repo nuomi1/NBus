@@ -12,7 +12,7 @@ identifier_name:
 
 included:
   - Example
-  - NBus
+  - Sources
   - Tests
   - Package.swift
 

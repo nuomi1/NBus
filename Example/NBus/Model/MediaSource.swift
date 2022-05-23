@@ -11,11 +11,9 @@ import UIKit
 
 enum MediaSource {
 
-    static let text: MessageType = {
-        Messages.text(
-            text: defaultText
-        )
-    }()
+    static let text: MessageType = Messages.text(
+        text: defaultText
+    )
 
     static let image: MessageType = {
         let data = defaultJPEG.jpegData(compressionQuality: 1)!
@@ -29,14 +27,31 @@ enum MediaSource {
         )
     }()
 
-    static let gif: MessageType = {
-        Messages.image(
-            data: defaultGIF,
+    static let qqImage: MessageType = {
+        let data = defaultJPEG.jpegData(compressionQuality: 0.5)!
+        let thumbnail = defaultJPEG.jpegData(compressionQuality: 0.2)!
+
+        return Messages.image(
+            data: data,
             title: defaultTitle,
             description: defaultDescription,
-            thumbnail: defaultThumbnail
+            thumbnail: thumbnail
         )
     }()
+
+    static let wechatImage: MessageType = Messages.image(
+        data: defaultThumbnail,
+        title: defaultTitle,
+        description: defaultDescription,
+        thumbnail: defaultThumbnail
+    )
+
+    static let gif: MessageType = Messages.image(
+        data: defaultGIF,
+        title: defaultTitle,
+        description: defaultDescription,
+        thumbnail: defaultThumbnail
+    )
 
     static let audio: MessageType = {
         let url = URL(string: "https://music.163.com/#/song?id=25706284")!
@@ -68,14 +83,12 @@ enum MediaSource {
         )
     }()
 
-    static let webPage: MessageType = {
-        Messages.webPage(
-            link: defaultLink,
-            title: defaultTitle,
-            description: defaultDescription,
-            thumbnail: defaultThumbnail
-        )
-    }()
+    static let webPage: MessageType = Messages.webPage(
+        link: defaultLink,
+        title: defaultTitle,
+        description: defaultDescription,
+        thumbnail: defaultThumbnail
+    )
 
     static let file: MessageType = {
         let fileExtension = "gif"

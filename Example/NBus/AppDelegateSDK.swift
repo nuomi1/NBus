@@ -21,6 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    #if BusMockTestSDK
+    var openURLToken: NSObjectProtocol?
+    var openUserActivityToken: NSObjectProtocol?
+    #endif
+
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -44,6 +49,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #elseif BusMockWeiboSDK
         let title = "isWeiboAppInstalled"
         let message = "\(WeiboSDK.isWeiboAppInstalled())"
+        #elseif BusMockTestSDK
+        let title = "Empty"
+        let message = "Empty"
         #else
         #error("ERROR")
         let title = "ERROR"
@@ -64,4 +72,82 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
+
+    #if BusMockTestSDK
+    func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
+        let group = DispatchGroup()
+
+        var result: Bool!
+
+        openURLToken = NotificationCenter.default.addObserver(
+            forName: AppState.OpenURL.responseName,
+            object: nil,
+            queue: nil,
+            using: { notification in
+                result = notification.userInfo?[AppState.OpenURL.responseResultKey] as? Bool
+
+                group.leave()
+            }
+        )
+
+        group.enter()
+
+        NotificationCenter.default.post(
+            name: AppState.OpenURL.requestName,
+            object: nil,
+            userInfo: [
+                AppState.OpenURL.requestURLKey: url,
+                AppState.OpenURL.requestPasteboardKey: UIPasteboard.general.items,
+            ]
+        )
+
+        group.wait()
+
+        NotificationCenter.default.removeObserver(openURLToken!)
+
+        return result
+    }
+
+    func application(
+        _ application: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
+        let group = DispatchGroup()
+
+        var result: Bool!
+
+        openUserActivityToken = NotificationCenter.default.addObserver(
+            forName: AppState.OpenUserActivity.responseName,
+            object: nil,
+            queue: nil,
+            using: { notification in
+                result = notification.userInfo?[AppState.OpenUserActivity.responseResultKey] as? Bool
+
+                group.leave()
+            }
+        )
+
+        group.enter()
+
+        NotificationCenter.default.post(
+            name: AppState.OpenUserActivity.requestName,
+            object: nil,
+            userInfo: [
+                AppState.OpenUserActivity.requestUserActivityKey: userActivity,
+                AppState.OpenUserActivity.requestPasteboardKey: UIPasteboard.general.items,
+            ]
+        )
+
+        group.wait()
+
+        NotificationCenter.default.removeObserver(openUserActivityToken!)
+
+        return result
+    }
+    #endif
 }
